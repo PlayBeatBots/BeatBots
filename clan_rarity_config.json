@@ -1,0 +1,275 @@
+{
+  "collection_name": "BeatBots Genesis",
+  "total_supply": 888,
+  "mint_price_sol": 0.5,
+  "royalty_basis_points": 500,
+  "creators": [
+    {
+      "address": "7xKpX4d5nQe4m9B2vR8sC1pL3wT6yF8uJ0aZ5vW9kQ2e",
+      "share": 85
+    },
+    {
+      "address": "BEATdaoTreasury11111111111111111111111111111",
+      "share": 15
+    }
+  ],
+  "clans": {
+    "bboy": {
+      "clan_id": "01",
+      "name": "Intergalactic B-Boys",
+      "inspiration": "Beastie Boys (Hello Nasty & Hot Sauce Committee)",
+      "allocation": 210,
+      "percentage": 23.65,
+      "theme_color": "#00FF87",
+      "sound_type": "scratch",
+      "sound_label": "4/4 Funk Breaks & Vinyl Scratch Cuts",
+      "base_bpm": 96,
+      "ability": "Scratch Fader Stutter (-15% Opponent Combo)",
+      "base_stats": {
+        "atk": 96,
+        "def": 88,
+        "spd": 94
+      },
+      "tiers": {
+        "Mythic Apex (1-of-1)": 1,
+        "Legendary Master": 9,
+        "Epic Veteran": 27,
+        "Rare Specialist": 59,
+        "Core Battler": 114
+      },
+      "editions": [
+        "V2 SPEAKER-CITY",
+        "V1 OG STREET BEANIE",
+        "V2 TURNTABLE VARIANT"
+      ],
+      "head_chassis": [
+        "Dual-Cassette Boombox",
+        "Intergalactic Antenna Ears",
+        "Flashing Amber Hazard Beacons",
+        "Vintage Street Beanie Chassis"
+      ],
+      "chest_rig": [
+        "Analog VU-Meter Speaker Chest",
+        "Dual 8-inch High-Excursion Cones",
+        "4-Track Cassette Rig",
+        "Transistor Solid-State Amp"
+      ],
+      "stage_backdrop": [
+        "Stacked Brooklyn Boombox Wall",
+        "Underground Rave Stage",
+        "Beastie Sound Alley",
+        "Neon Turntable Plinth"
+      ],
+      "audio_stems": [
+        "Stem 01: Brooklyn Cypher Funk Break",
+        "Stem 02: Vinyl Scratch Chop 96BPM",
+        "Stem 03: Retro Analog 808 Beat"
+      ]
+    },
+    "dub": {
+      "clan_id": "02",
+      "name": "140 Dub Operators",
+      "inspiration": "Bassnectar Live Rig (20 Double-Bins Up Front)",
+      "allocation": 195,
+      "percentage": 21.96,
+      "theme_color": "#06B6D4",
+      "sound_type": "sub",
+      "sound_label": "30Hz Sine Sub Drops & 140 Deep Dub Sirens",
+      "base_bpm": 140,
+      "ability": "20 Double-Bin Frenzy (8-Bit Arp + Screen Earthquake)",
+      "base_stats": {
+        "atk": 92,
+        "def": 98,
+        "spd": 86
+      },
+      "tiers": {
+        "Mythic Apex (1-of-1)": 1,
+        "Legendary Master": 9,
+        "Epic Veteran": 27,
+        "Rare Specialist": 55,
+        "Core Battler": 103
+      },
+      "editions": [
+        "V3 COZZA FRENZY STAGE",
+        "V2 BASEMENT SYNTH",
+        "V1 OG TUBE RIG"
+      ],
+      "head_chassis": [
+        "Braided Audio Cable Mane",
+        "12AX7 Crown Vacuum Tubes",
+        "Sub-Bass Oscilloscope Visor",
+        "Bass Respirator Grid"
+      ],
+      "chest_rig": [
+        "20 Double-Bin Subwoofer Wall",
+        "Center Matrix Mixer & Dual Laptops",
+        "Crown Macro-Tech 5000VZ Rig",
+        "Analog Sub-Harmonic Synthesizer"
+      ],
+      "stage_backdrop": [
+        "Cozza Frenzy Festival Mainstage",
+        "Underground Concrete Sub-Basement",
+        "Blinding Neon LED Pixel Wall",
+        "Industrial Sub-Bass Bunker"
+      ],
+      "audio_stems": [
+        "Stem 01: 30Hz Sine Sub Drop",
+        "Stem 02: 140 Dub Siren Stomp",
+        "Stem 03: Heavy Double-Bin Resonance"
+      ]
+    },
+    "alchemist": {
+      "clan_id": "03",
+      "name": "Electro-Soul Alchemists",
+      "inspiration": "Pretty Lights (Color Map Modular & Laser Canopy)",
+      "allocation": 175,
+      "percentage": 19.71,
+      "theme_color": "#FFB020",
+      "sound_type": "laser",
+      "sound_label": "Warm Tube Harmonics & Soulful MPC Grooves",
+      "base_bpm": 90,
+      "ability": "Harmonic Resonance (+25% Points on Hold Notes)",
+      "base_stats": {
+        "atk": 90,
+        "def": 90,
+        "spd": 95
+      },
+      "tiers": {
+        "Mythic Apex (1-of-1)": 1,
+        "Legendary Master": 9,
+        "Epic Veteran": 27,
+        "Rare Specialist": 49,
+        "Core Battler": 89
+      },
+      "editions": [
+        "V2 MODULAR LASER STAGE",
+        "V1 OG WAREHOUSE"
+      ],
+      "head_chassis": [
+        "Holographic Color Map Visor",
+        "Modular Patchbay Crown",
+        "Glowing Vacuum Tube Halo",
+        "Vintage Ribbon Mic Antenna"
+      ],
+      "chest_rig": [
+        "Triple Analog VU Meters",
+        "16-Pad MPC Drum Sampler",
+        "Eurorack Modular Synth Ribs",
+        "Dusty Vinyl Crate Bay"
+      ],
+      "stage_backdrop": [
+        "Volumetric Rainbow Laser Canopy",
+        "Abandoned Brick Warehouse",
+        "Color Map Modular Arena",
+        "Red Rocks Starlight Stage"
+      ],
+      "audio_stems": [
+        "Stem 01: Soulful MPC Vinyl Groove",
+        "Stem 02: Warm Tube Harmonic Pad",
+        "Stem 03: Laser Canopy Synth Lead"
+      ]
+    },
+    "industrial": {
+      "clan_id": "04",
+      "name": "Industrial Mecha",
+      "inspiration": "Linkin Park (Hybrid Theory & Reanimation Foundry)",
+      "allocation": 165,
+      "percentage": 18.58,
+      "theme_color": "#FF2E54",
+      "sound_type": "metal",
+      "sound_label": "Distorted Power Chords & Downbeat Industrial Drums",
+      "base_bpm": 105,
+      "ability": "Distortion Surge (Absorbs 1 Missed Beat per Match)",
+      "base_stats": {
+        "atk": 97,
+        "def": 94,
+        "spd": 87
+      },
+      "tiers": {
+        "Mythic Apex (1-of-1)": 1,
+        "Legendary Master": 9,
+        "Epic Veteran": 27,
+        "Rare Specialist": 46,
+        "Core Battler": 82
+      },
+      "editions": [
+        "V2 STEEL FOUNDRY MECH",
+        "V1 DARK BUNKER EDITION"
+      ],
+      "head_chassis": [
+        "Weathered Gunmetal Mecha Visor",
+        "Red Dragonfly Stencil Helmet",
+        "Heavy Combat Gas Filter",
+        "Tempered Industrial Steel Cowl"
+      ],
+      "chest_rig": [
+        "Marshall Amplifier Stack Core",
+        "Overhead Foundry Crane Rig",
+        "Distorted Pre-Amp Vacuum Circuit",
+        "Reanimation Soldier Fuel Cell"
+      ],
+      "stage_backdrop": [
+        "Dark Steel Foundry with Overhead Cranes",
+        "Hybrid Theory Underground Bunker",
+        "Reanimation Scrap Yard",
+        "Welding Spark Steel Mill"
+      ],
+      "audio_stems": [
+        "Stem 01: Distorted Power Chord Riff",
+        "Stem 02: Downbeat Industrial Heavy Drums",
+        "Stem 03: Reanimation Turntable Scrub"
+      ]
+    },
+    "biomech": {
+      "clan_id": "05",
+      "name": "Polyrhythmic Biomechs",
+      "inspiration": "Tool (Lateralus Alex Grey Net of Being)",
+      "allocation": 143,
+      "percentage": 16.1,
+      "theme_color": "#A855F7",
+      "sound_type": "gong",
+      "sound_label": "Shifting 5/4 and 7/8 Polyrhythms & Tribal Drums",
+      "base_bpm": 138,
+      "ability": "Polyrhythm Trance (Double Score on Odd-Meter bars)",
+      "base_stats": {
+        "atk": 94,
+        "def": 96,
+        "spd": 91
+      },
+      "tiers": {
+        "Mythic Apex (1-of-1)": 1,
+        "Legendary Master": 9,
+        "Epic Veteran": 27,
+        "Rare Specialist": 41,
+        "Core Battler": 65
+      },
+      "editions": [
+        "V2 ALEX GREY TEMPLE",
+        "V1 SUBTERRANEAN TORCHLIT"
+      ],
+      "head_chassis": [
+        "Four-Sided Multi-Faced Obsidian Heads",
+        "Flaming Third-Eye Spiral",
+        "Net of Being Crown",
+        "Biomechanical Heptagram Crest"
+      ],
+      "chest_rig": [
+        "Hovering Mandala Drum Pads",
+        "Carved Obsidian 7-Pointed Monolith",
+        "Danny Carey Hammered Bronze Gong",
+        "Lateralus Energy Conduit"
+      ],
+      "stage_backdrop": [
+        "Alex Grey Net of Being Temple",
+        "Subterranean Torchlit Crypt",
+        "Lateralus Sacred Geometry Void",
+        "7-Pointed Star Monolith Altar"
+      ],
+      "audio_stems": [
+        "Stem 01: Shifting 7/8 Mandala Drums",
+        "Stem 02: Hammered Bronze Gong Strike",
+        "Stem 03: Lateralus Tribal Bass Drone"
+      ]
+    }
+  }
+}

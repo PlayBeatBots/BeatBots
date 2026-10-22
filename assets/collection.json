@@ -1,0 +1,45 @@
+{
+  "name": "BeatBots Genesis",
+  "symbol": "BEAT",
+  "description": "888 Handcrafted Autonomous Audio Battlers forging rhythm and dueling for $SCRAP on Solana. Across five legendary Sound Clans.",
+  "seller_fee_basis_points": 500,
+  "image": "collection.jpg",
+  "external_url": "https://playbeatbots.com",
+  "attributes": [
+    {
+      "trait_type": "Collection",
+      "value": "BeatBots Genesis"
+    },
+    {
+      "trait_type": "Total Supply",
+      "value": "888"
+    },
+    {
+      "trait_type": "Clans",
+      "value": "5"
+    },
+    {
+      "trait_type": "Blockchain",
+      "value": "Solana Mainnet"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "collection.jpg",
+        "type": "image/jpeg"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d",
+        "share": 85
+      },
+      {
+        "address": "CnTMpsERhBucZwFngRny36fSfMasJ4zCisJctmUoPqMQ",
+        "share": 15
+      }
+    ]
+  }
+}

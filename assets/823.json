@@ -1,0 +1,98 @@
+{
+  "name": "BeatBot Genesis #823",
+  "symbol": "BEAT",
+  "description": "BeatBot Genesis #823 of the Electro-Soul Alchemists. Built to dominate the rhythm battlefield with Harmonic Resonance (+25% Points on Hold Notes).",
+  "seller_fee_basis_points": 500,
+  "image": "823.jpg",
+  "external_url": "https://playbeatbots.com",
+  "attributes": [
+    {
+      "trait_type": "Clan",
+      "value": "Electro-Soul Alchemists"
+    },
+    {
+      "trait_type": "Rarity Tier",
+      "value": "Core Battler"
+    },
+    {
+      "trait_type": "Visual Edition",
+      "value": "V1 OG WAREHOUSE"
+    },
+    {
+      "trait_type": "Head Chassis",
+      "value": "Vintage Ribbon Mic Antenna"
+    },
+    {
+      "trait_type": "Audio Chest Rig",
+      "value": "Dusty Vinyl Crate Bay"
+    },
+    {
+      "trait_type": "Stage Backdrop",
+      "value": "Volumetric Rainbow Laser Canopy"
+    },
+    {
+      "trait_type": "Battle Ability",
+      "value": "Harmonic Resonance (+25% Points on Hold Notes)"
+    },
+    {
+      "trait_type": "Sound Profile",
+      "value": "Warm Tube Harmonics & Soulful MPC Grooves"
+    },
+    {
+      "trait_type": "Base BPM",
+      "value": "90",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Audio Stem",
+      "value": "Stem 01: Soulful MPC Vinyl Groove"
+    },
+    {
+      "trait_type": "Attack",
+      "value": "89",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Defense",
+      "value": "90",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Speed",
+      "value": "94",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Power Rating",
+      "value": "273",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Generation",
+      "value": "Genesis"
+    }
+  ],
+  "collection": {
+    "name": "BeatBots Genesis",
+    "family": "BeatBots"
+  },
+  "properties": {
+    "files": [
+      {
+        "uri": "823.jpg",
+        "type": "image/jpeg"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d",
+        "share": 85
+      },
+      {
+        "address": "CnTMpsERhBucZwFngRny36fSfMasJ4zCisJctmUoPqMQ",
+        "share": 15
+      }
+    ]
+  }
+}

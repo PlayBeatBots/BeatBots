@@ -1,0 +1,98 @@
+{
+  "name": "BeatBot Genesis #807",
+  "symbol": "BEAT",
+  "description": "BeatBot Genesis #807 of the Intergalactic B-Boys. Built to dominate the rhythm battlefield with Scratch Fader Stutter (-15% Opponent Combo).",
+  "seller_fee_basis_points": 500,
+  "image": "807.jpg",
+  "external_url": "https://playbeatbots.com",
+  "attributes": [
+    {
+      "trait_type": "Clan",
+      "value": "Intergalactic B-Boys"
+    },
+    {
+      "trait_type": "Rarity Tier",
+      "value": "Core Battler"
+    },
+    {
+      "trait_type": "Visual Edition",
+      "value": "V2 TURNTABLE VARIANT"
+    },
+    {
+      "trait_type": "Head Chassis",
+      "value": "Flashing Amber Hazard Beacons"
+    },
+    {
+      "trait_type": "Audio Chest Rig",
+      "value": "Transistor Solid-State Amp"
+    },
+    {
+      "trait_type": "Stage Backdrop",
+      "value": "Stacked Brooklyn Boombox Wall"
+    },
+    {
+      "trait_type": "Battle Ability",
+      "value": "Scratch Fader Stutter (-15% Opponent Combo)"
+    },
+    {
+      "trait_type": "Sound Profile",
+      "value": "4/4 Funk Breaks & Vinyl Scratch Cuts"
+    },
+    {
+      "trait_type": "Base BPM",
+      "value": "96",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Audio Stem",
+      "value": "Stem 02: Vinyl Scratch Chop 96BPM"
+    },
+    {
+      "trait_type": "Attack",
+      "value": "96",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Defense",
+      "value": "88",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Speed",
+      "value": "95",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Power Rating",
+      "value": "279",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Generation",
+      "value": "Genesis"
+    }
+  ],
+  "collection": {
+    "name": "BeatBots Genesis",
+    "family": "BeatBots"
+  },
+  "properties": {
+    "files": [
+      {
+        "uri": "807.jpg",
+        "type": "image/jpeg"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d",
+        "share": 85
+      },
+      {
+        "address": "CnTMpsERhBucZwFngRny36fSfMasJ4zCisJctmUoPqMQ",
+        "share": 15
+      }
+    ]
+  }
+}

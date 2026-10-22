@@ -1,0 +1,43 @@
+{
+  "number": 888,
+  "creators": [
+    {
+      "address": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d",
+      "share": 85
+    },
+    {
+      "address": "CnTMpsERhBucZwFngRny36fSfMasJ4zCisJctmUoPqMQ",
+      "share": 15
+    }
+  ],
+  "uploadMethod": "irys",
+  "retainAuthority": true,
+  "isMutable": true,
+  "isSequential": false,
+  "symbol": "BEAT",
+  "sellerFeeBasisPoints": 500,
+  "awsConfig": null,
+  "nftStorageAuthToken": null,
+  "shdwStoragePubKey": null,
+  "pinataConfig": null,
+  "hiddenSettings": null,
+  "guards": {
+    "default": {
+      "botTax": {
+        "value": 0.01,
+        "lastInstruction": true
+      },
+      "solPayment": {
+        "value": 0.5,
+        "destination": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d"
+      },
+      "startDate": {
+        "date": "2026-11-01T00:00:00Z"
+      },
+      "mintLimit": {
+        "id": 1,
+        "limit": 5
+      }
+    }
+  }
+}

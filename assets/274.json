@@ -1,0 +1,98 @@
+{
+  "name": "BeatBot Genesis #274",
+  "symbol": "BEAT",
+  "description": "BeatBot Genesis #274 of the Polyrhythmic Biomechs. Built to dominate the rhythm battlefield with Polyrhythm Trance (Double Score on Odd-Meter bars).",
+  "seller_fee_basis_points": 500,
+  "image": "274.jpg",
+  "external_url": "https://playbeatbots.com",
+  "attributes": [
+    {
+      "trait_type": "Clan",
+      "value": "Polyrhythmic Biomechs"
+    },
+    {
+      "trait_type": "Rarity Tier",
+      "value": "Core Battler"
+    },
+    {
+      "trait_type": "Visual Edition",
+      "value": "V2 VISIONARY TEMPLE"
+    },
+    {
+      "trait_type": "Head Chassis",
+      "value": "Four-Sided Multi-Faced Obsidian Heads"
+    },
+    {
+      "trait_type": "Audio Chest Rig",
+      "value": "Hovering Mandala Drum Pads"
+    },
+    {
+      "trait_type": "Stage Backdrop",
+      "value": "Subterranean Torchlit Crypt"
+    },
+    {
+      "trait_type": "Battle Ability",
+      "value": "Polyrhythm Trance (Double Score on Odd-Meter bars)"
+    },
+    {
+      "trait_type": "Sound Profile",
+      "value": "Shifting 5/4 and 7/8 Polyrhythms & Tribal Drums"
+    },
+    {
+      "trait_type": "Base BPM",
+      "value": "138",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Audio Stem",
+      "value": "Stem 02: Hammered Bronze Gong Strike"
+    },
+    {
+      "trait_type": "Attack",
+      "value": "92",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Defense",
+      "value": "95",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Speed",
+      "value": "93",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Power Rating",
+      "value": "280",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Generation",
+      "value": "Genesis"
+    }
+  ],
+  "collection": {
+    "name": "BeatBots Genesis",
+    "family": "BeatBots"
+  },
+  "properties": {
+    "files": [
+      {
+        "uri": "274.jpg",
+        "type": "image/jpeg"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d",
+        "share": 85
+      },
+      {
+        "address": "CnTMpsERhBucZwFngRny36fSfMasJ4zCisJctmUoPqMQ",
+        "share": 15
+      }
+    ]
+  }
+}

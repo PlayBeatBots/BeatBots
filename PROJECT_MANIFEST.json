@@ -1,0 +1,86 @@
+{
+  "project_name": "BeatBots Genesis",
+  "ticker": "BEAT",
+  "version": "1.0.0",
+  "total_supply": 888,
+  "blockchain": "Solana",
+  "program_standard": "Metaplex Token Metadata Standard v1 / Candy Machine v3",
+  "domain": "https://playbeatbots.com",
+  "hosting_platform": "Cloudflare Pages",
+  "cloudflare_project_name": "playbeatbots",
+  "mint_parameters": {
+    "price_sol": 0.5,
+    "max_per_wallet": 5,
+    "bot_tax_sol": 0.01,
+    "royalty_basis_points": 500,
+    "royalty_percentage": 5.0,
+    "upload_method": "irys",
+    "treasury_address": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d",
+    "creators": [
+      {
+        "address": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d",
+        "share": 85,
+        "role": "Lead Artist / TecSuport Treasury"
+      },
+      {
+        "address": "CnTMpsERhBucZwFngRny36fSfMasJ4zCisJctmUoPqMQ",
+        "share": 15,
+        "role": "BeatBots Community DAO"
+      }
+    ]
+  },
+  "clans_allocation": {
+    "Intergalactic B-Boys": {
+      "count": 210,
+      "share": 0.2365,
+      "base_bpm": 96,
+      "theme_color": "#00FF87",
+      "inspiration": "Beastie Boys (Hello Nasty & Hot Sauce Committee)"
+    },
+    "140 Dub Operators": {
+      "count": 195,
+      "share": 0.2196,
+      "base_bpm": 140,
+      "theme_color": "#06B6D4",
+      "inspiration": "Bassnectar Live Rig (20 Double-Bins Up Front)"
+    },
+    "Electro-Soul Alchemists": {
+      "count": 175,
+      "share": 0.1971,
+      "base_bpm": 90,
+      "theme_color": "#FFB020",
+      "inspiration": "Pretty Lights (Color Map Modular & Laser Canopy)"
+    },
+    "Industrial Mecha": {
+      "count": 165,
+      "share": 0.1858,
+      "base_bpm": 105,
+      "theme_color": "#FF2E54",
+      "inspiration": "Linkin Park (Hybrid Theory & Reanimation Foundry)"
+    },
+    "Polyrhythmic Biomechs": {
+      "count": 143,
+      "share": 0.161,
+      "base_bpm": 138,
+      "theme_color": "#A855F7",
+      "inspiration": "Tool (Lateralus Alex Grey Net of Being)"
+    }
+  },
+  "rarity_tiers": {
+    "Mythic Apex (1-of-1)": 5,
+    "Legendary Master": 45,
+    "Epic Veteran": 135,
+    "Rare Specialist": 250,
+    "Core Battler": 453
+  },
+  "files_inventory": {
+    "frontend": "index.html",
+    "metadata_schema": "metaplex-metadata-schema.json",
+    "sugar_config": "sugar-config.json",
+    "candy_machine_config": "config.json",
+    "rarity_config": "clan_rarity_config.json",
+    "assets_dir": "assets/",
+    "tokens_count": 888,
+    "collection_metadata": "assets/collection.json"
+  }
+}

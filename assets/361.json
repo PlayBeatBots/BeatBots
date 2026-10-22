@@ -1,0 +1,98 @@
+{
+  "name": "BeatBot Genesis #361",
+  "symbol": "BEAT",
+  "description": "BeatBot Genesis #361 of the Polyrhythmic Biomechs. Built to dominate the rhythm battlefield with Polyrhythm Trance (Double Score on Odd-Meter bars).",
+  "seller_fee_basis_points": 500,
+  "image": "361.jpg",
+  "external_url": "https://playbeatbots.com",
+  "attributes": [
+    {
+      "trait_type": "Clan",
+      "value": "Polyrhythmic Biomechs"
+    },
+    {
+      "trait_type": "Rarity Tier",
+      "value": "Legendary Master"
+    },
+    {
+      "trait_type": "Visual Edition",
+      "value": "V1 SUBTERRANEAN TORCHLIT"
+    },
+    {
+      "trait_type": "Head Chassis",
+      "value": "Four-Sided Multi-Faced Obsidian Heads"
+    },
+    {
+      "trait_type": "Audio Chest Rig",
+      "value": "Carved Obsidian 7-Pointed Monolith"
+    },
+    {
+      "trait_type": "Stage Backdrop",
+      "value": "7-Pointed Star Monolith Altar"
+    },
+    {
+      "trait_type": "Battle Ability",
+      "value": "Polyrhythm Trance (Double Score on Odd-Meter bars)"
+    },
+    {
+      "trait_type": "Sound Profile",
+      "value": "Shifting 5/4 and 7/8 Polyrhythms & Tribal Drums"
+    },
+    {
+      "trait_type": "Base BPM",
+      "value": "138",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Audio Stem",
+      "value": "Stem 01: Shifting 7/8 Mandala Drums"
+    },
+    {
+      "trait_type": "Attack",
+      "value": "98",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Defense",
+      "value": "100",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Speed",
+      "value": "96",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Power Rating",
+      "value": "294",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Generation",
+      "value": "Genesis"
+    }
+  ],
+  "collection": {
+    "name": "BeatBots Genesis",
+    "family": "BeatBots"
+  },
+  "properties": {
+    "files": [
+      {
+        "uri": "361.jpg",
+        "type": "image/jpeg"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d",
+        "share": 85
+      },
+      {
+        "address": "CnTMpsERhBucZwFngRny36fSfMasJ4zCisJctmUoPqMQ",
+        "share": 15
+      }
+    ]
+  }
+}

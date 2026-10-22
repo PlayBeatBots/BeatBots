@@ -1,0 +1,147 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BeatBots Genesis Metaplex Metadata Schema",
+  "description": "Standard Metaplex Non-Fungible Token Metadata Standard for BeatBots 888 Genesis Collection",
+  "type": "object",
+  "required": [
+    "name",
+    "symbol",
+    "description",
+    "seller_fee_basis_points",
+    "image",
+    "attributes",
+    "properties"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the NFT asset, e.g., 'BeatBot Genesis #042'"
+    },
+    "symbol": {
+      "type": "string",
+      "description": "The short ticker symbol, e.g., 'BEAT'"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed lore, clan origin, and utility description of the BeatBot"
+    },
+    "seller_fee_basis_points": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10000,
+      "description": "Royalty percentage in basis points (500 = 5.00%)"
+    },
+    "image": {
+      "type": "string",
+      "description": "URI / IPFS / Arweave link to the primary artwork image"
+    },
+    "animation_url": {
+      "type": "string",
+      "description": "URI / IPFS / Arweave link to audio stem or interactive visualizer"
+    },
+    "external_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Official project website link"
+    },
+    "attributes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "trait_type",
+          "value"
+        ],
+        "properties": {
+          "trait_type": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "string",
+              "number"
+            ]
+          },
+          "display_type": {
+            "type": "string",
+            "enum": [
+              "number",
+              "boost_number",
+              "boost_percentage",
+              "date"
+            ]
+          }
+        }
+      }
+    },
+    "collection": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "family": {
+          "type": "string"
+        }
+      }
+    },
+    "properties": {
+      "type": "object",
+      "required": [
+        "files",
+        "category",
+        "creators"
+      ],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "uri",
+              "type"
+            ],
+            "properties": {
+              "uri": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "category": {
+          "type": "string",
+          "enum": [
+            "image",
+            "video",
+            "audio",
+            "vr",
+            "html"
+          ]
+        },
+        "creators": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "address",
+              "share"
+            ],
+            "properties": {
+              "address": {
+                "type": "string"
+              },
+              "share": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

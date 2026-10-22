@@ -1,0 +1,98 @@
+{
+  "name": "BeatBot Genesis #110",
+  "symbol": "BEAT",
+  "description": "BeatBot Genesis #110 of the 140 Dub Operators. Built to dominate the rhythm battlefield with 20 Double-Bin Frenzy (8-Bit Arp + Screen Earthquake).",
+  "seller_fee_basis_points": 500,
+  "image": "110.jpg",
+  "external_url": "https://playbeatbots.com",
+  "attributes": [
+    {
+      "trait_type": "Clan",
+      "value": "140 Dub Operators"
+    },
+    {
+      "trait_type": "Rarity Tier",
+      "value": "Core Battler"
+    },
+    {
+      "trait_type": "Visual Edition",
+      "value": "V3 COZZA FRENZY STAGE"
+    },
+    {
+      "trait_type": "Head Chassis",
+      "value": "Bass Respirator Grid"
+    },
+    {
+      "trait_type": "Audio Chest Rig",
+      "value": "Center Matrix Mixer & Dual Laptops"
+    },
+    {
+      "trait_type": "Stage Backdrop",
+      "value": "Cozza Frenzy Festival Mainstage"
+    },
+    {
+      "trait_type": "Battle Ability",
+      "value": "20 Double-Bin Frenzy (8-Bit Arp + Screen Earthquake)"
+    },
+    {
+      "trait_type": "Sound Profile",
+      "value": "30Hz Sine Sub Drops & 140 Deep Dub Sirens"
+    },
+    {
+      "trait_type": "Base BPM",
+      "value": "140",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Audio Stem",
+      "value": "Stem 03: Heavy Double-Bin Resonance"
+    },
+    {
+      "trait_type": "Attack",
+      "value": "92",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Defense",
+      "value": "96",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Speed",
+      "value": "88",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Power Rating",
+      "value": "276",
+      "display_type": "number"
+    },
+    {
+      "trait_type": "Generation",
+      "value": "Genesis"
+    }
+  ],
+  "collection": {
+    "name": "BeatBots Genesis",
+    "family": "BeatBots"
+  },
+  "properties": {
+    "files": [
+      {
+        "uri": "110.jpg",
+        "type": "image/jpeg"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d",
+        "share": 85
+      },
+      {
+        "address": "CnTMpsERhBucZwFngRny36fSfMasJ4zCisJctmUoPqMQ",
+        "share": 15
+      }
+    ]
+  }
+}
