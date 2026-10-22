@@ -1,5 +1,10 @@
 {
+  "tokenStandard": "nft",
   "number": 888,
+  "symbol": "BEAT",
+  "sellerFeeBasisPoints": 500,
+  "isMutable": true,
+  "isSequential": false,
   "creators": [
     {
       "address": "3v2VAud6JVQ62EuRaTRkKuswKJCvgaAUEJce8A1US68d",
@@ -10,15 +15,10 @@
       "share": 15
     }
   ],
-  "uploadMethod": "irys",
-  "retainAuthority": true,
-  "isMutable": true,
-  "isSequential": false,
-  "symbol": "BEAT",
-  "sellerFeeBasisPoints": 500,
+  "uploadMethod": "bundlr",
+  "ruleSet": null,
   "awsConfig": null,
-  "nftStorageAuthToken": null,
-  "shdwStoragePubKey": null,
+  "sdriveApiKey": null,
   "pinataConfig": null,
   "hiddenSettings": null,
   "guards": {
@@ -39,5 +39,6 @@
         "limit": 5
       }
     }
-  }
+  },
+  "maxEditionSupply": null
 }

@@ -96,11 +96,13 @@ for p in [os.path.join(BASE, "assets", "collection.json")] + glob.glob(os.path.j
 
 rw(os.path.join(BASE, "PROJECT_MANIFEST.json"), fix_manifest)
 
-html = os.path.join(BASE, "index.html")
-with open(html) as f:
+html = os.path.join(BASE, "site-src", "index.html")
+n = 0
+if os.path.exists(html):
+  with open(html) as f:
     src = f.read()
-src, n = re.subn(r'(const\s+TREASURY_PUBKEY\s*=\s*")[^"]*(")', r"\g<1>" + a.treasury + r"\g<2>", src)
-with open(html, "w") as f:
+  src, n = re.subn(r'(const\s+TREASURY_PUBKEY\s*=\s*")[^"]*(")', r"\g<1>" + a.treasury + r"\g<2>", src)
+  with open(html, "w") as f:
     f.write(src)
 
 print(f"✅ Wallets set: treasury {a.treasury} ({a.treasury_share}%), DAO {a.dao} ({100 - a.treasury_share}%)")

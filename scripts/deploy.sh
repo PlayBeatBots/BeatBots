@@ -34,7 +34,9 @@ esac
 RPC_URL="${RPC_URL:-$DEFAULT_RPC}"
 CACHE="cache-${NETWORK}.json"
 CONFIG="${CONFIG:-config.json}"
-SUGAR_ARGS=(--config "$CONFIG" --cache "$CACHE" --rpc-url "$RPC_URL")
+# verify/mint/guard show reject --config, so it is added only where Sugar accepts it
+SUGAR_ARGS=(--cache "$CACHE" --rpc-url "$RPC_URL")
+CFG_ARGS=(--config "$CONFIG")
 SOLANA_ARGS=(--url "$RPC_URL")
 if [[ -n "${KEYPAIR:-}" ]]; then
   SUGAR_ARGS+=(--keypair "$KEYPAIR")
@@ -70,11 +72,14 @@ fi
 echo "3. sugar validate..."
 sugar validate
 
+# Sugar reads the Solana CLI config file even when flags are given
+[[ -f "$HOME/.config/solana/cli/config.yml" ]] || solana config set "${SOLANA_ARGS[@]}" >/dev/null
+
 echo "4. Uploading images, audio and metadata to Arweave via Irys (resumable)..."
-sugar upload "${SUGAR_ARGS[@]}"
+sugar upload "${CFG_ARGS[@]}" "${SUGAR_ARGS[@]}"
 
 echo "5. Deploying Candy Machine..."
-sugar deploy "${SUGAR_ARGS[@]}"
+sugar deploy "${CFG_ARGS[@]}" "${SUGAR_ARGS[@]}"
 
 echo "6. Verifying on-chain config lines match the upload..."
 sugar verify "${SUGAR_ARGS[@]}"
@@ -87,7 +92,7 @@ else
 fi
 
 echo "8. Creating the Candy Guard (price, bot tax, mint limit, start date) and wrapping the Candy Machine..."
-sugar guard add "${SUGAR_ARGS[@]}"
+sugar guard add "${CFG_ARGS[@]}" "${SUGAR_ARGS[@]}"
 sugar guard show "${SUGAR_ARGS[@]}"
 
 CM_ID=$(python3 -c "import json;print(json.load(open('$CACHE'))['program'].get('candyMachine',''))")

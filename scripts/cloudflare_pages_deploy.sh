@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Cloudflare Pages deployment for playbeatbots.com
-# Publishes ONLY the public site (index.html) from a clean dist/ folder, so
+# Publishes ONLY the built public site in site/ (index.html + beatbots-mint.js), so
 # configs, cache-*.json, scripts and any keypair files are never uploaded.
 # ==============================================================================
 
@@ -10,12 +10,9 @@ cd "$(dirname "$0")/.."
 
 PROJECT_NAME="playbeatbots"
 DOMAIN="playbeatbots.com"
-DIST="dist"
+DIST="site"
 
-rm -rf "$DIST"
-mkdir -p "$DIST"
-cp index.html "$DIST/"
-# Add other public files here if the site grows, e.g.: cp -r public/* "$DIST/"
+[[ -f "$DIST/index.html" && -f "$DIST/beatbots-mint.js" ]] || { echo "❌ $DIST/ is not built. Run scripts/build_site.sh first."; exit 1; }
 
 # Safety net: refuse to publish anything that looks like a secret or Sugar cache.
 if find "$DIST" \( -name '*.json' -o -name '*keypair*' -o -name '*.pem' -o -name '.env*' \) | grep -q .; then
