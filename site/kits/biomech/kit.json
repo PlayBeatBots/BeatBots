@@ -1,0 +1,68 @@
+{
+  "clan": "biomech",
+  "name": "Polyrhythmic Biomechs \u2014 ritual hand-drum kit",
+  "version": 1,
+  "tracks": {
+    "0": {
+      "sub": {
+        "file": "kick_sub.wav"
+      },
+      "punch": {
+        "file": "kick_frame.wav"
+      },
+      "hard": {
+        "file": "kick_hard.wav"
+      }
+    },
+    "1": {
+      "crisp": {
+        "file": "snare_darbuka.wav"
+      },
+      "clap": {
+        "file": "snare_darbuka2.wav",
+        "gain": 1.96
+      },
+      "rim": {
+        "file": "snare_slit.wav",
+        "gain": 0.75
+      }
+    },
+    "2": {
+      "closed": {
+        "file": "hat_closed.wav"
+      },
+      "open": {
+        "file": "hat_open.wav",
+        "gain": 0.65
+      },
+      "shaker": {
+        "file": "hat_shaker.wav"
+      }
+    },
+    "3": {
+      "cowbell": {
+        "file": "perc_cowbell.wav",
+        "gain": 2.0
+      },
+      "bongo": {
+        "file": "perc_bongo.wav",
+        "gain": 1.64
+      },
+      "wood": {
+        "file": "perc_slit.wav",
+        "gain": 1.09
+      }
+    },
+    "7": {
+      "tom": {
+        "file": "glitch_tom.wav",
+        "gain": 1.36
+      }
+    }
+  },
+  "fx": {
+    "gong": {
+      "file": "fx_gong.wav"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+BeatBots starter kit: Intergalactic B-Boys — boom-bap street kit
+
+Sources:
+  [808] TR-808 sample set by Michael Fischer (1994, machines.hyperreal.org), distributed with no licensing restrictions; packaged as npm @fluid-music/tr-808 (ISC).
+  [vc] Versilian Community Sample Library (VCSL) by Versilian Studios — CC0 1.0 Universal (public domain dedication). https://github.com/sgossner/VCSL
+
+Files (processed: trimmed, peak-normalised, faded, 44.1 kHz mono):
+  kick_sub.wav  <-  TR808WAV/BD/BD0075.WAV  [808]
+  kick_punch.wav  <-  TR808WAV/BD/BD2510.WAV  [808]
+  kick_hard.wav  <-  TR808WAV/BD/BD5025.WAV  [808]
+  snare_crisp.wav  <-  Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitSN_v5_rr1_Mid.wav  [vc]
+  snare_clap.wav  <-  Idiophones/Struck Idiophones/Claps/Clap_rr1.wav  [vc]
+  snare_rim.wav  <-  TR808WAV/RS/RS.WAV  [808]
+  hat_closed.wav  <-  TR808WAV/CH/CH.WAV  [808]
+  hat_open.wav  <-  TR808WAV/OH/OH25.WAV  [808]
+  hat_shaker.wav  <-  Idiophones/Struck Idiophones/Shaker, Small/Mid_ShakerHighFaster_Down_rr1.wav  [vc]
+  perc_cowbell.wav  <-  TR808WAV/CB/CB.WAV  [808]
+  perc_bongo.wav  <-  Membranophones/Struck Membranophones/Bongos/BongoH_Hit1_v2_rr1_Mid.wav  [vc]
+  perc_wood.wav  <-  Idiophones/Struck Idiophones/Woodblock/wood_click_f_rr1.wav  [vc]
+  bass_808.wav  <-  TR808WAV/BDTuned/BD0010-g1.wav  [808]
+  keys_C3.wav  <-  Electrophones/TX81Z/FM Piano/FMPiano_C3_vl2.wav  [vc]
+  keys_C4.wav  <-  Electrophones/TX81Z/FM Piano/FMPiano_C4_vl2.wav  [vc]
+  glitch_tom.wav  <-  TR808WAV/LT/LT50.WAV  [808]

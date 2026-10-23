@@ -1,0 +1,83 @@
+{
+  "clan": "alchemist",
+  "name": "Electro-Soul Alchemists \u2014 live-room soul kit",
+  "version": 1,
+  "tracks": {
+    "0": {
+      "sub": {
+        "file": "kick_sub.wav",
+        "gain": 1.1
+      },
+      "punch": {
+        "file": "kick_punch.wav",
+        "gain": 1.36
+      },
+      "hard": {
+        "file": "kick_hard.wav"
+      }
+    },
+    "1": {
+      "crisp": {
+        "file": "snare_crisp.wav",
+        "gain": 1.31
+      },
+      "clap": {
+        "file": "snare_clap.wav",
+        "gain": 0.7
+      },
+      "rim": {
+        "file": "snare_rim.wav",
+        "gain": 1.41
+      }
+    },
+    "2": {
+      "closed": {
+        "file": "hat_closed.wav",
+        "gain": 0.78
+      },
+      "open": {
+        "file": "hat_open.wav",
+        "gain": 0.6
+      },
+      "shaker": {
+        "file": "hat_tamb.wav",
+        "gain": 0.5
+      }
+    },
+    "3": {
+      "cowbell": {
+        "file": "perc_cowbell.wav",
+        "gain": 2.0
+      },
+      "bongo": {
+        "file": "perc_conga.wav",
+        "gain": 1.12
+      },
+      "wood": {
+        "file": "perc_wood.wav",
+        "gain": 1.29
+      }
+    },
+    "5": {
+      "soul": {
+        "multi": [
+          {
+            "file": "keys_C3.wav",
+            "root": 48
+          },
+          {
+            "file": "keys_C4.wav",
+            "root": 60
+          }
+        ]
+      }
+    },
+    "7": {
+      "tom": {
+        "file": "glitch_tom.wav",
+        "gain": 1.5
+      }
+    }
+  },
+  "fx": {}
+}

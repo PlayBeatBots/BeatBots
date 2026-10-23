@@ -15,7 +15,7 @@ DIST="site"
 [[ -f "$DIST/index.html" && -f "$DIST/beatbots-mint.js" ]] || { echo "❌ $DIST/ is not built. Run scripts/build_site.sh first."; exit 1; }
 
 # Safety net: refuse to publish anything that looks like a secret or Sugar cache.
-if find "$DIST" \( -name '*.json' -o -name '*keypair*' -o -name '*.pem' -o -name '.env*' \) | grep -q .; then
+if find "$DIST" \( \( -name '*.json' ! -path "$DIST/kits/*/kit.json" \) -o -name '*keypair*' -o -name '*.pem' -o -name '.env*' \) | grep -q .; then
   echo "❌ dist/ contains JSON/keypair/env files. Refusing to publish."; exit 1
 fi
 

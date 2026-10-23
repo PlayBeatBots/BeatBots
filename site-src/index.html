@@ -1564,6 +1564,7 @@
         delayNode = N.delay; delayFeedback = N.dlyFb; waveShaper = N.drive;
         // pick up the current state of the controls
         bbEngine.setTempo(bpm);
+        bbEngine.kitBase = 'kits/';   // per-clan sample kits: kits/<clan>/kit.json
         bbEngine.setClan(activeClanKey);
         bbEngine.setDelayOn(isDelayOn);
         bbEngine.setDrive(isDistOn, masterDrive);
@@ -2325,6 +2326,7 @@
             const renderedBuffer = await window.BBAudio.renderPattern({
               pattern, models, mutes: trackMutes, solos: trackSolos,
               bpm, swing: swingPercent, clan: activeClanKey, bars: 2,
+              kit: bbEngine ? bbEngine.kits[activeClanKey] : null,
               settings: {
                 hp: highpassFilter ? highpassFilter.frequency.value : 30,
                 lp: biquadFilter ? biquadFilter.frequency.value : 20000,

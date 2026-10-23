@@ -1,0 +1,23 @@
+BeatBots starter kit: 140 Dub Operators — sound-system kit
+
+Sources:
+  [808] TR-808 sample set by Michael Fischer (1994, machines.hyperreal.org), distributed with no licensing restrictions; packaged as npm @fluid-music/tr-808 (ISC).
+  [vc] Versilian Community Sample Library (VCSL) by Versilian Studios — CC0 1.0 Universal (public domain dedication). https://github.com/sgossner/VCSL
+
+Files (processed: trimmed, peak-normalised, faded, 44.1 kHz mono):
+  kick_sub.wav  <-  TR808WAV/BD/BD0075.WAV  [808]
+  kick_punch.wav  <-  TR808WAV/BD/BD1050.WAV  [808]
+  kick_hard.wav  <-  TR808WAV/BD/BD2525.WAV  [808]
+  snare_crisp.wav  <-  Membranophones/Struck Membranophones/Snare Drum, Rope Tension/Hi/RopeSnare_hi_sn_Main_vl3_rr1.wav  [vc]
+  snare_clap.wav  <-  TR808WAV/CP/CP.WAV  [808]
+  snare_rim.wav  <-  TR808WAV/RS/RS.WAV  [808]
+  hat_closed.wav  <-  TR808WAV/CH/CH.WAV  [808]
+  hat_open.wav  <-  TR808WAV/OH/OH50.WAV  [808]
+  hat_shaker.wav  <-  TR808WAV/MA/MA.WAV  [808]
+  perc_claves.wav  <-  Idiophones/Struck Idiophones/Claves/Claves1_Hit_v2_rr1_Mid.wav  [vc]
+  perc_conga.wav  <-  TR808WAV/HC/HC25.WAV  [808]
+  perc_wood.wav  <-  Idiophones/Struck Idiophones/Woodblock/wood_click_mp.wav  [vc]
+  bass_808.wav  <-  TR808WAV/BDTuned/BD2510-g1.wav  [808]
+  keys_C3.wav  <-  Electrophones/TX81Z/FM Piano/FMPiano_C3_vl2.wav  [vc]
+  keys_C4.wav  <-  Electrophones/TX81Z/FM Piano/FMPiano_C4_vl2.wav  [vc]
+  glitch_tom.wav  <-  TR808WAV/LT/LT75.WAV  [808]

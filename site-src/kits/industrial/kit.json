@@ -1,0 +1,70 @@
+{
+  "clan": "industrial",
+  "name": "Industrial Mecha \u2014 foundry metal kit",
+  "version": 1,
+  "tracks": {
+    "0": {
+      "sub": {
+        "file": "kick_sub.wav"
+      },
+      "punch": {
+        "file": "kick_punch.wav",
+        "gain": 1.27
+      },
+      "hard": {
+        "file": "kick_hard.wav"
+      }
+    },
+    "1": {
+      "crisp": {
+        "file": "snare_crisp.wav"
+      },
+      "clap": {
+        "file": "snare_clap.wav",
+        "gain": 0.7
+      },
+      "rim": {
+        "file": "snare_anvil.wav",
+        "gain": 0.63
+      }
+    },
+    "2": {
+      "closed": {
+        "file": "hat_closed.wav",
+        "gain": 0.56
+      },
+      "open": {
+        "file": "hat_open.wav",
+        "gain": 0.63
+      },
+      "shaker": {
+        "file": "hat_shaker.wav",
+        "gain": 0.59
+      }
+    },
+    "3": {
+      "cowbell": {
+        "file": "perc_anvil.wav",
+        "gain": 0.84
+      },
+      "bongo": {
+        "file": "perc_brake.wav"
+      },
+      "wood": {
+        "file": "perc_brake2.wav",
+        "gain": 1.24
+      }
+    },
+    "7": {
+      "tom": {
+        "file": "glitch_tom.wav",
+        "gain": 1.22
+      }
+    }
+  },
+  "fx": {
+    "metal": {
+      "file": "fx_metal.wav"
+    }
+  }
+}

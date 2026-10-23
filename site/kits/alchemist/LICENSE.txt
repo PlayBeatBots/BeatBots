@@ -1,0 +1,22 @@
+BeatBots starter kit: Electro-Soul Alchemists — live-room soul kit
+
+Sources:
+  [808] TR-808 sample set by Michael Fischer (1994, machines.hyperreal.org), distributed with no licensing restrictions; packaged as npm @fluid-music/tr-808 (ISC).
+  [vc] Versilian Community Sample Library (VCSL) by Versilian Studios — CC0 1.0 Universal (public domain dedication). https://github.com/sgossner/VCSL
+
+Files (processed: trimmed, peak-normalised, faded, 44.1 kHz mono):
+  kick_sub.wav  <-  TR808WAV/BD/BD0050.WAV  [808]
+  kick_punch.wav  <-  TR808WAV/BD/BD1025.WAV  [808]
+  kick_hard.wav  <-  TR808WAV/BD/BD5010.WAV  [808]
+  snare_crisp.wav  <-  Membranophones/Struck Membranophones/Snare Drum, Modern 1/Snare2_HitNS_v5_rr1_Mid.wav  [vc]
+  snare_clap.wav  <-  Idiophones/Struck Idiophones/Claps/Clap_rr3.wav  [vc]
+  snare_rim.wav  <-  Idiophones/Struck Idiophones/Claves/Claves2_Hit_v2_rr1_Mid.wav  [vc]
+  hat_closed.wav  <-  Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitC_v3_rr1_Mid.wav  [vc]
+  hat_open.wav  <-  Idiophones/Struck Idiophones/Hi-Hat Cymbal/HiHat_HitO_rr1_Mid.wav  [vc]
+  hat_tamb.wav  <-  Idiophones/Struck Idiophones/Tambourine 1/Tamb1_Shake_rr1_Mid.wav  [vc]
+  perc_cowbell.wav  <-  Idiophones/Struck Idiophones/Cowbells/Cowbell1_Muted_v2_rr1_Mid.wav  [vc]
+  perc_conga.wav  <-  Membranophones/Struck Membranophones/Conga/Conga_HitN_v2_rr1_Sum.wav  [vc]
+  perc_wood.wav  <-  Idiophones/Struck Idiophones/Woodblock/wood_click_pp_rr1.wav  [vc]
+  keys_C3.wav  <-  Electrophones/TX81Z/FM Piano/FMPiano_C3_vl2.wav  [vc]
+  keys_C4.wav  <-  Electrophones/TX81Z/FM Piano/FMPiano_C4_vl2.wav  [vc]
+  glitch_tom.wav  <-  Membranophones/Struck Membranophones/Tom 1/Mallet/TomH_HitM_v3_rr1_Mid.wav  [vc]

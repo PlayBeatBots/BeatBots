@@ -5,7 +5,7 @@ const path = require('path');
 const { chromium } = require('/opt/npm-tools/node_modules/playwright');
 
 const [siteDir, outDir] = process.argv.slice(2);
-const types = { '.html': 'text/html', '.js': 'application/javascript' };
+const types = { '.html': 'text/html', '.js': 'application/javascript', '.json': 'application/json', '.wav': 'audio/wav' };
 
 (async () => {
   const browser = await chromium.launch({
@@ -106,6 +106,28 @@ const types = { '.html': 'text/html', '.js': 'application/javascript' };
     return out;
   });
 
+  // 3b. Kits: load each clan folder through the page, measure every sampled voice
+  const kits = await page.evaluate(async () => {
+    const out = {};
+    for (const clan of ['bboy', 'dub', 'alchemist', 'industrial', 'biomech']) {
+      const kit = await bbEngine.loadKit(clan);
+      if (!kit) { out[clan] = { error: 'not loaded' }; continue; }
+      const voices = [];
+      for (const [tr, models] of Object.entries(kit.manifest.tracks)) {
+        for (const model of Object.keys(models)) {
+          const pat = Array.from({ length: 8 }, () => Array(16).fill(0)); pat[+tr][0] = 1;
+          const ms = ['sub', 'crisp', 'closed', 'cowbell', 'sine', 'soul', 'hey', 'tom']; ms[+tr] = model;
+          const buf = await BBAudio.renderPattern({ pattern: pat, models: ms, bpm: 120, swing: 0, clan, kit, bars: 1, settings: {} });
+          const d = buf.getChannelData(0); let pk = 0, ss = 0;
+          for (let i = 0; i < d.length; i++) { pk = Math.max(pk, Math.abs(d[i])); ss += d[i] * d[i]; }
+          voices.push(`${tr}:${model} pk${pk.toFixed(2)} ${(10 * Math.log10(ss / d.length + 1e-12)).toFixed(0)}dB`);
+        }
+      }
+      out[clan] = { name: kit.manifest.name, buffers: Object.keys(kit.buffers).length, voices };
+    }
+    return out;
+  });
+
   // 4. Demo loops: each clan preset, 4 bars at its own tempo
   const demos = await page.evaluate(async () => {
     const PRESET_TEMPOS = { bboy: 96, dub: 140, soul: 90, metal: 105, poly: 138 };
@@ -118,7 +140,9 @@ const types = { '.html': 'text/html', '.js': 'application/javascript' };
       poly: { clan: 'biomech', models: ['sub', 'rim', 'closed', 'bongo', 'reese', 'flute', 'drop', 'tom'] },
     };
     for (const [key, p] of Object.entries(plan)) {
+      const kit = await bbEngine.loadKit(p.clan);
       const buf = await BBAudio.renderPattern({
+        kit,
         pattern: PRESETS[key], models: p.models, bpm: PRESET_TEMPOS[key] || 105, swing: key === 'bboy' ? 22 : 10,
         clan: p.clan, bars: 4, settings: { tapeOn: true, delayOn: true, driveOn: key === 'metal', drive: 35 },
       });
@@ -130,6 +154,7 @@ const types = { '.html': 'text/html', '.js': 'application/javascript' };
     return res;
   });
 
+  console.log('KITS ' + JSON.stringify(kits));
   console.log(JSON.stringify({ live, seq: { notes: seq.times.length, first: seq.times.slice(0, 8), highlighted: seq.highlighted, stoppedClean: !seq.playing }, stats }, null, 1));
   fs.mkdirSync(outDir, { recursive: true });
   for (const [k, v] of Object.entries(demos)) {

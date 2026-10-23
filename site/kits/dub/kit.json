@@ -1,0 +1,86 @@
+{
+  "clan": "dub",
+  "name": "140 Dub Operators \u2014 sound-system kit",
+  "version": 1,
+  "tracks": {
+    "0": {
+      "sub": {
+        "file": "kick_sub.wav"
+      },
+      "punch": {
+        "file": "kick_punch.wav"
+      },
+      "hard": {
+        "file": "kick_hard.wav",
+        "gain": 1.25
+      }
+    },
+    "1": {
+      "crisp": {
+        "file": "snare_crisp.wav"
+      },
+      "clap": {
+        "file": "snare_clap.wav"
+      },
+      "rim": {
+        "file": "snare_rim.wav",
+        "gain": 1.9
+      }
+    },
+    "2": {
+      "closed": {
+        "file": "hat_closed.wav",
+        "gain": 2.55
+      },
+      "open": {
+        "file": "hat_open.wav",
+        "gain": 0.78
+      },
+      "shaker": {
+        "file": "hat_shaker.wav",
+        "gain": 1.39
+      }
+    },
+    "3": {
+      "cowbell": {
+        "file": "perc_claves.wav",
+        "gain": 1.8
+      },
+      "bongo": {
+        "file": "perc_conga.wav",
+        "gain": 1.89
+      },
+      "wood": {
+        "file": "perc_wood.wav",
+        "gain": 1.57
+      }
+    },
+    "4": {
+      "sine": {
+        "file": "bass_808.wav",
+        "root": 31.31
+      }
+    },
+    "5": {
+      "soul": {
+        "multi": [
+          {
+            "file": "keys_C3.wav",
+            "root": 48
+          },
+          {
+            "file": "keys_C4.wav",
+            "root": 60
+          }
+        ]
+      }
+    },
+    "7": {
+      "tom": {
+        "file": "glitch_tom.wav",
+        "gain": 0.85
+      }
+    }
+  },
+  "fx": {}
+}

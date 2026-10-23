@@ -211,6 +211,97 @@
     const T = (t) => t || now();
     const stepSec = () => 60 / E.bpm / 4;
 
+    // ---------- sampler: per-clan kits (kits/<clan>/kit.json) ----------
+    E.kits = {};          // clan -> { manifest, buffers }
+    E.kitBase = null;     // e.g. 'kits/' — set by the page; null = synth only
+    const kitLoads = {};
+    E.loadKit = (clan) => {
+      if (!E.kitBase || !CLANS[clan]) return Promise.resolve(null);
+      if (E.kits[clan]) return Promise.resolve(E.kits[clan]);
+      if (kitLoads[clan]) return kitLoads[clan];
+      const base = `${E.kitBase}${clan}/`;
+      kitLoads[clan] = fetch(base + 'kit.json')
+        .then((r) => { if (!r.ok) throw new Error(`kit ${clan}: HTTP ${r.status}`); return r.json(); })
+        .then(async (manifest) => {
+          const files = new Set();
+          const collect = (e) => { if (!e) return; if (e.multi) e.multi.forEach(collect); else if (e.file) files.add(e.file); };
+          Object.values(manifest.tracks || {}).forEach((models) => Object.values(models).forEach(collect));
+          Object.values(manifest.fx || {}).forEach(collect);
+          const buffers = {};
+          await Promise.all([...files].map(async (f) => {
+            const ab = await (await fetch(base + f)).arrayBuffer();
+            buffers[f] = await new Promise((res, rej) => ctx.decodeAudioData(ab, res, rej));
+          }));
+          E.kits[clan] = { manifest, buffers };
+          return E.kits[clan];
+        })
+        .catch((err) => { console.warn('BeatBots kit load failed, using synth:', err); delete kitLoads[clan]; return null; });
+      return kitLoads[clan];
+    };
+    E.useKit = (clan, kit) => { if (kit) E.kits[clan] = kit; };
+    const kitEntry = (track, model) => {
+      const k = E.kits[E.clan];
+      const m = k && k.manifest.tracks && k.manifest.tracks[String(track)];
+      return m && m[model] ? { kit: k, entry: m[model] } : null;
+    };
+    const kitFx = (type) => {
+      const k = E.kits[E.clan];
+      return k && k.manifest.fx && k.manifest.fx[type] ? { kit: k, entry: k.manifest.fx[type] } : null;
+    };
+    // per-track mix level and space for samples (samples are peak-normalised to -1 dBFS)
+    const SAMPLE_MIX = {
+      0: { gain: 0.92, rev: 0 }, 1: { gain: 0.62, rev: 0.18 }, 2: { gain: 0.34, rev: 0.05 },
+      3: { gain: 0.42, rev: 0.12 }, 4: { gain: 0.8, rev: 0 }, 5: { gain: 0.2, rev: 0.25, dly: 0.1 },
+      6: { gain: 0.5, rev: 0.2 }, 7: { gain: 0.55, rev: 0.22 },
+    };
+    function playBuffer(buf, t, o) {
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.playbackRate.setValueAtTime(o.rate || 1, t);
+      const g = gainNode(0);
+      const peak = (o.gain == null ? 1 : o.gain) * (o.vel || 1);
+      g.gain.setValueAtTime(peak, t);
+      const natural = buf.duration / (o.rate || 1);
+      if (o.dur && o.dur < natural) {
+        g.gain.setValueAtTime(peak, t + o.dur);
+        g.gain.exponentialRampToValueAtTime(TINY, t + o.dur + (o.release || 0.05));
+      }
+      src.connect(g);
+      route(g, { gain: 1, rev: o.rev || 0, dly: o.dly || 0 });
+      src.start(t);
+      src.stop(t + Math.min(natural, (o.dur || natural) + (o.release || 0.05)) + 0.02);
+    }
+    // returns true if a sample handled this hit
+    function playSampleTrack(track, model, t, o) {
+      const hit = kitEntry(track, model);
+      if (!hit) return false;
+      const { kit, entry } = hit;
+      const mix = SAMPLE_MIX[track] || { gain: 0.6 };
+      const c = CLANS[E.clan] || CLANS.bboy;
+      if (track === 4 && entry.file) { // pitched bass follows the clan bassline
+        const buf = kit.buffers[entry.file]; if (!buf) return false;
+        const semis = o.step != null ? c.bass[o.step % 16] : 0;
+        const target = c.root + semis;
+        const rate = Math.pow(2, (target - (entry.root || target)) / 12);
+        playBuffer(buf, t, { gain: mix.gain, rate, vel: o.vel, dur: o.dur || stepSec() * 1.7, release: 0.06 });
+        return true;
+      }
+      if (track === 5 && entry.multi) { // chord from multisampled keys
+        const notes = c.chords[(o.step || 0) < 8 ? 0 : 1];
+        const dur = o.dur || stepSec() * 2.5;
+        notes.forEach((m) => {
+          let best = entry.multi[0];
+          entry.multi.forEach((z) => { if (Math.abs(z.root - m) < Math.abs(best.root - m)) best = z; });
+          const buf = kit.buffers[best.file]; if (!buf) return;
+          playBuffer(buf, t, { gain: mix.gain, rate: Math.pow(2, (m - best.root) / 12), vel: o.vel, dur, release: 0.35, rev: mix.rev, dly: mix.dly });
+        });
+        return true;
+      }
+      const buf = kit.buffers[entry.file]; if (!buf) return false;
+      playBuffer(buf, t, { gain: mix.gain * (entry.gain || 1), vel: o.vel, rev: mix.rev, dly: mix.dly });
+      return true;
+    }
+
     // ---------- controls ----------
     function ramp(param, v, t) { param.cancelScheduledValues(t); param.setTargetAtTime(v, t, 0.06); }
     E.setHighpass = (hz) => { E.state.hp = hz; ramp(N.highpass.frequency, hz, now()); };
@@ -233,6 +324,7 @@
     E.setClan = (key) => {
       const c = CLANS[key]; if (!c) return;
       E.clan = key;
+      E.loadKit(key);
       const t = now();
       ramp(N.eqLow.frequency, c.low[0], t); ramp(N.eqLow.gain, c.low[1], t);
       ramp(N.eqMid.frequency, c.mid[0], t); ramp(N.eqMid.gain, c.mid[1], t); ramp(N.eqMid.Q, c.mid[2], t);
@@ -598,6 +690,12 @@
     E.fx = (type, time) => {
       const t = T(time);
       const c = CLANS[E.clan] || CLANS.bboy;
+      const fxHit = kitFx(type);
+      if (fxHit && fxHit.kit.buffers[fxHit.entry.file]) {
+        playBuffer(fxHit.kit.buffers[fxHit.entry.file], t, { gain: 0.6, rev: type === 'gong' ? 0.45 : 0.25 });
+        if (type === 'metal') E.kick(t, 'hard');
+        return;
+      }
       switch (type) {
         case 'siren': {
           const s = osc('square', 560, t);
@@ -876,6 +974,7 @@
     // Track dispatch used by the sequencer: 0 kick, 1 snare, 2 hat, 3 perc, 4 bass, 5 chord, 6 vocal, 7 glitch
     E.playTrack = (trackIdx, time, model, step, extra) => {
       const o = Object.assign({ step, dur: undefined }, extra || {});
+      if (playSampleTrack(trackIdx, model, T(time), o)) return;
       switch (trackIdx) {
         case 0: return E.kick(time, model, o);
         case 1: return E.snare(time, model, o);
@@ -907,6 +1006,7 @@
     const ctx = new OAC(2, length, sr);
     const E = createEngine(ctx, {});
     E.setTempo(opts.bpm);
+    if (opts.kit) E.useKit(opts.clan || 'bboy', opts.kit);
     E.setClan(opts.clan || 'bboy');
     const s = opts.settings || {};
     if (s.hp != null) E.nodes.highpass.frequency.value = s.hp;

@@ -1,0 +1,87 @@
+{
+  "clan": "bboy",
+  "name": "Intergalactic B-Boys \u2014 boom-bap street kit",
+  "version": 1,
+  "tracks": {
+    "0": {
+      "sub": {
+        "file": "kick_sub.wav"
+      },
+      "punch": {
+        "file": "kick_punch.wav"
+      },
+      "hard": {
+        "file": "kick_hard.wav",
+        "gain": 1.34
+      }
+    },
+    "1": {
+      "crisp": {
+        "file": "snare_crisp.wav",
+        "gain": 1.31
+      },
+      "clap": {
+        "file": "snare_clap.wav",
+        "gain": 0.9
+      },
+      "rim": {
+        "file": "snare_rim.wav",
+        "gain": 1.9
+      }
+    },
+    "2": {
+      "closed": {
+        "file": "hat_closed.wav",
+        "gain": 2.55
+      },
+      "open": {
+        "file": "hat_open.wav",
+        "gain": 0.82
+      },
+      "shaker": {
+        "file": "hat_shaker.wav",
+        "gain": 0.5
+      }
+    },
+    "3": {
+      "cowbell": {
+        "file": "perc_cowbell.wav",
+        "gain": 2.25
+      },
+      "bongo": {
+        "file": "perc_bongo.wav",
+        "gain": 1.44
+      },
+      "wood": {
+        "file": "perc_wood.wav",
+        "gain": 1.29
+      }
+    },
+    "4": {
+      "sine": {
+        "file": "bass_808.wav",
+        "root": 31.31
+      }
+    },
+    "5": {
+      "soul": {
+        "multi": [
+          {
+            "file": "keys_C3.wav",
+            "root": 48
+          },
+          {
+            "file": "keys_C4.wav",
+            "root": 60
+          }
+        ]
+      }
+    },
+    "7": {
+      "tom": {
+        "file": "glitch_tom.wav"
+      }
+    }
+  },
+  "fx": {}
+}

@@ -6,6 +6,7 @@
 - `site/` — **the deployed website** (Cloudflare Pages output folder): `index.html` + `beatbots-mint.js`
 - `site-src/index.html` — page template; `tools/patch_site.py` turns it into `site/index.html`
 - `mint-client/` — source of the real Candy Machine mint (`beatbots-mint.js`, built with esbuild)
+- `site-src/kits/<clan>/` — per-clan sample kits (`kit.json` maps sequencer track/model → file; `LICENSE.txt` per folder). Built by `tools/build_kits.py`, levels in `tools/kit_gains.json`
 - `site-src/beatbots-audio.js` — audio engine v4 (procedural drums, clan voicings, UI sounds, WAV export); copied to `site/`
 - `assets/` — 888 token metadata files + `collection.json` (images are generated, not committed)
 - `art/` — the 12 clan-edition artworks used to generate token images
