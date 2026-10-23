@@ -11,6 +11,7 @@ checked_at: 2026-10-23T16:45Z (Claude)
 4. All wallet addresses in the Drive folder are PLACEHOLDERS until Jake supplies the real Tec5uport/DAO wallets before mainnet.
 5. UI/design changes (Gemini) go in `site-src/index.html`; run `scripts/build_site.sh` afterwards — never hand-edit `site/`.
 6. Mark guesses as "(unverified)".
+7. MUSIC POLICY (Jake, 2026-10-23): the public site uses only original TecSuport clan tribute tracks with lore titles (e.g. Brooklyn Cypher, 20 Double-Bins). No copyrighted masters and no trademarked artist names are hosted on Cloudflare. Raw samples served in kits/ must be licensed for redistribution, not just for use in songs.
 
 ## 1. Current state
 | Item | Value |
@@ -95,6 +96,7 @@ Headless tests serve the site via Playwright page.route on http://beatbots.test 
 Troubleshooting: "unknown variant irys" -> bundlr. Bot tax charged but no NFT -> guard rejected (limit/date/funds); pre-flight now blocks this. Sugar "config file not found" -> solana config set. Cloudflare GitHub app stuck -> uninstall in a normal browser, reinstall on PlayBeatBots with BeatBots repo only.
 
 ## 10. CHANGE LOG (newest first; append a line for every change)
+- 2026-10-23 17:05 — DECISION: music policy added (rule 7). Boombox player / TRACK_LIBRARY / ranked-vs-sandbox build is next, waiting on Jake's tracks from his iMac. — Claude
 - 2026-10-23 16:45 — Runbook rewritten to current reality (was stale: Irys/Wrangler/old budget). Repo + Drive copies synced. — Claude
 - 2026-10-23 16:31 — 25062a7 Rhythm battle: BeatMap engine, pluck synth, Track 01, station export. Verified: perfect bot 29/29 PERFECT S+, 70 ms late = GREAT, idle = F, station export OK, no console errors; live on pages.dev. — Claude
 - 2026-10-23 16:24 — 97297a1 Pitched arcade lane notes + background kit prefetch. — Claude
