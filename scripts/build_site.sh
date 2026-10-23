@@ -10,5 +10,6 @@ NETWORK="${1:?network}"; RPC="${2:?rpc url}"; CM="${3:?candy machine id}"
   --platform=browser --target=es2020 --define:global=window --outfile=../site/beatbots-mint.js)
 python3 tools/patch_site.py site-src/index.html site/index.html "$NETWORK" "$RPC" "$CM"
 cp site-src/beatbots-audio.js site/beatbots-audio.js
+cp site-src/beatbots-rhythm.js site/beatbots-rhythm.js
 rm -rf site/kits && cp -r site-src/kits site/kits
 echo "✅ site/ built for $NETWORK (Candy Machine $CM)"

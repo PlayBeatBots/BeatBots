@@ -971,6 +971,9 @@
       }
     };
 
+    // public hook so add-on instruments (rhythm synth, etc.) share the mix chain
+    E.connectVoice = (node, o) => route(node, o || {});
+
     // Arcade lane pluck: a pitched note in the active clan's key (kit keys/bass sample, else FM synth).
     // Each lane takes a chord tone; the note climbs an octave at 10+ combo.
     E.lanePluck = (lane, combo, time) => {
