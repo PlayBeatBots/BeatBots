@@ -1577,6 +1577,11 @@
         bbEngine.setTempo(bpm);
         bbEngine.kitBase = 'kits/';   // per-clan sample kits: kits/<clan>/kit.json
         bbEngine.setClan(activeClanKey);
+        // once the active clan's kit is in, quietly load the other clans so switching is instant
+        bbEngine.loadKit(activeClanKey).then(() => {
+          const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1200));
+          idle(() => bbEngine.prefetchKits());
+        });
         bbEngine.setDelayOn(isDelayOn);
         bbEngine.setDrive(isDistOn, masterDrive);
         bbEngine.setTape(isTapeSaturationOn);
@@ -2115,6 +2120,7 @@
           botHP = Math.min(100, botHP + 2.5);
 
           playTrackSound(laneIdx % 3);
+          if (bbEngine) bbEngine.lanePluck(laneIdx, comboStreak);
           triggerHitFeedback(comboStreak >= 10 ? `HYPER STREAK! +${50*mult}` : 'PERFECT!');
           break;
         }

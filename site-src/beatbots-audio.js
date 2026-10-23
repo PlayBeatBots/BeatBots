@@ -971,6 +971,38 @@
       }
     };
 
+    // Arcade lane pluck: a pitched note in the active clan's key (kit keys/bass sample, else FM synth).
+    // Each lane takes a chord tone; the note climbs an octave at 10+ combo.
+    E.lanePluck = (lane, combo, time) => {
+      const t = T(time);
+      const c = CLANS[E.clan] || CLANS.bboy;
+      const chord = c.chords[0];
+      const midi = chord[lane % chord.length] + 12 + ((combo || 0) >= 10 ? 12 : 0);
+      const k = E.kits[E.clan];
+      const keys = k && k.manifest.tracks['5'] && k.manifest.tracks['5'].soul;
+      if (keys && keys.multi) {
+        let best = keys.multi[0];
+        keys.multi.forEach((z) => { if (Math.abs(z.root - midi) < Math.abs(best.root - midi)) best = z; });
+        const buf = k.buffers[best.file];
+        if (buf) { playBuffer(buf, t, { gain: 0.32, rate: Math.pow(2, (midi - best.root) / 12), dur: 0.35, release: 0.25, rev: 0.25, dly: 0.12 }); return; }
+      }
+      const bass = k && k.manifest.tracks['4'] && k.manifest.tracks['4'].sine;
+      if (bass && bass.file && k.buffers[bass.file]) {
+        playBuffer(k.buffers[bass.file], t, { gain: 0.5, rate: Math.pow(2, (midi - 24 - bass.root) / 12), dur: 0.3, release: 0.12 });
+        return;
+      }
+      const bus = gainNode(1);
+      rhodesNote(t, midiHz(midi), 0.22, 0.3, bus);
+      route(bus, { gain: 0.9, rev: 0.22, dly: 0.12 });
+    };
+
+    // Prefetch every clan's kit in the background (skips data-saver connections)
+    E.prefetchKits = () => {
+      const conn = typeof navigator !== 'undefined' && navigator.connection;
+      if (conn && (conn.saveData || /2g/.test(conn.effectiveType || ''))) return Promise.resolve();
+      return Object.keys(CLANS).reduce((p, clan) => p.then(() => E.loadKit(clan)), Promise.resolve());
+    };
+
     // Track dispatch used by the sequencer: 0 kick, 1 snare, 2 hat, 3 perc, 4 bass, 5 chord, 6 vocal, 7 glitch
     E.playTrack = (trackIdx, time, model, step, extra) => {
       const o = Object.assign({ step, dur: undefined }, extra || {});
