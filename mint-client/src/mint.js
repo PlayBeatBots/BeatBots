@@ -17,6 +17,7 @@ import {
   mintV2,
   mplCandyMachine,
   safeFetchCandyGuard,
+  safeFetchMintCounterFromSeeds,
 } from '@metaplex-foundation/mpl-candy-machine';
 import { fetchDigitalAsset, mplTokenMetadata } from '@metaplex-foundation/mpl-token-metadata';
 import { setComputeUnitLimit } from '@metaplex-foundation/mpl-toolbox';
@@ -66,6 +67,58 @@ async function getStats() {
   };
 }
 
+// How many this wallet has minted / may still mint under the mintLimit guard
+async function walletMinted(owner, loaded) {
+  requireInit();
+  const { candyMachine, candyGuard } = loaded || (await loadMachine());
+  const limit = guardValue(candyGuard, 'mintLimit');
+  if (!limit || !owner) return { minted: 0, limit: null, remaining: Infinity };
+  const counter = await safeFetchMintCounterFromSeeds(umi, {
+    id: limit.id,
+    user: publicKey(owner.toString()),
+    candyGuard: candyGuard.publicKey,
+    candyMachine: candyMachine.publicKey,
+  });
+  const minted = counter ? Number(counter.count) : 0;
+  return { minted, limit: limit.limit, remaining: Math.max(0, limit.limit - minted) };
+}
+
+// Mirror the guards before sending, so a mint the guard would reject never costs the bot tax
+async function preflight(owner, quantity, loaded) {
+  const { candyMachine, candyGuard } = loaded;
+  const left = Number(candyMachine.data.itemsAvailable) - Number(candyMachine.itemsRedeemed);
+  if (left <= 0) throw new Error('Sold out.');
+  if (quantity > left) throw new Error(`Only ${left} BeatBot${left === 1 ? '' : 's'} left — lower the quantity.`);
+  const start = guardValue(candyGuard, 'startDate');
+  if (start && Date.now() < Number(start.date) * 1000) {
+    throw new Error(`The mint has not started yet. It opens ${new Date(Number(start.date) * 1000).toLocaleString()}.`);
+  }
+  const end = guardValue(candyGuard, 'endDate');
+  if (end && Date.now() > Number(end.date) * 1000) throw new Error('The mint has ended.');
+  const w = await walletMinted(owner, loaded);
+  if (w.limit != null && quantity > w.remaining) {
+    throw new Error(w.remaining === 0
+      ? `This wallet has reached the limit of ${w.limit} BeatBots.`
+      : `This wallet can mint ${w.remaining} more (limit ${w.limit} per wallet).`);
+  }
+  const sol = guardValue(candyGuard, 'solPayment');
+  const price = sol ? Number(sol.lamports.basisPoints) : 0;
+  const balance = Number((await umi.rpc.getBalance(publicKey(owner.toString()))).basisPoints);
+  const needed = quantity * (price + 25_000_000); // price + ~0.025 SOL rent and fees per NFT
+  if (balance < needed) {
+    throw new Error(`Not enough SOL: about ${(needed / 1e9).toFixed(3)} SOL needed, wallet has ${(balance / 1e9).toFixed(3)}.`);
+  }
+}
+
+// After confirmation, make sure an NFT really exists (a guard rejection still lands as a successful tx)
+async function nftExists(mintAddress) {
+  for (let i = 0; i < 6; i++) {
+    if (await umi.rpc.accountExists(mintAddress, { commitment: 'confirmed' })) return true;
+    await new Promise((r) => setTimeout(r, 800));
+  }
+  return false;
+}
+
 function friendlyError(err) {
   const msg = String((err && (err.message || err.toString())) || err);
   const logs = (err && err.logs ? err.logs.join('\n') : '') + '\n' + msg;
@@ -100,8 +153,10 @@ async function mint({ provider, quantity = 1, onProgress } = {}) {
   if (!provider || !provider.publicKey) throw new Error('Connect a wallet first.');
   umi.use(walletAdapterIdentity(provider));
 
-  const { candyMachine, candyGuard } = await loadMachine();
+  const loaded = await loadMachine();
+  const { candyMachine, candyGuard } = loaded;
   if (!candyGuard) throw new Error('Mint is not configured yet (no Candy Guard found).');
+  await preflight(provider.publicKey, quantity, loaded);
 
   const mintArgs = {};
   const sol = guardValue(candyGuard, 'solPayment');
@@ -129,10 +184,16 @@ async function mint({ provider, quantity = 1, onProgress } = {}) {
         )
         .sendAndConfirm(umi, { confirm: { commitment: 'confirmed' } });
       const sig = base58.deserialize(signature)[0];
+      if (!(await nftExists(nftMint.publicKey))) {
+        const e = new Error('The Candy Guard rejected this mint, so no BeatBot was created (the 0.01 SOL bot tax may have been charged).');
+        e.signature = sig;
+        throw e;
+      }
       onProgress && onProgress({ index: i, quantity, stage: 'confirmed', signature: sig });
       const revealed = await readRevealed(nftMint.publicKey);
       results.push({ mint: nftMint.publicKey.toString(), signature: sig, revealed });
     } catch (err) {
+      if (err && err.signature) { err.completed = results; throw err; }
       const e = new Error(friendlyError(err));
       e.cause = err;
       e.completed = results;
@@ -149,4 +210,4 @@ function clusterParam() {
 const explorerTx = (sig) => `https://solscan.io/tx/${sig}${clusterParam()}`;
 const explorerAddress = (addr) => `https://solscan.io/account/${addr}${clusterParam()}`;
 
-window.BeatBotsMint = { init, getStats, mint, explorerTx, explorerAddress };
+window.BeatBotsMint = { init, getStats, walletMinted, mint, explorerTx, explorerAddress };

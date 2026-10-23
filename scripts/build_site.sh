@@ -9,4 +9,5 @@ NETWORK="${1:?network}"; RPC="${2:?rpc url}"; CM="${3:?candy machine id}"
 (cd mint-client && npm ci --silent && npx esbuild src/mint.js --bundle --minify --format=iife \
   --platform=browser --target=es2020 --define:global=window --outfile=../site/beatbots-mint.js)
 python3 tools/patch_site.py site-src/index.html site/index.html "$NETWORK" "$RPC" "$CM"
+cp site-src/beatbots-audio.js site/beatbots-audio.js
 echo "✅ site/ built for $NETWORK (Candy Machine $CM)"

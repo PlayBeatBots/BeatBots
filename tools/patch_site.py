@@ -116,6 +116,7 @@ real_handler = r"""      executeMintBtn.addEventListener('click', async () => {
           ).join(' · ');
         }
 
+        if (typeof uiSound === 'function') uiSound('chime');
         const last = results[results.length - 1];
         const rv = last.revealed;
         const botImg = document.getElementById('modal-bot-image');

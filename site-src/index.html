@@ -559,9 +559,9 @@
               <div class="bg-bass-card p-3 rounded-lg border border-bass-border space-y-1.5">
                 <div class="flex justify-between text-slate-300">
                   <span>LOWPASS FILTER:</span>
-                  <span id="filter-val" class="text-bass-cyan font-bold">2800Hz</span>
+                  <span id="filter-val" class="text-bass-cyan font-bold">20kHz</span>
                 </div>
-                <input id="filter-slider" type="range" min="150" max="4000" value="2800" class="w-full accent-bass-cyan">
+                <input id="filter-slider" type="range" min="0" max="100" value="100" class="w-full accent-bass-cyan">
               </div>
 
               <!-- Highpass Filter -->
@@ -1445,6 +1445,7 @@
     </div>
   </div>
 
+  <script src="beatbots-audio.js"></script>
   <!-- SCRIPT LOGIC (Web Audio, Sequencer, Clans, Arcade, Armory, Mint) -->
   <script>
     // ==========================================
@@ -1536,589 +1537,88 @@
     };
 
     // ==========================================
-    // 1. WEB AUDIO SYNTHESIZER ENGINE v3.0
+    // 1. AUDIO ENGINE v4 — procedural synthesis lives in beatbots-audio.js
     // ==========================================
     let audioCtx = null;
-    let masterGain = null;
-    let biquadFilter = null;
-    let highpassFilter = null;
-    let delayNode = null;
-    let delayFeedback = null;
-    let waveShaper = null;
+    let bbEngine = null;
+    // Node handles kept for the existing slider handlers
+    let masterGain = null, biquadFilter = null, highpassFilter = null;
+    let delayNode = null, delayFeedback = null, waveShaper = null;
     let isDelayOn = true;
     let isDistOn = false;
     let isTapeSaturationOn = true;
     let masterDrive = 15;
 
+    // Master filter slider is 0-100, mapped exponentially to 150 Hz - 20 kHz
+    function filterSliderHz(v) { return Math.round(150 * Math.pow(20000 / 150, v / 100)); }
+    function formatHz(hz) { return hz >= 1000 ? `${(hz / 1000).toFixed(hz >= 10000 ? 0 : 1)}kHz` : `${hz}Hz`; }
+
     function initAudio() {
       if (!audioCtx) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        audioCtx = new AudioContext();
-
-        // Highpass filter for low-end cleanup
-        highpassFilter = audioCtx.createBiquadFilter();
-        highpassFilter.type = 'highpass';
-        highpassFilter.frequency.setValueAtTime(30, audioCtx.currentTime);
-
-        // Lowpass filter
-        biquadFilter = audioCtx.createBiquadFilter();
-        biquadFilter.type = 'lowpass';
-        biquadFilter.frequency.setValueAtTime(2800, audioCtx.currentTime);
-
-        // Distortion / Waveshaper
-        waveShaper = audioCtx.createWaveShaper();
-        updateDistortionCurve(masterDrive);
-
-        // Delay & Feedback loop
-        delayNode = audioCtx.createDelay(2.0);
-        delayNode.delayTime.setValueAtTime(0.28, audioCtx.currentTime);
-        delayFeedback = audioCtx.createGain();
-        delayFeedback.gain.setValueAtTime(0.35, audioCtx.currentTime);
-        delayNode.connect(delayFeedback);
-        delayFeedback.connect(delayNode);
-
-        // Master Gain
-        masterGain = audioCtx.createGain();
-        masterGain.gain.setValueAtTime(0.85, audioCtx.currentTime);
-
-        // Audio Routing Graph
-        highpassFilter.connect(biquadFilter);
-        biquadFilter.connect(waveShaper);
-        waveShaper.connect(masterGain);
-
-        // Delay send
-        biquadFilter.connect(delayNode);
-        delayNode.connect(masterGain);
-
-        masterGain.connect(audioCtx.destination);
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AC({ latencyHint: 'interactive' });
+        bbEngine = window.BBAudio.createEngine(audioCtx);
+        window.__bbEngine = bbEngine;
+        const N = bbEngine.nodes;
+        masterGain = N.master; biquadFilter = N.lowpass; highpassFilter = N.highpass;
+        delayNode = N.delay; delayFeedback = N.dlyFb; waveShaper = N.drive;
+        // pick up the current state of the controls
+        bbEngine.setTempo(bpm);
+        bbEngine.setClan(activeClanKey);
+        bbEngine.setDelayOn(isDelayOn);
+        bbEngine.setDrive(isDistOn, masterDrive);
+        bbEngine.setTape(isTapeSaturationOn);
+        const fs = document.getElementById('filter-slider');
+        if (fs) bbEngine.setLowpass(filterSliderHz(parseInt(fs.value, 10)));
+        const hs = document.getElementById('hpf-slider');
+        if (hs) bbEngine.setHighpass(parseInt(hs.value, 10));
+        const ds = document.getElementById('delay-time-slider');
+        if (ds) bbEngine.setDelayTime(parseInt(ds.value, 10) / 1000);
       }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    // Unlock audio on the first interaction so UI sounds work right away
+    document.addEventListener('pointerdown', () => initAudio(), { once: true, capture: true });
+
+    function uiSound(type, opts) {
+      if (bbEngine && audioCtx && audioCtx.state === 'running') bbEngine.ui(type, opts);
     }
 
     function updateDistortionCurve(amount) {
-      if (!waveShaper || !audioCtx) return;
-      if (!isDistOn || amount <= 0) {
-        waveShaper.curve = null;
-        return;
-      }
-      const k = amount * 4;
-      const n_samples = 44100;
-      const curve = new Float32Array(n_samples);
-      const deg = Math.PI / 180;
-      for (let i = 0; i < n_samples; ++i) {
-        const x = (i * 2) / n_samples - 1;
-        curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
-      }
-      waveShaper.curve = curve;
+      if (bbEngine) bbEngine.setDrive(isDistOn, amount);
     }
 
-    // 8 Independent Instrument Channels
-    function play808Kick(time = 0, model = 'sub') {
-      if (!audioCtx) return;
-      const t = time || audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      if (model === 'punch') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(180, t);
-        osc.frequency.exponentialRampToValueAtTime(50, t + 0.1);
-        gain.gain.setValueAtTime(1.0, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-      } else if (model === 'hard') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(160, t);
-        osc.frequency.exponentialRampToValueAtTime(38, t + 0.15);
-        gain.gain.setValueAtTime(0.9, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-      } else {
-        // Deep sub sine
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(140, t);
-        osc.frequency.exponentialRampToValueAtTime(42, t + 0.12);
-        gain.gain.setValueAtTime(1.0, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
-      }
-
-      osc.connect(gain);
-      gain.connect(highpassFilter);
-
-      osc.start(t);
-      osc.stop(t + 0.4);
-    }
-
-    function playSnare(time = 0, model = 'crisp') {
-      if (!audioCtx) return;
-      const t = time || audioCtx.currentTime;
-
-      if (model === 'clap') {
-        // 3 bursts of noise for realistic handclap
-        for (let i = 0; i < 3; i++) {
-          const delay = i * 0.015;
-          const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.04, audioCtx.sampleRate);
-          const d = buf.getChannelData(0);
-          for (let j = 0; j < d.length; j++) d[j] = Math.random() * 2 - 1;
-
-          const n = audioCtx.createBufferSource();
-          n.buffer = buf;
-          const g = audioCtx.createGain();
-          g.gain.setValueAtTime(0.6, t + delay);
-          g.gain.exponentialRampToValueAtTime(0.01, t + delay + 0.035);
-          n.connect(g);
-          g.connect(highpassFilter);
-          n.start(t + delay);
-          n.stop(t + delay + 0.04);
-        }
-      } else if (model === 'rim') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(450, t);
-        gain.gain.setValueAtTime(0.8, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-        osc.start(t);
-        osc.stop(t + 0.09);
-      } else {
-        // Crisp 90s snare
-        const bufferSize = audioCtx.sampleRate * 0.18;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-
-        const noise = audioCtx.createBufferSource();
-        noise.buffer = buffer;
-        const noiseFilter = audioCtx.createBiquadFilter();
-        noiseFilter.type = 'highpass';
-        noiseFilter.frequency.setValueAtTime(950, t);
-
-        const noiseGain = audioCtx.createGain();
-        noiseGain.gain.setValueAtTime(0.8, t);
-        noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.18);
-
-        const osc = audioCtx.createOscillator();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(185, t);
-        osc.frequency.exponentialRampToValueAtTime(80, t + 0.1);
-
-        const oscGain = audioCtx.createGain();
-        oscGain.gain.setValueAtTime(0.6, t);
-        oscGain.gain.exponentialRampToValueAtTime(0.01, t + 0.12);
-
-        noise.connect(noiseFilter);
-        noiseFilter.connect(noiseGain);
-        noiseGain.connect(highpassFilter);
-
-        osc.connect(oscGain);
-        oscGain.connect(highpassFilter);
-
-        noise.start(t);
-        osc.start(t);
-        noise.stop(t + 0.2);
-        osc.stop(t + 0.2);
-      }
-    }
-
-    function playHiHat(time = 0, model = 'closed') {
-      if (!audioCtx) return;
-      const t = time || audioCtx.currentTime;
-      const dur = model === 'open' ? 0.35 : 0.05;
-
-      const bufferSize = audioCtx.sampleRate * dur;
-      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-
-      const source = audioCtx.createBufferSource();
-      source.buffer = buffer;
-
-      const filter = audioCtx.createBiquadFilter();
-      filter.type = 'highpass';
-      filter.frequency.setValueAtTime(model === 'shaker' ? 5000 : 7800, t);
-
-      const gain = audioCtx.createGain();
-      gain.gain.setValueAtTime(0.5, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + dur - 0.005);
-
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(highpassFilter);
-
-      source.start(t);
-      source.stop(t + dur);
-    }
-
-    function playPerc(time = 0, model = 'cowbell') {
-      if (!audioCtx) return;
-      const t = time || audioCtx.currentTime;
-
-      if (model === 'cowbell') {
-        // 808 twin-square cowbell
-        const osc1 = audioCtx.createOscillator();
-        const osc2 = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc1.type = 'square';
-        osc2.type = 'square';
-        osc1.frequency.setValueAtTime(540, t);
-        osc2.frequency.setValueAtTime(800, t);
-
-        const band = audioCtx.createBiquadFilter();
-        band.type = 'bandpass';
-        band.frequency.setValueAtTime(700, t);
-        band.Q.setValueAtTime(2.5, t);
-
-        gain.gain.setValueAtTime(0.65, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
-
-        osc1.connect(band);
-        osc2.connect(band);
-        band.connect(gain);
-        gain.connect(highpassFilter);
-
-        osc1.start(t);
-        osc2.start(t);
-        osc1.stop(t + 0.3);
-        osc2.stop(t + 0.3);
-      } else {
-        // Bongo / Tom
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(260, t);
-        osc.frequency.exponentialRampToValueAtTime(140, t + 0.15);
-        gain.gain.setValueAtTime(0.7, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.22);
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-        osc.start(t);
-        osc.stop(t + 0.24);
-      }
-    }
-
-    function playSubSynth(time = 0, model = 'sine', freq = 50) {
-      if (!audioCtx) return;
-      const t = time || audioCtx.currentTime;
-
-      if (model === 'reese') {
-        const osc1 = audioCtx.createOscillator();
-        const osc2 = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc1.type = 'sawtooth';
-        osc2.type = 'sawtooth';
-        osc1.frequency.setValueAtTime(freq, t);
-        osc2.frequency.setValueAtTime(freq * 1.025, t); // Detune for Reese beating
-
-        gain.gain.setValueAtTime(0.6, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-
-        osc1.connect(gain);
-        osc2.connect(gain);
-        gain.connect(highpassFilter);
-
-        osc1.start(t);
-        osc2.start(t);
-        osc1.stop(t + 0.38);
-        osc2.stop(t + 0.38);
-      } else if (model === 'acid') {
-        const osc = audioCtx.createOscillator();
-        const filt = audioCtx.createBiquadFilter();
-        const gain = audioCtx.createGain();
-
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(freq, t);
-
-        filt.type = 'lowpass';
-        filt.frequency.setValueAtTime(1800, t);
-        filt.frequency.exponentialRampToValueAtTime(200, t + 0.2);
-        filt.Q.setValueAtTime(6.0, t);
-
-        gain.gain.setValueAtTime(0.55, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
-
-        osc.connect(filt);
-        filt.connect(gain);
-        gain.connect(highpassFilter);
-
-        osc.start(t);
-        osc.stop(t + 0.3);
-      } else {
-        // Deep sine sub
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, t);
-        gain.gain.setValueAtTime(0.7, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-        osc.start(t);
-        osc.stop(t + 0.38);
-      }
-    }
-
-    function playSynthChord(time = 0, model = 'soul') {
-      if (!audioCtx) return;
-      const t = time || audioCtx.currentTime;
-      const notes = [220, 261.63, 329.63]; // A minor triad
-
-      notes.forEach((freq, idx) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-
-        osc.type = model === 'saw' ? 'sawtooth' : model === 'flute' ? 'sine' : 'triangle';
-        osc.frequency.setValueAtTime(freq, t);
-
-        gain.gain.setValueAtTime(0.25, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-
-        osc.start(t);
-        osc.stop(t + 0.42);
-      });
-    }
-
-    function playVocalStab(time = 0, model = 'hey') {
-      if (!audioCtx) return;
-      const t = time || audioCtx.currentTime;
-
-      const osc = audioCtx.createOscillator();
-      const f1 = audioCtx.createBiquadFilter();
-      const f2 = audioCtx.createBiquadFilter();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(140, t);
-
-      // Formant filters for vowel "EH" or "AY"
-      f1.type = 'bandpass';
-      f1.frequency.setValueAtTime(model === 'yeah' ? 400 : 700, t);
-      f1.Q.setValueAtTime(3.0, t);
-
-      f2.type = 'bandpass';
-      f2.frequency.setValueAtTime(model === 'yeah' ? 1800 : 1300, t);
-      f2.Q.setValueAtTime(3.0, t);
-
-      gain.gain.setValueAtTime(0.6, t);
-      gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
-
-      osc.connect(f1);
-      osc.connect(f2);
-      f1.connect(gain);
-      f2.connect(gain);
-      gain.connect(highpassFilter);
-
-      osc.start(t);
-      osc.stop(t + 0.28);
-    }
-
-    function playGlitchTom(time = 0, model = 'tom') {
-      if (!audioCtx) return;
-      const t = time || audioCtx.currentTime;
-
-      if (model === 'laser') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(2000, t);
-        osc.frequency.exponentialRampToValueAtTime(180, t + 0.12);
-        gain.gain.setValueAtTime(0.5, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-        osc.start(t);
-        osc.stop(t + 0.16);
-      } else {
-        // Tribal Tom
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(130, t);
-        osc.frequency.exponentialRampToValueAtTime(65, t + 0.2);
-        gain.gain.setValueAtTime(0.75, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-        osc.start(t);
-        osc.stop(t + 0.3);
-      }
-    }
+    // 8 instrument channels (names kept for the rest of the page)
+    function play808Kick(time = 0, model = 'sub', step = null) { if (!bbEngine) initAudio(); bbEngine.kick(time, model, { step }); }
+    function playSnare(time = 0, model = 'crisp', step = null) { if (!bbEngine) initAudio(); bbEngine.snare(time, model, { step }); }
+    function playHiHat(time = 0, model = 'closed', step = null) { if (!bbEngine) initAudio(); bbEngine.hat(time, model, { step }); }
+    function playPerc(time = 0, model = 'cowbell', step = null) { if (!bbEngine) initAudio(); bbEngine.percussion(time, model, { step }); }
+    function playSubSynth(time = 0, model = 'sine', freq = 50, step = null) { if (!bbEngine) initAudio(); bbEngine.bass(time, model, { step }); }
+    function playSynthChord(time = 0, model = 'soul', step = null) { if (!bbEngine) initAudio(); bbEngine.chord(time, model, { step }); }
+    function playVocalStab(time = 0, model = 'hey', step = null) { if (!bbEngine) initAudio(); bbEngine.vocal(time, model, { step }); }
+    function playGlitchTom(time = 0, model = 'tom', step = null) { if (!bbEngine) initAudio(); bbEngine.glitch(time, model, { step }); }
 
     // Playable Melodic Micro-Keyboard Engine
     let currentOctave = 3;
     function playKeyboardNote(freq) {
       initAudio();
-      const t = audioCtx.currentTime;
       const preset = document.getElementById('synth-lab-preset').value;
-
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      if (preset === 'wobble') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(freq, t);
-        const lfo = audioCtx.createOscillator();
-        const lfoGain = audioCtx.createGain();
-        lfo.frequency.setValueAtTime(6, t);
-        lfoGain.gain.setValueAtTime(freq * 0.25, t);
-        lfo.connect(lfoGain);
-        lfoGain.connect(osc.frequency);
-        lfo.start(t);
-        lfo.stop(t + 0.5);
-      } else if (preset === 'industrial') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(freq, t);
-      } else if (preset === 'rhodes') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, t);
-      } else if (preset === 'gong') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, t);
-        osc.frequency.exponentialRampToValueAtTime(freq * 0.8, t + 0.6);
-      } else {
-        // Vocoder Lead
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(freq, t);
-      }
-
-      gain.gain.setValueAtTime(0.6, t);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
-
-      osc.connect(gain);
-      gain.connect(highpassFilter);
-
-      osc.start(t);
-      osc.stop(t + 0.58);
+      bbEngine.keyNote(freq, preset);
     }
 
-    // Performance Launchpad FX (Expanded to 8 Pads)
+    // Performance Launchpad FX
     function triggerFX(type) {
       initAudio();
-      const t = audioCtx.currentTime;
-
-      if (type === 'siren') {
-        const osc = audioCtx.createOscillator();
-        const lfo = audioCtx.createOscillator();
-        const lfoGain = audioCtx.createGain();
-        const gain = audioCtx.createGain();
-
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(560, t);
-        lfo.type = 'sine';
-        lfo.frequency.setValueAtTime(4.5, t);
-        lfoGain.gain.setValueAtTime(140, t);
-        lfo.connect(osc.frequency);
-
-        gain.gain.setValueAtTime(0.5, t);
-        gain.gain.linearRampToValueAtTime(0.0, t + 0.9);
-
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-
-        lfo.start(t);
-        osc.start(t);
-        lfo.stop(t + 0.95);
-        osc.stop(t + 0.95);
-      } else if (type === 'sub') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(75, t);
-        osc.frequency.exponentialRampToValueAtTime(28, t + 0.8);
-        gain.gain.setValueAtTime(1.0, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 1.1);
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-        osc.start(t);
-        osc.stop(t + 1.15);
-      } else if (type === 'scratch') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(280, t);
-        osc.frequency.linearRampToValueAtTime(950, t + 0.08);
-        osc.frequency.linearRampToValueAtTime(160, t + 0.18);
-        gain.gain.setValueAtTime(0.5, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-        osc.start(t);
-        osc.stop(t + 0.22);
-      } else if (type === 'laser') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(2200, t);
-        osc.frequency.exponentialRampToValueAtTime(120, t + 0.25);
-        gain.gain.setValueAtTime(0.6, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-        osc.start(t);
-        osc.stop(t + 0.28);
-      } else if (type === 'stop') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(440, t);
-        osc.frequency.exponentialRampToValueAtTime(20, t + 0.5);
-        gain.gain.setValueAtTime(0.6, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
-        osc.connect(gain);
-        gain.connect(highpassFilter);
-        osc.start(t);
-        osc.stop(t + 0.52);
-      } else if (type === 'riser') {
-        const bufferSize = audioCtx.sampleRate * 0.8;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-
-        const source = audioCtx.createBufferSource();
-        source.buffer = buffer;
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(300, t);
-        filter.frequency.exponentialRampToValueAtTime(3500, t + 0.75);
-
-        const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.1, t);
-        gain.gain.linearRampToValueAtTime(0.7, t + 0.7);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.8);
-
-        source.connect(filter);
-        filter.connect(gain);
-        gain.connect(highpassFilter);
-
-        source.start(t);
-        source.stop(t + 0.82);
-      } else if (type === 'airhorn') {
-        // Reggae sound-system airhorn
-        [587.33, 659.25, 783.99].forEach(f => {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(f, t);
-          gain.gain.setValueAtTime(0.3, t);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
-          osc.connect(gain);
-          gain.connect(highpassFilter);
-          osc.start(t);
-          osc.stop(t + 0.65);
-        });
-      } else if (type === 'amen') {
-        // Amen break fast stutter snare roll
-        for (let i = 0; i < 6; i++) {
-          playSnare(t + i * 0.06, 'crisp');
-        }
-      }
+      bbEngine.fx(type);
     }
+
+    // Relay clicks for small toggle-style buttons
+    document.addEventListener('click', (e) => {
+      const el = e.target && e.target.closest && e.target.closest(
+        '.track-mute-btn, .track-solo-btn, .pattern-bank-btn, .preset-btn, #seq-clear-btn, #seq-random-btn, #tap-tempo-btn, #toggle-crt-btn'
+      );
+      if (el) uiSound('click');
+    }, true);
 
     // ==========================================
     // 2. UPGRADED 8-TRACK SEQUENCER ENGINE
@@ -2269,7 +1769,9 @@
             btn.classList.toggle('step-active');
             btn.classList.toggle('border-bass-toxic');
             if (pattern[t][s]) {
-              playTrackSound(t);
+              playTrackSound(t, 0, s);
+            } else {
+              uiSound('step');
             }
           });
           row.appendChild(btn);
@@ -2277,38 +1779,46 @@
       }
     }
 
-    function playTrackSound(trackIdx, time = 0) {
+    function playTrackSound(trackIdx, time = 0, step = null) {
       const anySolo = trackSolos.some(Boolean);
       if (anySolo && !trackSolos[trackIdx]) return;
       if (trackMutes[trackIdx]) return;
+      if (!bbEngine) initAudio();
 
       const sel = document.querySelector(`.track-model-select[data-track="${trackIdx}"]`);
       const model = sel ? sel.value : 'default';
+      bbEngine.playTrack(trackIdx, time, model, step == null ? currentStep : step);
+    }
 
-      if (trackIdx === 0) play808Kick(time, model);
-      else if (trackIdx === 1) playSnare(time, model);
-      else if (trackIdx === 2) playHiHat(time, model);
-      else if (trackIdx === 3) playPerc(time, model);
-      else if (trackIdx === 4) playSubSynth(time, model, 48);
-      else if (trackIdx === 5) playSynthChord(time, model);
-      else if (trackIdx === 6) playVocalStab(time, model);
-      else if (trackIdx === 7) playGlitchTom(time, model);
+    // Lookahead scheduler: a 25 ms timer queues notes ~120 ms ahead on the audio clock,
+    // so timing stays tight even when the page is busy.
+    const SCHED_LOOKAHEAD = 0.12;
+    let nextStepTime = 0;
+
+    function highlightStep(step) {
+      document.querySelectorAll('.step-current').forEach(el => el.classList.remove('step-current'));
+      for (let t = 0; t < NUM_TRACKS; t++) {
+        const row = document.getElementById(`grid-track-${t}`);
+        if (row && row.children[step]) row.children[step].classList.add('step-current');
+      }
     }
 
     function stepSequencer() {
-      document.querySelectorAll('.step-current').forEach(el => el.classList.remove('step-current'));
-
-      for (let t = 0; t < NUM_TRACKS; t++) {
-        const row = document.getElementById(`grid-track-${t}`);
-        if (row && row.children[currentStep]) {
-          row.children[currentStep].classList.add('step-current');
-          if (pattern[t][currentStep]) {
-            playTrackSound(t);
-          }
+      if (!audioCtx) return;
+      const stepDur = 60 / bpm / 4;
+      bbEngine.setTempo(bpm);
+      while (nextStepTime < audioCtx.currentTime + SCHED_LOOKAHEAD) {
+        const step = currentStep;
+        const swing = step % 2 ? stepDur * (swingPercent / 100) * 0.66 : 0;
+        const time = nextStepTime + swing;
+        for (let t = 0; t < NUM_TRACKS; t++) {
+          if (pattern[t][step]) playTrackSound(t, time, step);
         }
+        const wait = Math.max(0, (time - audioCtx.currentTime) * 1000);
+        setTimeout(() => { if (isSeqPlaying) highlightStep(step); }, wait);
+        nextStepTime += stepDur;
+        currentStep = (currentStep + 1) % NUM_STEPS;
       }
-
-      currentStep = (currentStep + 1) % NUM_STEPS;
     }
 
     function toggleSequencer() {
@@ -2320,8 +1830,10 @@
       if (isSeqPlaying) {
         btn.classList.replace('bg-bass-toxic', 'bg-bass-amber');
         text.textContent = 'STOP PATTERN';
-        const intervalMs = (60000 / bpm) / 4;
-        seqInterval = setInterval(stepSequencer, intervalMs);
+        currentStep = 0;
+        nextStepTime = audioCtx.currentTime + 0.06;
+        stepSequencer();
+        seqInterval = setInterval(stepSequencer, 25);
       } else {
         btn.classList.replace('bg-bass-amber', 'bg-bass-toxic');
         text.textContent = 'PLAY PATTERN';
@@ -2381,6 +1893,8 @@
       activeClanKey = key;
       const clan = CLAN_ASSETS[key];
       if (!clan) return;
+      if (bbEngine) bbEngine.setClan(key);
+      uiSound('servo');
 
       // Update tabs
       document.querySelectorAll('.clan-tab-btn').forEach(btn => {
@@ -2558,6 +2072,7 @@
     }
 
     function triggerHitFeedback(text, color = 'text-bass-toxic') {
+      uiSound(/MISS/.test(text) ? 'miss' : 'hit', { combo: comboStreak });
       const fb = document.getElementById('hit-feedback');
       fb.textContent = text;
       fb.className = `absolute top-20 font-display font-bold text-2xl ${color} opacity-100 transition-opacity duration-200`;
@@ -2803,75 +2318,21 @@
           exportWavBtn.disabled = true;
 
           try {
-            const sampleRate = 44100;
-            const barDuration = (60 / bpm) * 4; // 1 bar duration in seconds
-            const totalDuration = barDuration * 2; // 2 bars
-            const offlineCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, sampleRate * totalDuration, sampleRate);
-
-            const stepDuration = barDuration / 16;
-            for (let step = 0; step < 32; step++) {
-              const patternStep = step % 16;
-              const time = step * stepDuration;
-
-              // Synthesize Kick
-              if (pattern[0][patternStep]) {
-                const osc = offlineCtx.createOscillator();
-                const gain = offlineCtx.createGain();
-                osc.frequency.setValueAtTime(140, time);
-                osc.frequency.exponentialRampToValueAtTime(32, time + 0.12);
-                gain.gain.setValueAtTime(1, time);
-                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.25);
-                osc.connect(gain);
-                gain.connect(offlineCtx.destination);
-                osc.start(time);
-                osc.stop(time + 0.25);
-              }
-
-              // Synthesize Snare
-              if (pattern[1][patternStep]) {
-                const osc = offlineCtx.createOscillator();
-                const gain = offlineCtx.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(180, time);
-                gain.gain.setValueAtTime(0.7, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + 0.15);
-                osc.connect(gain);
-                gain.connect(offlineCtx.destination);
-                osc.start(time);
-                osc.stop(time + 0.15);
-              }
-
-              // Synthesize Hi-Hat
-              if (pattern[2][patternStep]) {
-                const osc = offlineCtx.createOscillator();
-                const gain = offlineCtx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(6000, time);
-                gain.gain.setValueAtTime(0.3, time);
-                gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-                osc.connect(gain);
-                gain.connect(offlineCtx.destination);
-                osc.start(time);
-                osc.stop(time + 0.05);
-              }
-
-              // Synthesize Sub Bass
-              if (pattern[4][patternStep]) {
-                const osc = offlineCtx.createOscillator();
-                const gain = offlineCtx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(55, time);
-                gain.gain.setValueAtTime(0.8, time);
-                gain.gain.exponentialRampToValueAtTime(0.01, time + stepDuration * 1.5);
-                osc.connect(gain);
-                gain.connect(offlineCtx.destination);
-                osc.start(time);
-                osc.stop(time + stepDuration * 1.5);
-              }
-            }
-
-            const renderedBuffer = await offlineCtx.startRendering();
-            const wavBlob = audioBufferToWav(renderedBuffer);
+            const models = Array.from({ length: NUM_TRACKS }, (_, t) => {
+              const sel = document.querySelector(`.track-model-select[data-track="${t}"]`);
+              return sel ? sel.value : 'default';
+            });
+            const renderedBuffer = await window.BBAudio.renderPattern({
+              pattern, models, mutes: trackMutes, solos: trackSolos,
+              bpm, swing: swingPercent, clan: activeClanKey, bars: 2,
+              settings: {
+                hp: highpassFilter ? highpassFilter.frequency.value : 30,
+                lp: biquadFilter ? biquadFilter.frequency.value : 20000,
+                delayTime: delayNode ? delayNode.delayTime.value : 0.28,
+                delayOn: isDelayOn, driveOn: isDistOn, drive: masterDrive, tapeOn: isTapeSaturationOn,
+              },
+            });
+            const wavBlob = window.BBAudio.bufferToWav(renderedBuffer);
             const wavUrl = URL.createObjectURL(wavBlob);
 
             const a = document.createElement('a');
@@ -2944,8 +2405,7 @@
               document.getElementById('bpm-slider').value = bpm;
               document.getElementById('bpm-val').textContent = bpm;
               if (isSeqPlaying) {
-                clearInterval(seqInterval);
-                seqInterval = setInterval(stepSequencer, (60000 / bpm) / 4);
+                /* the lookahead clock follows bpm live */
               }
             }
           }
@@ -2958,7 +2418,8 @@
       if (delayBtn) {
         delayBtn.addEventListener('click', () => {
           isDelayOn = !isDelayOn;
-          if (delayFeedback) delayFeedback.gain.setValueAtTime(isDelayOn ? 0.35 : 0, audioCtx ? audioCtx.currentTime : 0);
+          if (bbEngine) bbEngine.setDelayOn(isDelayOn);
+          uiSound(isDelayOn ? 'on' : 'off');
           delayBtn.textContent = `ECHO DELAY: ${isDelayOn ? 'ON' : 'OFF'}`;
           delayBtn.classList.toggle('text-bass-cyan');
           delayBtn.classList.toggle('text-slate-400');
@@ -2970,6 +2431,7 @@
         distBtn.addEventListener('click', () => {
           isDistOn = !isDistOn;
           updateDistortionCurve(masterDrive);
+          uiSound(isDistOn ? 'on' : 'off');
           distBtn.textContent = `DRIVE: ${isDistOn ? 'ON' : 'OFF'}`;
           distBtn.classList.toggle('text-bass-crimson');
           distBtn.classList.toggle('text-slate-400');
@@ -3453,18 +2915,15 @@
         bpm = parseInt(e.target.value, 10);
         document.getElementById('bpm-val').textContent = bpm;
         if (isSeqPlaying) {
-          clearInterval(seqInterval);
-          seqInterval = setInterval(stepSequencer, (60000 / bpm) / 4);
+          /* the lookahead clock follows bpm live */
         }
       });
 
       const filterSlider = document.getElementById('filter-slider');
       filterSlider.addEventListener('input', (e) => {
-        const val = parseInt(e.target.value, 10);
-        document.getElementById('filter-val').textContent = `${val}Hz`;
-        if (biquadFilter && audioCtx) {
-          biquadFilter.frequency.setValueAtTime(val, audioCtx.currentTime);
-        }
+        const val = filterSliderHz(parseInt(e.target.value, 10));
+        document.getElementById('filter-val').textContent = formatHz(val);
+        if (bbEngine) bbEngine.setLowpass(val);
       });
 
       const swingSlider = document.getElementById('swing-slider');
@@ -3475,6 +2934,8 @@
 
       document.getElementById('toggle-saturation-btn').addEventListener('click', (e) => {
         isTapeSaturationOn = !isTapeSaturationOn;
+        if (bbEngine) bbEngine.setTape(isTapeSaturationOn);
+        uiSound(isTapeSaturationOn ? 'on' : 'off');
         e.target.textContent = `WARM: ${isTapeSaturationOn ? 'ON' : 'OFF'}`;
         e.target.classList.toggle('text-bass-toxic');
         e.target.classList.toggle('text-slate-400');
@@ -3507,8 +2968,7 @@
               if (bpmSlider) bpmSlider.value = bpm;
               if (bpmVal) bpmVal.textContent = bpm;
               if (isSeqPlaying) {
-                clearInterval(seqInterval);
-                seqInterval = setInterval(stepSequencer, (60000 / bpm) / 4);
+                /* the lookahead clock follows bpm live */
               }
             }
 

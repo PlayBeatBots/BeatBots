@@ -6,6 +6,7 @@
 - `site/` — **the deployed website** (Cloudflare Pages output folder): `index.html` + `beatbots-mint.js`
 - `site-src/index.html` — page template; `tools/patch_site.py` turns it into `site/index.html`
 - `mint-client/` — source of the real Candy Machine mint (`beatbots-mint.js`, built with esbuild)
+- `site-src/beatbots-audio.js` — audio engine v4 (procedural drums, clan voicings, UI sounds, WAV export); copied to `site/`
 - `assets/` — 888 token metadata files + `collection.json` (images are generated, not committed)
 - `art/` — the 12 clan-edition artworks used to generate token images
 - `config.json` — Sugar config for **mainnet** (start date Nov 1); `config-devnet.json` for devnet testing
@@ -36,3 +37,7 @@ Never commit keypairs or `cache-*.json` (see `.gitignore`).
 - `config.json` start date (currently 2026-11-01)
 - A private mainnet RPC URL for the site (the public mainnet RPC rate-limits browsers)
 - `build_site.sh mainnet-beta <RPC> <MAINNET_CM_ID>` after the mainnet deploy
+
+## Testing
+- `node tools/audio_test.cjs site <outDir>` — fires every voice/FX/UI sound headlessly, measures levels, renders clan demo loops
+- `node tools/browser_e2e.cjs site <devnet-keypair.json> <qty> <shotDir>` — real devnet mint through the UI (`SITE_URL=` to test the live site)

@@ -66,7 +66,7 @@ const server = http.createServer((req, res) => {
     Object.defineProperty(window, 'phantom', { value: { solana: window.__testWallet }, configurable: true });
   }, addr);
 
-  await page.goto('http://beatbots.test/', { waitUntil: 'domcontentloaded' });
+  await page.goto(process.env.SITE_URL || 'http://beatbots.test/', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => /^\d+$/.test(document.getElementById('minted-count')?.textContent || ''), null, { timeout: 60000 });
   const before = Number(await page.textContent('#minted-count'));
   const cluster = await page.textContent('#cluster-label');
