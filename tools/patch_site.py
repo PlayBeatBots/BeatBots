@@ -72,8 +72,6 @@ real_handler = r"""      executeMintBtn.addEventListener('click', async () => {
           return;
         }
 
-        const priceSol = (window.__beatbotsStats && window.__beatbotsStats.priceSol) || 0.5;
-        const totalCostSol = mintQty * priceSol;
         mintSpinner.classList.remove('hidden');
         executeMintBtn.disabled = true;
         mintBtnLabel.textContent = `CONFIRM IN WALLET (1 of ${mintQty})...`;
@@ -97,7 +95,7 @@ real_handler = r"""      executeMintBtn.addEventListener('click', async () => {
         } finally {
           mintSpinner.classList.add('hidden');
           executeMintBtn.disabled = false;
-          mintBtnLabel.textContent = `APPROVE & MINT (${totalCostSol.toFixed(2)} SOL)`;
+          mintBtnLabel.textContent = 'APPROVE & MINT (DEVNET)';
           refreshMintStats();
           if (userPubkey) fetchUserBalance(userPubkey).then(b => updateWalletUIConnected(activeWalletType, userPubkey.toString(), b));
         }

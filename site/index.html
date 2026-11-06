@@ -118,7 +118,7 @@
     </div>
     <div class="mx-auto sm:mx-0 flex items-center space-x-2">
       <span class="inline-block px-2 py-0.5 rounded bg-bass-toxic/20 text-bass-toxic font-bold">GENESIS DROP</span>
-      <span>888 Handcrafted Autonomous Audio Battlers • 0.5 SOL</span>
+      <span>888 Handcrafted Autonomous Audio Battlers • DEVNET TEST, mainnet date TBA</span>
     </div>
     <div class="flex items-center space-x-3">
       <button id="toggle-crt-btn" class="text-[11px] text-slate-400 hover:text-bass-toxic flex items-center space-x-1 transition-colors">
@@ -238,10 +238,6 @@
               <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Genesis Supply</span>
             </div>
             <div>
-              <span class="block text-2xl font-display font-bold text-bass-toxic">0.5 SOL</span>
-              <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Mint Price</span>
-            </div>
-            <div>
               <span class="block text-2xl font-display font-bold text-bass-amber">1.5x</span>
               <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">$SCRAP Boost</span>
             </div>
@@ -315,7 +311,7 @@
     <section id="mint-section" class="py-20 bg-bass-darker border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto space-y-4 mb-12">
-          <span class="text-bass-toxic font-mono text-xs uppercase tracking-widest block font-bold">SOLANA MAINNET DROP</span>
+          <span class="text-bass-toxic font-mono text-xs uppercase tracking-widest block font-bold">DEVNET TEST, mainnet date TBA</span>
           <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">GENESIS BEATBOT MINT</h2>
           <p class="text-slate-400 text-sm sm:text-base">
             Each Genesis NFT is a 1-of-1 autonomous battler with randomized clan alignment, chassis geometry, and custom audio traits. Minting grants full game utility, custom sequencer sound packs, and lifetime asynchronous tournament entry.
@@ -349,22 +345,14 @@
           <!-- Price Calculation Breakdown -->
           <div class="space-y-2 mb-8 font-mono text-sm border-t border-bass-border pt-4">
             <div class="flex justify-between text-slate-400">
-              <span>Unit Price:</span>
-              <span class="text-white">0.5 SOL</span>
-            </div>
-            <div class="flex justify-between text-slate-400">
               <span>Network Gas (Est.):</span>
               <span class="text-white">&lt; 0.00001 SOL</span>
-            </div>
-            <div class="flex justify-between text-base font-bold pt-2 border-t border-bass-border/50">
-              <span class="text-white">Total Amount:</span>
-              <span id="total-sol-price" class="text-bass-toxic">0.50 SOL</span>
             </div>
           </div>
 
           <!-- Mint CTA Button -->
           <button id="open-mint-modal-btn" class="w-full py-4 rounded-xl bg-gradient-to-r from-bass-toxic to-emerald-400 hover:from-emerald-400 hover:to-bass-toxic text-bass-black font-display font-bold text-lg shadow-lg hover:shadow-bass-toxic/30 transition-all duration-200 active:scale-95">
-            MINT NOW • <span id="mint-btn-sol-label">0.50 SOL</span>
+            MINT ON DEVNET (TEST)
           </button>
 
           <!-- Disclaimer Note -->
@@ -1403,15 +1391,11 @@
             <span>WALLET:</span>
             <span id="modal-wallet-address" class="text-bass-cyan font-bold">Phantom (7xKp...9B2v)</span>
           </div>
-          <div class="flex justify-between text-slate-300 border-t border-bass-border pt-2 text-sm">
-            <span class="text-white font-bold">TOTAL:</span>
-            <span id="modal-total-cost" class="text-bass-toxic font-bold">0.50 SOL</span>
-          </div>
         </div>
 
         <button id="execute-mint-btn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-bass-toxic to-emerald-400 hover:from-emerald-400 hover:to-bass-toxic text-bass-black font-display font-bold text-base shadow-lg transition-all active:scale-95 flex items-center justify-center space-x-2">
           <span id="mint-spinner" class="w-4 h-4 border-2 border-bass-black border-t-transparent rounded-full animate-spin hidden"></span>
-          <span id="mint-btn-label">APPROVE & MINT (0.50 SOL)</span>
+          <span id="mint-btn-label">APPROVE & MINT (DEVNET)</span>
         </button>
       </div>
 
@@ -2844,15 +2828,11 @@
       const qtyPlus = document.getElementById('qty-plus');
       const qtyMinus = document.getElementById('qty-minus');
       const qtyDisplay = document.getElementById('mint-qty');
-      const totalPrice = document.getElementById('total-sol-price');
-      const btnPriceLabel = document.getElementById('mint-btn-sol-label');
 
       qtyPlus.addEventListener('click', () => {
         if (mintQty < 5) {
           mintQty++;
           qtyDisplay.textContent = mintQty;
-          totalPrice.textContent = `${(mintQty * 0.5).toFixed(2)} SOL`;
-          btnPriceLabel.textContent = `${(mintQty * 0.5).toFixed(2)} SOL`;
         }
       });
 
@@ -2860,8 +2840,6 @@
         if (mintQty > 1) {
           mintQty--;
           qtyDisplay.textContent = mintQty;
-          totalPrice.textContent = `${(mintQty * 0.5).toFixed(2)} SOL`;
-          btnPriceLabel.textContent = `${(mintQty * 0.5).toFixed(2)} SOL`;
         }
       });
 
@@ -2878,7 +2856,6 @@
 
       openMintModalBtn.addEventListener('click', () => {
         document.getElementById('modal-qty-text').textContent = `${mintQty} BeatBot${mintQty > 1 ? 's' : ''}`;
-        document.getElementById('modal-total-cost').textContent = `${(mintQty * 0.5).toFixed(2)} SOL`;
         modalStepPre.classList.remove('hidden');
         modalStepSuccess.classList.add('hidden');
         mintModal.classList.remove('hidden');
@@ -2900,8 +2877,6 @@
           return;
         }
 
-        const priceSol = (window.__beatbotsStats && window.__beatbotsStats.priceSol) || 0.5;
-        const totalCostSol = mintQty * priceSol;
         mintSpinner.classList.remove('hidden');
         executeMintBtn.disabled = true;
         mintBtnLabel.textContent = `CONFIRM IN WALLET (1 of ${mintQty})...`;
@@ -2925,7 +2900,7 @@
         } finally {
           mintSpinner.classList.add('hidden');
           executeMintBtn.disabled = false;
-          mintBtnLabel.textContent = `APPROVE & MINT (${totalCostSol.toFixed(2)} SOL)`;
+          mintBtnLabel.textContent = 'APPROVE & MINT (DEVNET)';
           refreshMintStats();
           if (userPubkey) fetchUserBalance(userPubkey).then(b => updateWalletUIConnected(activeWalletType, userPubkey.toString(), b));
         }
