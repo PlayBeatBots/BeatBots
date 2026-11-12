@@ -15,7 +15,7 @@ rhythm battle game. The live site is https://playbeatbots.pages.dev (DEVNET ONLY
 |---|---|---|
 | Claude | Code, builds, deploys, Candy Machine, merges, runbook | Yes, after tests pass |
 | Gemini | UI/design in `site-src/index.html` only | No: open a PR |
-| Grok Dev bot (via Nori) | QA after deploys, PR review, bug reports, small fixes | No: open a PR |
+| Grok Dev bot (via Nori) | QA after deploys and on previews, code review, bug reports, small fixes | No. No GitHub write access yet: hands code to Claude as a patch + task file in Drive `Agent Ops/BeatBots/` with a queue item |
 | Other Grok bots | Marketing, community, research | No code changes |
 
 **Every push to `main` redeploys the live site (Cloudflare Pages).** Only Claude merges.
@@ -25,8 +25,12 @@ rhythm battle game. The live site is https://playbeatbots.pages.dev (DEVNET ONLY
 2. Edit `site-src/` only. Never hand-edit `site/`; it is build output.
 3. Build: `scripts/build_site.sh devnet https://api.devnet.solana.com FCrJhgeHCdZyAbTPAjG6TgC3f9XeqMucoZ1mQHjbemPo`
 4. Test (runbook section 8): `tools/audio_test.cjs`, `tools/rhythm_test.cjs`, and the browser mint flow.
-5. Open a PR and say what you tested. Claude reviews, merges and verifies the live site.
-6. Add a dated line to the runbook CHANGE LOG.
+5. Hand it to Claude: a PR if you have write access, otherwise a patch file + task file in Drive
+   `Agent Ops/BeatBots/` with a queue item owned by Claude. Say what you tested. Claude reviews,
+   merges and verifies the live site.
+6. Every branch gets a Cloudflare preview at `https://<branch-name-with-dashes>.playbeatbots.pages.dev`;
+   QA it there before it is merged.
+7. Add a dated line to the runbook CHANGE LOG.
 
 Images live in `site-src/img/` as files, not as base64 in the HTML. Keep it that way so the page
 stays small.

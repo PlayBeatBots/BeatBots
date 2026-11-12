@@ -13,4 +13,5 @@ cp site-src/beatbots-audio.js site/beatbots-audio.js
 cp site-src/beatbots-rhythm.js site/beatbots-rhythm.js
 rm -rf site/kits && cp -r site-src/kits site/kits
 rm -rf site/img && cp -r site-src/img site/img
+cp site-src/_headers site/_headers
 echo "✅ site/ built for $NETWORK (Candy Machine $CM)"
