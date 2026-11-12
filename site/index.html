@@ -153,6 +153,7 @@
         <a href="#mint-section" class="hover:text-bass-toxic transition-colors">Mint</a>
         <a href="#clans-section" class="hover:text-bass-toxic transition-colors">Sound Clans</a>
         <a href="#audio-section" class="hover:text-bass-toxic transition-colors">Sound Station</a>
+        <a href="#boombox-section" class="hover:text-bass-toxic transition-colors">Boombox</a>
         <a href="#arcade-section" class="hover:text-bass-toxic transition-colors">Battle Arcade</a>
         <a href="#armory-section" class="hover:text-bass-toxic transition-colors">Bot Armory</a>
         <a href="#vault-section" class="hover:text-bass-amber transition-colors">TecSuport Vault</a>
@@ -864,6 +865,39 @@
             </div>
           </div>
 
+        </div>
+      </div>
+    </section>
+
+    <!-- TecSupport Boombox: original tracks (manifest: tracks/tracks.json, built by tools/chart_track.py) -->
+    <section id="boombox-section" class="py-24 bg-bass-darker border-t border-bass-border relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto space-y-4 mb-10">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded bg-bass-toxic/15 text-bass-toxic text-xs font-mono font-bold">
+            <span>TECSUPPORT TRANSMISSIONS // ORIGINAL TRACKS</span>
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">THE BOOMBOX</h2>
+          <p class="text-slate-400 text-sm sm:text-base">
+            Original TecSupport cuts from the clan archives. Press play, then take any track into the Battle Arcade.
+          </p>
+        </div>
+        <div class="max-w-2xl mx-auto bg-bass-card rounded-2xl border-2 border-bass-border overflow-hidden shadow-2xl">
+          <div class="bg-bass-darker p-4 border-b border-bass-border font-mono text-xs">
+            <div class="flex items-center justify-between gap-3">
+              <div class="min-w-0">
+                <span class="text-slate-400 block text-[10px]">NOW PLAYING</span>
+                <span id="boombox-now" class="text-white font-bold font-display text-base truncate block">Select a track</span>
+              </div>
+              <button id="boombox-play-btn" class="shrink-0 w-12 h-12 rounded-full bg-bass-toxic text-bass-black font-bold text-lg disabled:opacity-40" aria-label="Play or pause" disabled>&#9654;</button>
+            </div>
+            <div class="mt-3 flex items-center gap-2">
+              <span id="boombox-time" class="text-slate-400 w-10">0:00</span>
+              <input id="boombox-seek" type="range" min="0" max="1000" value="0" class="flex-1 accent-[#39ff14]" aria-label="Seek" disabled>
+              <span id="boombox-dur" class="text-slate-400 w-10 text-right">0:00</span>
+            </div>
+          </div>
+          <ul id="boombox-list" class="divide-y divide-bass-border font-mono text-sm"></ul>
+          <div id="boombox-empty" class="p-8 text-center text-slate-400 font-mono text-xs">New TecSupport transmissions dropping soon.</div>
         </div>
       </div>
     </section>
@@ -2023,6 +2057,90 @@
       sel.appendChild(mine);
     }
 
+    // ---- Boombox + original-track charts (tracks/tracks.json) ----
+    async function loadTrackManifest() {
+      let man;
+      try {
+        const r = await fetch('tracks/tracks.json', { cache: 'no-cache' });
+        if (!r.ok) throw new Error(r.status);
+        man = await r.json();
+      } catch (e) { return; } // no tracks yet: Boombox keeps its "dropping soon" state
+      const tracks = (man && man.tracks) || [];
+      for (const t of tracks) {
+        for (const [diff, label] of [['standard', ''], ['hard', ' (Hard)']]) {
+          const url = t.charts && t.charts[diff];
+          if (!url) continue;
+          try {
+            const bm = await (await fetch(url)).json();
+            BBRhythm.registerTrack(Object.assign(bm, { title: `${t.title}${label}` }));
+          } catch (e) { console.warn('chart skipped', url, e); }
+        }
+      }
+      buildArcadeLibrary();
+      setupBoombox(tracks);
+    }
+
+    function setupBoombox(tracks) {
+      const list = document.getElementById('boombox-list');
+      if (!list || !tracks.length) return;
+      document.getElementById('boombox-empty').classList.add('hidden');
+      const audio = new Audio(); audio.preload = 'none';
+      const playBtn = document.getElementById('boombox-play-btn');
+      const seek = document.getElementById('boombox-seek');
+      const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+      let current = null;
+      const setPlaying = (on) => { playBtn.innerHTML = on ? '&#10074;&#10074;' : '&#9654;'; };
+      function choose(t, autoplay) {
+        current = t;
+        audio.src = t.url;
+        document.getElementById('boombox-now').textContent = t.title;
+        document.getElementById('boombox-dur').textContent = fmt(t.duration || 0);
+        list.querySelectorAll('li').forEach((li) => li.classList.toggle('bg-bass-black', li.dataset.id === t.id));
+        playBtn.disabled = false; seek.disabled = false;
+        if (autoplay) audio.play().catch(() => {});
+      }
+      tracks.forEach((t, i) => {
+        const li = document.createElement('li');
+        li.dataset.id = t.id;
+        li.className = 'flex items-center justify-between gap-3 px-4 py-3 hover:bg-bass-black cursor-pointer';
+        const hasChart = t.charts && t.charts.standard;
+        li.innerHTML = `<span class="text-slate-500 w-6">${String(i + 1).padStart(2, '0')}</span>
+          <span class="flex-1 min-w-0"><span class="text-white block truncate"></span><span class="text-slate-500 text-[11px]">TecSupport${t.bpm ? ' &middot; ' + Math.round(t.bpm) + ' BPM' : ''} &middot; ${fmt(t.duration || 0)}</span></span>
+          ${hasChart ? '<button class="boombox-battle shrink-0 px-3 py-1 rounded border border-bass-amber/50 text-bass-amber text-[11px] hover:bg-bass-amber/10">BATTLE IT</button>' : ''}`;
+        li.querySelector('.text-white').textContent = t.title;
+        li.addEventListener('click', (e) => { if (!e.target.closest('.boombox-battle')) choose(t, true); });
+        const battle = li.querySelector('.boombox-battle');
+        if (battle) battle.addEventListener('click', () => {
+          audio.pause();
+          const sel = document.getElementById('arcade-song-select');
+          sel.value = `${t.id}-standard`;
+          document.getElementById('arcade-section').scrollIntoView({ behavior: 'smooth' });
+        });
+        list.appendChild(li);
+      });
+      playBtn.addEventListener('click', () => {
+        if (!current) return choose(tracks[0], true);
+        if (audio.paused) audio.play().catch(() => {}); else audio.pause();
+      });
+      audio.addEventListener('play', () => setPlaying(true));
+      audio.addEventListener('pause', () => setPlaying(false));
+      audio.addEventListener('ended', () => {
+        const i = tracks.indexOf(current);
+        if (i >= 0 && i < tracks.length - 1) choose(tracks[i + 1], true); else setPlaying(false);
+      });
+      audio.addEventListener('timeupdate', () => {
+        const d = audio.duration || (current && current.duration) || 0;
+        document.getElementById('boombox-time').textContent = fmt(audio.currentTime);
+        if (d && !seek.matches(':active')) seek.value = Math.round((audio.currentTime / d) * 1000);
+      });
+      seek.addEventListener('input', () => {
+        const d = audio.duration || (current && current.duration) || 0;
+        if (d) audio.currentTime = (seek.value / 1000) * d;
+      });
+      window.BBBoombox = { pause: () => audio.pause(), audio };
+      choose(tracks[0], false);
+    }
+
     // Sequencer-to-Arcade bridge: the current 16-step grid as a BeatMap
     function exportGridToBeatMap() {
       const models = Array.from({ length: NUM_TRACKS }, (_, t) => {
@@ -2045,19 +2163,30 @@
 
     const laneFlash = [0, 0, 0];
 
-    function startArcadeGame() {
+    async function startArcadeGame() {
       initAudio();
+      if (window.BBBoombox) window.BBBoombox.pause();
       let track;
+      const startBtn = document.getElementById('start-arcade-btn');
       try {
         track = selectedArcadeTrack();
         rhythm = rhythm || new BBRhythm.RhythmEngine({ getEngine: () => bbEngine });
         rhythm.stop();
         const info = rhythm.loadBeatMap(track);
-        // whole loops only, close to the 45 s round
-        arcadeRoundSeconds = Math.max(1, Math.round(45 / info.length)) * info.length;
+        if (rhythm.chart.audio) {
+          // a real song: play it once, the round is the charted length
+          if (startBtn) { startBtn.disabled = true; startBtn.dataset.label = startBtn.textContent; startBtn.textContent = 'LOADING TRACK...'; }
+          await rhythm.prepareAudio();
+          arcadeRoundSeconds = info.length;
+        } else {
+          // whole loops only, close to the 45 s round
+          arcadeRoundSeconds = Math.max(1, Math.round(45 / info.length)) * info.length;
+        }
       } catch (e) {
         alert(e.message);
         return;
+      } finally {
+        if (startBtn && startBtn.dataset.label) { startBtn.textContent = startBtn.dataset.label; startBtn.disabled = false; delete startBtn.dataset.label; }
       }
       document.getElementById('arcade-overlay').classList.add('hidden');
       document.getElementById('overlay-pre-game').classList.add('hidden');
@@ -3105,6 +3234,7 @@
 
       // Arcade controls
       buildArcadeLibrary();
+      loadTrackManifest();
       canvas.addEventListener('pointerdown', (e) => {
         if (!isArcadeRunning) return;
         const r = canvas.getBoundingClientRect();

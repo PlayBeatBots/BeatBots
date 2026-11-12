@@ -68,6 +68,15 @@ Verify: `curl -s https://playbeatbots.pages.dev/ | grep BBRhythm` and run the br
 - To update: drop WAVs into the clan's slot folders, then tell Claude "kit update for <clan>". Claude pulls them, runs `tools/build_kits.py` (trim, normalise, 44.1k mono, gains from `tools/kit_gains.json`), updates kit.json + LICENSE.txt, rebuilds, tests, pushes.
 - Licensing: only redistributable samples (site is public). Current sources: TR-808 set by Michael Fischer (no restrictions stated) and VCSL (CC0). Rejected: the TR-909 set (author forbids for-profit use/modification). Every new sample needs its source + license in LICENSE.txt.
 
+## 6b. Original tracks (Boombox + song battles)
+- Only Jake's own original TecSupport tracks. Public title = a lore title, no real band/artist names.
+- Add one: `python3 tools/chart_track.py <file.mp3|wav> --id <slug> --title "<Lore Title>" --original "<working title>" --clan <bboy|dub|alchemist|industrial|biomech> [--start <s>] [--length 75] [--bpm <n>]`
+  - Writes `site-src/tracks/<id>.mp3` (192 kbps), `<id>.easy|standard|hard.json` charts and updates `tracks.json`.
+  - The tempo grid is fitted across the whole window (no drift); `--bpm` overrides the tempo if detection is off; `--start` picks where the battle begins.
+- Rebuild, run the tests, then spot-check the chart by playing it (Standard should feel fair; Hard adds 16ths + chords).
+- BeatMaps with an `audio` block play the song in sync (`RhythmEngine.prepareAudio()` before `start()`); rounds don't loop.
+- Needs `pip install librosa soundfile` and ffmpeg.
+
 ## 7. Audio + rhythm engine APIs
 - `BBAudio.createEngine(ctx)` voices: kick, snare, hat, perc, bass, chord, vocal, glitch, fx, keyNote, ui. Also playTrack, loadKit/useKit/kitBase/prefetchKits, lanePluck, connectVoice, renderPattern + bufferToWav (WAV export). CLANS table holds per-clan EQ, reverb/delay, root, bassline, chords. Master filter is 0-100 exponential up to 20 kHz.
 - `BBRhythm`: RhythmEngine (loadBeatMap, start({travelTime, duration, onHit, onMiss, onEnd}), frame, hit(lane), stop, now via audio-clock getOutputTimestamp), RhythmSynth (pluck), LIBRARY, registerTrack, fromSequencerGrid, normalizeBeatMap, noteToMidi, SCALES, DEFAULT_LANE_MAP.

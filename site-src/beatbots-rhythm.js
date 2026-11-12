@@ -19,6 +19,8 @@
  *   "backing": { "steps": 16, "swing": 18,                  // optional drum/bass loop under the chart
  *                "models": ["punch","crisp","closed","cowbell","sine","soul","hey","tom"],
  *                "pattern": [[...16 or steps*bars per sequencer track...] x 8] },
+ *   "audio": { "url": "tracks/x.mp3", "offset": 0.12,       // optional: play a real song under the chart;
+ *              "gain": 0.9 },                              //   offset = seconds into the file where beat 0 lands
  *   "notes": [ { "beat": 0, "lanes": [0] },                 // beat = quarter notes from bar 1
  *              { "beat": 2.5, "lanes": [1] },               // 8th-note syncopation
  *              { "beat": 4, "lanes": [0, 2] },              // two-lane chord
@@ -132,10 +134,16 @@
       mutes: track.backing.mutes || [],
     } : null;
 
+    let audio = null;
+    if (track.audio) {
+      if (!track.audio.url || typeof track.audio.url !== 'string') throw new Error('BeatMap: audio.url is required');
+      audio = { url: track.audio.url, offset: Number(track.audio.offset || 0), gain: track.audio.gain != null ? Number(track.audio.gain) : 0.9 };
+    }
+
     return {
       id: track.id || 'custom', title: track.title || 'Untitled', artist: track.artist || '',
       clan: track.clan || null, bpm, beatsPerBar, bars, length, laneMidi,
-      synth: track.synth || {}, backing, notes,
+      synth: track.synth || {}, backing, notes, audio,
       nps: +(notes.length / length).toFixed(2),
     };
   }
@@ -159,6 +167,22 @@
       this.chart = normalizeBeatMap(track, this.lanes);
       this.synth = new RhythmSynth(this.getEngine(), this.chart.synth);
       return { title: this.chart.title, bpm: this.chart.bpm, bars: this.chart.bars, length: this.chart.length, notes: this.chart.notes.length, nps: this.chart.nps };
+    }
+
+    // Fetch + decode the song for an audio-backed chart (cached per URL). Call before start().
+    async prepareAudio() {
+      const a = this.chart && this.chart.audio;
+      if (!a) return null;
+      const E = this.getEngine(); if (!E) throw new Error('RhythmEngine: audio engine not ready');
+      const cache = RhythmEngine.audioCache || (RhythmEngine.audioCache = new Map());
+      if (!cache.has(a.url)) {
+        cache.set(a.url, fetch(a.url).then((r) => {
+          if (!r.ok) throw new Error(`Could not load ${a.url} (${r.status})`);
+          return r.arrayBuffer();
+        }).then((b) => E.ctx.decodeAudioData(b)).catch((e) => { cache.delete(a.url); throw e; }));
+      }
+      this.audioBuffer = await cache.get(a.url);
+      return this.audioBuffer;
     }
 
     // Audio-clock time, interpolated between audio callbacks for smooth visuals and fair judging
@@ -187,6 +211,20 @@
       this.t0 = E.ctx.currentTime + this.leadIn;
       this.queue = []; this.nextLoop = 0; this.nextId = 0;
       this.backingStep = 0; this.backingTime = this.t0;
+      this.stopSong();
+      if (this.chart.audio) {
+        if (!this.audioBuffer) throw new Error('RhythmEngine: call prepareAudio() before start() for audio tracks');
+        const a = this.chart.audio;
+        const songLeft = Math.max(0, this.audioBuffer.duration - a.offset);
+        this.loop = false;
+        this.duration = Math.min(this.duration, songLeft);
+        const src = E.ctx.createBufferSource(); src.buffer = this.audioBuffer;
+        const g = E.ctx.createGain(); g.gain.value = a.gain;
+        src.connect(g); g.connect((E.nodes && E.nodes.limiter) || E.ctx.destination);
+        // beat 0 of the chart (song time 0) lines up with `offset` seconds into the file
+        if (a.offset >= 0) src.start(this.t0, a.offset); else src.start(this.t0 - a.offset, 0);
+        this.song = { src, g };
+      }
       this.stats = { notes: 0, hits: 0, perfect: 0, great: 0, good: 0, misses: 0 };
       this.running = true;
       this.fillQueue();
@@ -199,6 +237,14 @@
     stop() {
       this.running = false;
       clearInterval(this.timer);
+      this.stopSong();
+    }
+
+    stopSong() {
+      if (!this.song) return;
+      try { this.song.src.stop(); } catch (e) { /* already stopped */ }
+      try { this.song.g.disconnect(); } catch (e) { /* ignore */ }
+      this.song = null;
     }
 
     // queue notes up to a few seconds ahead, looping the chart for the round length
