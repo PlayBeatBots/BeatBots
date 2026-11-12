@@ -12,4 +12,5 @@ python3 tools/patch_site.py site-src/index.html site/index.html "$NETWORK" "$RPC
 cp site-src/beatbots-audio.js site/beatbots-audio.js
 cp site-src/beatbots-rhythm.js site/beatbots-rhythm.js
 rm -rf site/kits && cp -r site-src/kits site/kits
+rm -rf site/img && cp -r site-src/img site/img
 echo "✅ site/ built for $NETWORK (Candy Machine $CM)"
