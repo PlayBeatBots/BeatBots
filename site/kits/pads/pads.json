@@ -1,0 +1,113 @@
+{
+ "piano": [
+  {
+   "file": "piano_A1.wav",
+   "root": 32.94
+  },
+  {
+   "file": "piano_Cs2.wav",
+   "root": 36.99
+  },
+  {
+   "file": "piano_F2.wav",
+   "root": 41.02
+  },
+  {
+   "file": "piano_A2.wav",
+   "root": 45.05
+  },
+  {
+   "file": "piano_Cs3.wav",
+   "root": 49.07
+  },
+  {
+   "file": "piano_F3.wav",
+   "root": 53.12
+  },
+  {
+   "file": "piano_A3.wav",
+   "root": 57.17
+  },
+  {
+   "file": "piano_Cs4.wav",
+   "root": 60.92
+  },
+  {
+   "file": "piano_F4.wav",
+   "root": 64.93
+  },
+  {
+   "file": "piano_A4.wav",
+   "root": 69.17
+  }
+ ],
+ "vibes": [
+  {
+   "file": "vibes_C3.wav",
+   "root": 47.9
+  },
+  {
+   "file": "vibes_E3.wav",
+   "root": 52.01
+  },
+  {
+   "file": "vibes_G3.wav",
+   "root": 54.92
+  },
+  {
+   "file": "vibes_B3.wav",
+   "root": 58.94
+  },
+  {
+   "file": "vibes_D4.wav",
+   "root": 61.99
+  },
+  {
+   "file": "vibes_F4.wav",
+   "root": 64.93
+  },
+  {
+   "file": "vibes_A4.wav",
+   "root": 69.0
+  },
+  {
+   "file": "vibes_C5.wav",
+   "root": 72.04
+  }
+ ],
+ "horn": [
+  {
+   "file": "horn_C3.wav",
+   "root": 48.04
+  },
+  {
+   "file": "horn_E3.wav",
+   "root": 52.01
+  },
+  {
+   "file": "horn_Gs3.wav",
+   "root": 56.01
+  },
+  {
+   "file": "horn_C4.wav",
+   "root": 60.04
+  },
+  {
+   "file": "horn_E4.wav",
+   "root": 64.01
+  }
+ ],
+ "crash": [
+  {
+   "file": "crash.wav"
+  },
+  {
+   "file": "crash_short.wav"
+  }
+ ],
+ "impact": [
+  {
+   "file": "timpani.wav"
+  }
+ ]
+}
