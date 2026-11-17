@@ -22,7 +22,7 @@ checked_at: 2026-10-23T16:45Z (Claude)
 | Collection NFT | GzGaVXPwRxMn3D89NsdwUPTHAFUyjyUyv1AtkqJmNJzf |
 | Guards | solPayment 0.5 SOL, botTax 0.01, mintLimit 5 per wallet, startDate |
 | Minted (devnet) | ~11 / 888 (test mints) |
-| Site | https://playbeatbots.pages.dev (live). playbeatbots.com custom domain NOT attached yet. |
+| Site | https://playbeatbots.com (custom domain live 2026-11-17, www too); https://playbeatbots.pages.dev still serves. |
 | Hosting | Cloudflare Pages, Git-connected to PlayBeatBots/BeatBots (branch main), output dir `site/`. Every push to main redeploys. |
 | Art model | Option 1: shared clan-edition art; Cozza Frenzy is the main display image. "Inspiration" trait removed; each theme is nodded to in copy/traits. |
 | Mainnet config | `config.json` (start date Nov 1) — wallets are placeholders. |
