@@ -215,6 +215,13 @@
     E.kits = {};          // clan -> { manifest, buffers }
     E.kitBase = null;     // e.g. 'kits/' — set by the page; null = synth only
     const kitLoads = {};
+    const decoded = {};   // url -> Promise<AudioBuffer>; shared files (kits/_shared/) decode once
+    const fetchBuffer = (url) => decoded[url] || (decoded[url] = fetch(url)
+      .then((r) => { if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`); return r.arrayBuffer(); })
+      .then((ab) => new Promise((res, rej) => ctx.decodeAudioData(ab, res, rej)))
+      .catch((e) => { delete decoded[url]; throw e; }));
+    // nearest-root zone of a multisample entry
+    const nearestZone = (multi, midi) => multi.reduce((best, z) => (Math.abs(z.root - midi) < Math.abs(best.root - midi) ? z : best), multi[0]);
     E.loadKit = (clan) => {
       if (!E.kitBase || !CLANS[clan]) return Promise.resolve(null);
       if (E.kits[clan]) return Promise.resolve(E.kits[clan]);
@@ -228,10 +235,7 @@
           Object.values(manifest.tracks || {}).forEach((models) => Object.values(models).forEach(collect));
           Object.values(manifest.fx || {}).forEach(collect);
           const buffers = {};
-          await Promise.all([...files].map(async (f) => {
-            const ab = await (await fetch(base + f)).arrayBuffer();
-            buffers[f] = await new Promise((res, rej) => ctx.decodeAudioData(ab, res, rej));
-          }));
+          await Promise.all([...files].map(async (f) => { buffers[f] = await fetchBuffer(base + f); }));
           E.kits[clan] = { manifest, buffers };
           return E.kits[clan];
         })
@@ -278,11 +282,12 @@
       const { kit, entry } = hit;
       const mix = SAMPLE_MIX[track] || { gain: 0.6 };
       const c = CLANS[E.clan] || CLANS.bboy;
-      if (track === 4 && entry.file) { // pitched bass follows the clan bassline
-        const buf = kit.buffers[entry.file]; if (!buf) return false;
+      if (track === 4 && (entry.file || entry.multi)) { // pitched bass follows the clan bassline
         const semis = o.step != null ? c.bass[o.step % 16] : 0;
         const target = c.root + semis;
-        const rate = Math.pow(2, (target - (entry.root || target)) / 12);
+        const zone = entry.multi ? nearestZone(entry.multi, target) : entry;
+        const buf = kit.buffers[zone.file]; if (!buf) return false;
+        const rate = Math.pow(2, (target - (zone.root || target)) / 12);
         playBuffer(buf, t, { gain: mix.gain, rate, vel: o.vel, dur: o.dur || stepSec() * 1.7, release: 0.06 });
         return true;
       }
@@ -990,8 +995,9 @@
         if (buf) { playBuffer(buf, t, { gain: 0.32, rate: Math.pow(2, (midi - best.root) / 12), dur: 0.35, release: 0.25, rev: 0.25, dly: 0.12 }); return; }
       }
       const bass = k && k.manifest.tracks['4'] && k.manifest.tracks['4'].sine;
-      if (bass && bass.file && k.buffers[bass.file]) {
-        playBuffer(k.buffers[bass.file], t, { gain: 0.5, rate: Math.pow(2, (midi - 24 - bass.root) / 12), dur: 0.3, release: 0.12 });
+      const bz = bass && (bass.multi ? nearestZone(bass.multi, midi - 24) : bass);
+      if (bz && bz.file && k.buffers[bz.file]) {
+        playBuffer(k.buffers[bz.file], t, { gain: 0.5, rate: Math.pow(2, (midi - 24 - bz.root) / 12), dur: 0.3, release: 0.12 });
         return;
       }
       const bus = gainNode(1);

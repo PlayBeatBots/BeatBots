@@ -1,54 +1,58 @@
 {
   "clan": "dub",
   "name": "140 Dub Operators \u2014 sound-system kit",
-  "version": 1,
+  "version": 2,
   "tracks": {
     "0": {
       "sub": {
-        "file": "kick_sub.wav"
+        "file": "kick_sub.wav",
+        "gain": 0.56
       },
       "punch": {
-        "file": "kick_punch.wav"
+        "file": "kick_punch.wav",
+        "gain": 0.43
       },
       "hard": {
         "file": "kick_hard.wav",
-        "gain": 1.25
+        "gain": 0.45
       }
     },
     "1": {
       "crisp": {
-        "file": "snare_crisp.wav"
+        "file": "snare_crisp.wav",
+        "gain": 0.63
       },
       "clap": {
-        "file": "snare_clap.wav"
+        "file": "snare_clap.wav",
+        "gain": 1.07
       },
       "rim": {
         "file": "snare_rim.wav",
-        "gain": 1.9
+        "gain": 0.52
       }
     },
     "2": {
       "closed": {
         "file": "hat_closed.wav",
-        "gain": 2.55
+        "gain": 1.11
       },
       "open": {
         "file": "hat_open.wav",
-        "gain": 0.78
+        "gain": 0.59
       },
       "shaker": {
         "file": "hat_shaker.wav",
-        "gain": 1.39
+        "gain": 0.72
       }
     },
     "3": {
       "cowbell": {
-        "file": "perc_claves.wav",
-        "gain": 1.8
+        "file": "perc_cowbell.wav",
+        "gain": 0.75
       },
       "bongo": {
-        "file": "perc_conga.wav",
-        "gain": 1.89
+        "file": "perc_bongo.wav",
+        "gain": 0.39
       },
       "wood": {
         "file": "perc_wood.wav",
@@ -57,8 +61,56 @@
     },
     "4": {
       "sine": {
-        "file": "bass_808.wav",
-        "root": 31.31
+        "multi": [
+          {
+            "file": "../_shared/808_F1.wav",
+            "root": 29
+          },
+          {
+            "file": "../_shared/808_Fs1.wav",
+            "root": 30
+          },
+          {
+            "file": "../_shared/808_G1.wav",
+            "root": 31
+          },
+          {
+            "file": "../_shared/808_Gs1.wav",
+            "root": 32
+          },
+          {
+            "file": "../_shared/808_A1.wav",
+            "root": 33
+          },
+          {
+            "file": "../_shared/808_As1.wav",
+            "root": 34
+          },
+          {
+            "file": "../_shared/808_B1.wav",
+            "root": 35
+          },
+          {
+            "file": "../_shared/808_C2.wav",
+            "root": 36
+          },
+          {
+            "file": "../_shared/808_Cs2.wav",
+            "root": 37
+          },
+          {
+            "file": "../_shared/808_D2.wav",
+            "root": 38
+          },
+          {
+            "file": "../_shared/808_Ds2.wav",
+            "root": 39
+          },
+          {
+            "file": "../_shared/808_E2.wav",
+            "root": 40
+          }
+        ]
       }
     },
     "5": {
@@ -78,7 +130,7 @@
     "7": {
       "tom": {
         "file": "glitch_tom.wav",
-        "gain": 0.85
+        "gain": 0.36
       }
     }
   },

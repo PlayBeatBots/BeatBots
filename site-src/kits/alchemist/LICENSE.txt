@@ -20,3 +20,20 @@ Files (processed: trimmed, peak-normalised, faded, 44.1 kHz mono):
   keys_C3.wav  <-  Electrophones/TX81Z/FM Piano/FMPiano_C3_vl2.wav  [vc]
   keys_C4.wav  <-  Electrophones/TX81Z/FM Piano/FMPiano_C4_vl2.wav  [vc]
   glitch_tom.wav  <-  Membranophones/Struck Membranophones/Tom 1/Mallet/TomH_HitM_v3_rr1_Mid.wav  [vc]
+
+
+[2026-11 upgrade]
+  [cb] Clipabay Free Drum Kit by Black Ribbon Studios, CC0 1.0 Universal (no credit needed;
+       commercial use and redistribution allowed). https://clipabay.com/free-drum-kit
+  These slots now use [cb] files (trimmed, peak -1 dBFS, 44.1 kHz 16-bit mono):
+    kick_sub.wav  <-  Kicks/Kick 09 - Soft.wav  [cb]
+    kick_punch.wav  <-  Kicks/Kick 01 - Punchy.wav  [cb]
+    kick_hard.wav  <-  Kicks/Kick 06 - Clicky.wav  [cb]
+    snare_crisp.wav  <-  Snares/Snare 04 - Roomy.wav  [cb]
+    snare_clap.wav  <-  Claps/Clap 04 - Verb.wav  [cb]
+    snare_rim.wav  <-  Percussion/Snap.wav  [cb]
+    hat_closed.wav  <-  Hats/Hat 03 - Closed Loose.wav  [cb]
+    hat_open.wav  <-  Hats/Open Hat 01 - Open.wav  [cb]
+    glitch_tom.wav  <-  Percussion/Tom High.wav  [cb]
+  Sub Synth "sine" plays the tuned [cb] 808s in ../_shared/ (see ../_shared/LICENSE.txt).
+  Kept files with leading silence trimmed: perc_wood.wav (-4.5 ms)

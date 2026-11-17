@@ -19,3 +19,15 @@ Files (processed: trimmed, peak-normalised, faded, 44.1 kHz mono):
   perc_slit.wav  <-  Idiophones/Struck Idiophones/Slit Drum/LogDrumLo_MedM_v2_rr1_Sum.wav  [vc]
   glitch_tom.wav  <-  Membranophones/Struck Membranophones/Tom 1/Mallet/TomH_HitM_v4_rr1_Mid.wav  [vc]
   fx_gong.wav  <-  Idiophones/Struck Idiophones/Gong 1/gong_f.wav  [vc]
+
+
+[2026-11 upgrade]
+  [cb] Clipabay Free Drum Kit by Black Ribbon Studios, CC0 1.0 Universal (no credit needed;
+       commercial use and redistribution allowed). https://clipabay.com/free-drum-kit
+  These slots now use [cb] files (trimmed, peak -1 dBFS, 44.1 kHz 16-bit mono):
+    kick_sub.wav  <-  Kicks/Kick 02 - Deep.wav  [cb]
+    kick_hard.wav  <-  Kicks/Kick 05 - Round.wav  [cb]
+    hat_closed.wav  <-  Hats/Hat 01 - Closed Tight.wav  [cb]
+    hat_open.wav  <-  Hats/Open Hat 02 - Open Long.wav  [cb]
+  Sub Synth "sine" plays the tuned [cb] 808s in ../_shared/ (see ../_shared/LICENSE.txt).
+  Kept files with leading silence trimmed: fx_gong.wav (-36.6 ms)

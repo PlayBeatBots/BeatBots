@@ -228,16 +228,35 @@
       this.stats = { notes: 0, hits: 0, perfect: 0, great: 0, good: 0, misses: 0 };
       this.running = true;
       this.fillQueue();
-      clearInterval(this.timer);
-      this.timer = setInterval(() => this.tick(), 25);
+      this.stopTimer();
+      this.startTimer();
       this.tick();
       return { startsAt: this.t0, leadIn: this.leadIn };
     }
 
     stop() {
       this.running = false;
-      clearInterval(this.timer);
+      this.stopTimer();
       this.stopSong();
+    }
+
+    // 25 ms tick from a Worker (not throttled like a main-thread setInterval); setInterval fallback.
+    // Backing hits are queued RhythmEngine.LOOKAHEAD seconds ahead on the audio clock.
+    startTimer() {
+      try {
+        const src = 'let t=null;onmessage=(e)=>{if(e.data==="start"){clearInterval(t);t=setInterval(()=>postMessage(0),25);}else{clearInterval(t);}};';
+        this.worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+        this.worker.onmessage = () => this.tick();
+        this.worker.postMessage('start');
+      } catch (e) {
+        this.worker = null;
+        this.timer = setInterval(() => this.tick(), 25);
+      }
+    }
+
+    stopTimer() {
+      if (this.worker) { this.worker.postMessage('stop'); this.worker.terminate(); this.worker = null; }
+      clearInterval(this.timer); this.timer = null;
     }
 
     stopSong() {
@@ -274,7 +293,7 @@
       if (c.backing && E) {
         const stepDur = (60 / c.bpm) * (4 / c.backing.steps);
         const endAt = this.t0 + this.duration;
-        while (this.backingTime < E.ctx.currentTime + 0.12 && this.backingTime < endAt) {
+        while (this.backingTime < E.ctx.currentTime + RhythmEngine.LOOKAHEAD && this.backingTime < endAt) {
           const s = this.backingStep;
           const swing = s % 2 ? stepDur * (c.backing.swing / 100) * 0.66 : 0;
           c.backing.pattern.forEach((row, tr) => {
@@ -327,6 +346,7 @@
       return res;
     }
   }
+  RhythmEngine.LOOKAHEAD = 0.3; // seconds of backing scheduled ahead on the audio clock
 
   // ---------------------------------------------------------------------------
   // Sequencer -> BeatMap bridge

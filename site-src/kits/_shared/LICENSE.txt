@@ -1,0 +1,19 @@
+Shared samples used by several clan kits.
+
+Source: Clipabay Free Drum Kit by Black Ribbon Studios, CC0 1.0 Universal (public domain
+dedication; commercial use and redistribution allowed, no credit needed).
+https://clipabay.com/free-drum-kit
+
+Files (trimmed, peak -1 dBFS, 44.1 kHz 16-bit mono):
+  808_F1.wav  <-  808s/808 - F1.wav
+  808_Fs1.wav  <-  808s/808 - F#1.wav
+  808_G1.wav  <-  808s/808 - G1.wav
+  808_Gs1.wav  <-  808s/808 - G#1.wav
+  808_A1.wav  <-  808s/808 - A1.wav
+  808_As1.wav  <-  808s/808 - A#1.wav
+  808_B1.wav  <-  808s/808 - B1.wav
+  808_C2.wav  <-  808s/808 - C2.wav
+  808_Cs2.wav  <-  808s/808 - C#2.wav
+  808_D2.wav  <-  808s/808 - D2.wav
+  808_Ds2.wav  <-  808s/808 - D#2.wav
+  808_E2.wav  <-  808s/808 - E2.wav
