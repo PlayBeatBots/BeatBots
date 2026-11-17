@@ -44,6 +44,23 @@ COLLECTION_HERO = "dub_0.jpg"  # 140 Dub Operators — V3 Cozza Frenzy Stage
 COLLECTION_TILES = ["bboy_0.jpg", "alchemist_0.jpg", "industrial_0.jpg", "biomech_0.jpg", "bboy_2.jpg"]
 
 
+CLAN_KEY = {"Intergalactic B-Boys": "bboy", "140 Dub Operators": "dub", "Electro-Soul Alchemists": "alchemist",
+            "Industrial Mecha": "industrial", "Polyrhythmic Biomechs": "biomech"}
+
+
+def variant_art(art, base_file, attrs):
+    """Finish-specific art if it exists: Mythics -> mythic_<clan>.jpg, others -> <base>_<finish>.jpg."""
+    finish = attrs.get("Finish", "Factory")
+    if finish == "1-of-1":
+        name = f"mythic_{CLAN_KEY[attrs['Clan']]}.jpg"
+    elif finish == "Factory":
+        return os.path.join(art, base_file)
+    else:
+        name = base_file[:-4] + "_" + finish.lower().replace(" ", "_") + ".jpg"
+    path = os.path.join(art, name)
+    return path if os.path.exists(path) else None
+
+
 def main():
     if len(sys.argv) != 2:
         sys.exit(__doc__)
@@ -58,6 +75,7 @@ def main():
             os.remove(f)
 
     counts = {}
+    fallback = 0
     for i in range(SUPPLY):
         path = os.path.join(ASSETS, f"{i}.json")
         with open(path) as f:
@@ -66,7 +84,10 @@ def main():
         key = (attrs["Clan"], attrs["Visual Edition"])
         if key not in EDITION_ART:
             sys.exit(f"❌ {i}.json has no artwork mapped for {key}")
-        shutil.copyfile(os.path.join(art, EDITION_ART[key]), os.path.join(ASSETS, f"{i}.jpg"))
+        src = variant_art(art, EDITION_ART[key], attrs)
+        if src is None:
+            src = os.path.join(art, EDITION_ART[key]); fallback += 1
+        shutil.copyfile(src, os.path.join(ASSETS, f"{i}.jpg"))
         counts[key] = counts.get(key, 0) + 1
 
         meta["image"] = f"{i}.jpg"
@@ -101,6 +122,8 @@ def main():
         f.write("\n")
 
     total = sum(os.path.getsize(os.path.join(ASSETS, f"{i}.jpg")) for i in range(SUPPLY))
+    if fallback:
+        print(f"ℹ️  {fallback} tokens used base edition art (variant art not in {art} yet)")
     print(f"✅ Built {SUPPLY} token images + collection.jpg ({total / 1e6:.0f} MB of images)")
     for (clan, ed), n in sorted(counts.items()):
         print(f"  {n:4d}  {clan} / {ed}")

@@ -23,6 +23,10 @@
       "value": "V2 STEEL FOUNDRY MECH"
     },
     {
+      "trait_type": "Finish",
+      "value": "1-of-1"
+    },
+    {
       "trait_type": "Head Chassis",
       "value": "Heavy Combat Gas Filter"
     },

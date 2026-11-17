@@ -19,6 +19,10 @@
       "value": "V2 STEEL FOUNDRY MECH"
     },
     {
+      "trait_type": "Finish",
+      "value": "Toxic"
+    },
+    {
       "trait_type": "Head Chassis",
       "value": "Weathered Gunmetal Mecha Visor"
     },

@@ -19,6 +19,10 @@
       "value": "V2 STEEL FOUNDRY MECH"
     },
     {
+      "trait_type": "Finish",
+      "value": "Neon Trim"
+    },
+    {
       "trait_type": "Head Chassis",
       "value": "Red Winged-Soldier Stencil Helmet"
     },
