@@ -335,7 +335,7 @@
 
           <!-- Quantity Selector -->
           <div class="space-y-3 mb-8">
-            <label class="text-xs font-mono text-slate-400 uppercase tracking-wider block">Quantity (Max 5 per TX)</label>
+            <label class="text-xs font-mono text-slate-400 uppercase tracking-wider block">Quantity (Max 5 per wallet)</label>
             <div class="flex items-center justify-between bg-bass-darker rounded-xl p-2 border border-bass-border">
               <button id="qty-minus" class="w-12 h-12 rounded-lg bg-bass-card hover:bg-bass-border text-white text-xl font-bold flex items-center justify-center transition-colors active:scale-95">-</button>
               <span id="mint-qty" class="font-display font-bold text-3xl text-white">1</span>
@@ -486,7 +486,7 @@
           <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-bass-border">
             
             <!-- Transport Controls -->
-            <div class="flex items-center space-x-3">
+            <div class="flex flex-wrap items-center gap-3">
               <button id="seq-play-btn" class="px-6 py-2.5 rounded-xl bg-bass-toxic hover:bg-emerald-400 text-bass-black font-display font-bold text-sm transition-all flex items-center space-x-2 shadow-md hover:shadow-bass-toxic/30 active:scale-95">
                 <svg id="play-icon" class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                 <span id="play-btn-text">PLAY PATTERN</span>
@@ -535,7 +535,7 @@
                 <span>🎛️</span>
                 <span>MASTER ANALOG FX RACK & SIGNAL PROCESSING</span>
               </span>
-              <div class="flex items-center space-x-2 text-[11px]">
+              <div class="flex flex-wrap items-center gap-2 text-[11px]">
                 <button id="toggle-saturation-btn" class="px-2.5 py-1 rounded bg-bass-toxic/20 text-bass-toxic border border-bass-toxic font-bold">WARM: ON</button>
                 <button id="toggle-delay-btn" class="px-2.5 py-1 rounded bg-bass-cyan/20 text-bass-cyan border border-bass-cyan font-bold">ECHO DELAY: ON</button>
                 <button id="toggle-dist-btn" class="px-2.5 py-1 rounded bg-bass-card text-slate-400 border border-bass-border font-bold">DRIVE: OFF</button>
@@ -779,14 +779,14 @@
                 <span class="text-xs font-mono text-bass-toxic font-bold uppercase tracking-wider block">🎹 LIVE SYNTH LAB & MELODIC KEYS</span>
                 <span class="text-[11px] font-mono text-slate-400">PLAY LIVE BASSLINES & LEADS VIA MOUSE, TOUCH, OR KEYBOARD (<kbd class="px-1 py-0.5 rounded bg-bass-card text-white">A</kbd> - <kbd class="px-1 py-0.5 rounded bg-bass-card text-white">K</kbd>)</span>
               </div>
-              <div class="flex items-center space-x-3 text-xs font-mono">
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-mono max-w-full">
                 <span class="text-slate-400">SYNTH ENGINE:</span>
-                <select id="synth-lab-preset" class="bg-bass-card text-white border border-bass-border rounded px-2.5 py-1 text-xs">
+                <select id="synth-lab-preset" class="bg-bass-card text-white border border-bass-border rounded px-2.5 py-1 text-xs max-w-full">
                   <option value="vocoder">Intergalactic Vocoder Lead</option>
                   <option value="wobble">140 Dubstep Wobble</option>
                   <option value="rhodes">Electro-Soul Rhodes</option>
                   <option value="industrial">Industrial Distorted Lead</option>
-                  <option value="gong">Danny Carey Tribal Bell</option>
+                  <option value="gong">Temple Tribal Bell</option>
                 </select>
                 <div class="flex items-center space-x-1">
                   <button id="octave-down-btn" class="px-2 py-1 rounded bg-bass-card border border-bass-border text-slate-300 font-bold">-1 Oct</button>
@@ -846,7 +846,7 @@
 
           <!-- Pattern Export, Save & Share Toolbar -->
           <div class="pt-4 border-t border-bass-border flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
-            <div class="flex items-center space-x-2">
+            <div class="flex flex-wrap items-center gap-2">
               <span class="text-slate-400">PATTERN UTILITIES:</span>
               <button id="export-wav-btn" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-bass-toxic/20 to-bass-cyan/20 border border-bass-toxic text-bass-toxic hover:text-white hover:bg-bass-toxic font-mono text-xs font-bold flex items-center space-x-1.5 transition-all shadow-sm">
             <span>🎵</span>
@@ -1515,7 +1515,7 @@
       alchemist: {
         title: "Electro-Soul Alchemists",
         badge: "SOUND: ELECTRO-SOUL LIGHTSHOW",
-        subtitle: "CLAN 03 // COLOR MAP MODULAR & LASER CANOPY",
+        subtitle: "CLAN 03 // MODULAR SPECTRUM & LASER CANOPY",
         desc: "Outfitted with triple chest analog VU meters, glowing vacuum tubes, modular synth shoulder racks, dusty vinyl crates, and a 16-pad MPC drum sampler under a full volumetric rainbow laser canopy.",
         trait: "Triple VU-Meter Chest & Modular Laser Canopy",
         ability: "Harmonic Resonance (+25% Points on Hold Notes)",
@@ -1532,7 +1532,7 @@
         title: "Industrial Mecha",
         badge: "SOUND: HYBRID NU-METAL REMIX",
         subtitle: "CLAN 04 // HYBRID RIG & REMIX FOUNDRY",
-        desc: "Giant weathered gunmetal combat mechs stenciled with the iconic red dragonfly soldier emblem, standing inside a dark steel foundry filled with overhead cranes, Marshall amplifier stacks, and welding sparks.",
+        desc: "Giant weathered gunmetal combat mechs stenciled with a red winged-soldier emblem, standing inside a dark steel foundry filled with overhead cranes, towering tube-amp stacks, and welding sparks.",
         trait: "Holographic Stencil Wings & Neon Turntable Plinths",
         ability: "Distortion Surge (Absorbs 1 Missed Beat per Match)",
         soundLabel: "Distorted Power Chords & Downbeat Industrial Drums",
@@ -1548,7 +1548,7 @@
         title: "Polyrhythmic Biomechs",
         badge: "SOUND: ODD-METER PROG RITUAL",
         subtitle: "CLAN 05 // GOLDEN SPIRAL VISIONARY TEMPLE",
-        desc: "Dark obsidian automaton surrounded by towering four-sided pillars of multi-faced heads with flaming third-eye spirals, Danny Carey's hammered bronze gong, and a carved obsidian 7-pointed heptagram monolith.",
+        desc: "Dark obsidian automaton surrounded by towering four-sided pillars of multi-faced heads with flaming third-eye spirals, a hammered bronze temple gong, and a carved obsidian 7-pointed heptagram monolith.",
         trait: "Hovering Mandala Drum Pads & Heptagram Altar",
         ability: "Polyrhythm Trance (Double Score on Odd-Meter bars)",
         soundLabel: "Shifting 5/4 and 7/8 Polyrhythms & Tribal Drums",

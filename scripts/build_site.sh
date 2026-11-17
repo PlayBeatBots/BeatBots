@@ -15,4 +15,6 @@ rm -rf site/kits && cp -r site-src/kits site/kits
 rm -rf site/img && cp -r site-src/img site/img
 cp site-src/_headers site/_headers
 rm -rf site/tracks && mkdir -p site/tracks && cp -r site-src/tracks/. site/tracks/
+cp site-src/robots.txt site/robots.txt
+cp site-src/sitemap.xml site/sitemap.xml
 echo "✅ site/ built for $NETWORK (Candy Machine $CM)"
