@@ -1,7 +1,7 @@
 {
   "collection_name": "BeatBots Genesis",
   "total_supply": 888,
-  "mint_price_sol": 0.5,
+  "mint_price_sol": "TBD",
   "royalty_basis_points": 500,
   "creators": [
     {
@@ -17,7 +17,6 @@
     "bboy": {
       "clan_id": "01",
       "name": "Intergalactic B-Boys",
-      "inspiration": "Beastie Boys (Hello Nasty & Hot Sauce Committee)",
       "allocation": 210,
       "percentage": 23.65,
       "theme_color": "#00FF87",
@@ -57,19 +56,41 @@
       "stage_backdrop": [
         "Stacked Brooklyn Boombox Wall",
         "Underground Rave Stage",
-        "Beastie Sound Alley",
+        "Brooklyn Sound Alley",
         "Neon Turntable Plinth"
       ],
       "audio_stems": [
         "Stem 01: Brooklyn Cypher Funk Break",
         "Stem 02: Vinyl Scratch Chop 96BPM",
         "Stem 03: Retro Analog 808 Beat"
-      ]
+      ],
+      "theme": "Brooklyn boom-bap b-boy crew",
+      "tier_power_bands": {
+        "Core Battler": [
+          262,
+          272
+        ],
+        "Rare Specialist": [
+          274,
+          280
+        ],
+        "Epic Veteran": [
+          282,
+          287
+        ],
+        "Legendary Master": [
+          289,
+          294
+        ],
+        "Mythic Apex (1-of-1)": [
+          297,
+          300
+        ]
+      }
     },
     "dub": {
       "clan_id": "02",
       "name": "140 Dub Operators",
-      "inspiration": "Bassnectar Live Rig (20 Double-Bins Up Front)",
       "allocation": 195,
       "percentage": 21.96,
       "theme_color": "#06B6D4",
@@ -103,7 +124,7 @@
       "chest_rig": [
         "20 Double-Bin Subwoofer Wall",
         "Center Matrix Mixer & Dual Laptops",
-        "Crown Macro-Tech 5000VZ Rig",
+        "Macro-Watt 5000 Power Amp Rig",
         "Analog Sub-Harmonic Synthesizer"
       ],
       "stage_backdrop": [
@@ -116,12 +137,34 @@
         "Stem 01: 30Hz Sine Sub Drop",
         "Stem 02: 140 Dub Siren Stomp",
         "Stem 03: Heavy Double-Bin Resonance"
-      ]
+      ],
+      "theme": "140 bass-music sound-system rig",
+      "tier_power_bands": {
+        "Core Battler": [
+          262,
+          272
+        ],
+        "Rare Specialist": [
+          274,
+          280
+        ],
+        "Epic Veteran": [
+          282,
+          287
+        ],
+        "Legendary Master": [
+          289,
+          294
+        ],
+        "Mythic Apex (1-of-1)": [
+          297,
+          300
+        ]
+      }
     },
     "alchemist": {
       "clan_id": "03",
       "name": "Electro-Soul Alchemists",
-      "inspiration": "Pretty Lights (Color Map Modular & Laser Canopy)",
       "allocation": 175,
       "percentage": 19.71,
       "theme_color": "#FFB020",
@@ -146,7 +189,7 @@
         "V1 OG WAREHOUSE"
       ],
       "head_chassis": [
-        "Holographic Color Map Visor",
+        "Holographic Spectrum Visor",
         "Modular Patchbay Crown",
         "Glowing Vacuum Tube Halo",
         "Vintage Ribbon Mic Antenna"
@@ -160,19 +203,41 @@
       "stage_backdrop": [
         "Volumetric Rainbow Laser Canopy",
         "Abandoned Brick Warehouse",
-        "Color Map Modular Arena",
-        "Red Rocks Starlight Stage"
+        "Spectrum Modular Arena",
+        "Red Canyon Starlight Amphitheater"
       ],
       "audio_stems": [
         "Stem 01: Soulful MPC Vinyl Groove",
         "Stem 02: Warm Tube Harmonic Pad",
         "Stem 03: Laser Canopy Synth Lead"
-      ]
+      ],
+      "theme": "Electro-soul modular laser show",
+      "tier_power_bands": {
+        "Core Battler": [
+          262,
+          272
+        ],
+        "Rare Specialist": [
+          274,
+          280
+        ],
+        "Epic Veteran": [
+          282,
+          287
+        ],
+        "Legendary Master": [
+          289,
+          294
+        ],
+        "Mythic Apex (1-of-1)": [
+          297,
+          300
+        ]
+      }
     },
     "industrial": {
       "clan_id": "04",
       "name": "Industrial Mecha",
-      "inspiration": "Linkin Park (Hybrid Theory & Reanimation Foundry)",
       "allocation": 165,
       "percentage": 18.58,
       "theme_color": "#FF2E54",
@@ -198,7 +263,7 @@
       ],
       "head_chassis": [
         "Weathered Gunmetal Mecha Visor",
-        "Red Dragonfly Stencil Helmet",
+        "Red Winged-Soldier Stencil Helmet",
         "Heavy Combat Gas Filter",
         "Tempered Industrial Steel Cowl"
       ],
@@ -206,24 +271,46 @@
         "Tube Amplifier Stack Core",
         "Overhead Foundry Crane Rig",
         "Distorted Pre-Amp Vacuum Circuit",
-        "Reanimation Soldier Fuel Cell"
+        "Remix Soldier Fuel Cell"
       ],
       "stage_backdrop": [
         "Dark Steel Foundry with Overhead Cranes",
-        "Hybrid Theory Underground Bunker",
-        "Reanimation Scrap Yard",
+        "Hybrid Rig Underground Bunker",
+        "Remix Scrap Yard",
         "Welding Spark Steel Mill"
       ],
       "audio_stems": [
         "Stem 01: Distorted Power Chord Riff",
         "Stem 02: Downbeat Industrial Heavy Drums",
-        "Stem 03: Reanimation Turntable Scrub"
-      ]
+        "Stem 03: Remix Turntable Scrub"
+      ],
+      "theme": "Hybrid nu-metal remix foundry",
+      "tier_power_bands": {
+        "Core Battler": [
+          262,
+          272
+        ],
+        "Rare Specialist": [
+          274,
+          280
+        ],
+        "Epic Veteran": [
+          282,
+          287
+        ],
+        "Legendary Master": [
+          289,
+          294
+        ],
+        "Mythic Apex (1-of-1)": [
+          297,
+          300
+        ]
+      }
     },
     "biomech": {
       "clan_id": "05",
       "name": "Polyrhythmic Biomechs",
-      "inspiration": "Tool (Lateralus Alex Grey Net of Being)",
       "allocation": 143,
       "percentage": 16.1,
       "theme_color": "#A855F7",
@@ -244,32 +331,55 @@
         "Core Battler": 65
       },
       "editions": [
-        "V2 ALEX GREY TEMPLE",
+        "V2 VISIONARY TEMPLE",
         "V1 SUBTERRANEAN TORCHLIT"
       ],
       "head_chassis": [
         "Four-Sided Multi-Faced Obsidian Heads",
         "Flaming Third-Eye Spiral",
-        "Net of Being Crown",
+        "Lattice of Being Crown",
         "Biomechanical Heptagram Crest"
       ],
       "chest_rig": [
         "Hovering Mandala Drum Pads",
         "Carved Obsidian 7-Pointed Monolith",
         "Hammered Bronze Temple Gong",
-        "Lateralus Energy Conduit"
+        "Golden Spiral Energy Conduit"
       ],
       "stage_backdrop": [
-        "Alex Grey Net of Being Temple",
+        "Visionary Lattice Temple",
         "Subterranean Torchlit Crypt",
-        "Lateralus Sacred Geometry Void",
+        "Golden Spiral Sacred Geometry Void",
         "7-Pointed Star Monolith Altar"
       ],
       "audio_stems": [
         "Stem 01: Shifting 7/8 Mandala Drums",
         "Stem 02: Hammered Bronze Gong Strike",
-        "Stem 03: Lateralus Tribal Bass Drone"
-      ]
+        "Stem 03: Golden Spiral Tribal Bass Drone"
+      ],
+      "theme": "Odd-meter prog ritual temple",
+      "tier_power_bands": {
+        "Core Battler": [
+          262,
+          272
+        ],
+        "Rare Specialist": [
+          274,
+          280
+        ],
+        "Epic Veteran": [
+          282,
+          287
+        ],
+        "Legendary Master": [
+          289,
+          294
+        ],
+        "Mythic Apex (1-of-1)": [
+          297,
+          300
+        ]
+      }
     }
   }
 }

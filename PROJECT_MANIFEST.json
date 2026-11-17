@@ -34,36 +34,31 @@
       "count": 210,
       "share": 0.2365,
       "base_bpm": 96,
-      "theme_color": "#00FF87",
-      "inspiration": "Beastie Boys (Hello Nasty & Hot Sauce Committee)"
+      "theme_color": "#00FF87"
     },
     "140 Dub Operators": {
       "count": 195,
       "share": 0.2196,
       "base_bpm": 140,
-      "theme_color": "#06B6D4",
-      "inspiration": "Bassnectar Live Rig (20 Double-Bins Up Front)"
+      "theme_color": "#06B6D4"
     },
     "Electro-Soul Alchemists": {
       "count": 175,
       "share": 0.1971,
       "base_bpm": 90,
-      "theme_color": "#FFB020",
-      "inspiration": "Pretty Lights (Color Map Modular & Laser Canopy)"
+      "theme_color": "#FFB020"
     },
     "Industrial Mecha": {
       "count": 165,
       "share": 0.1858,
       "base_bpm": 105,
-      "theme_color": "#FF2E54",
-      "inspiration": "Linkin Park (Hybrid Theory & Reanimation Foundry)"
+      "theme_color": "#FF2E54"
     },
     "Polyrhythmic Biomechs": {
       "count": 143,
       "share": 0.161,
       "base_bpm": 138,
-      "theme_color": "#A855F7",
-      "inspiration": "Tool (Lateralus Alex Grey Net of Being)"
+      "theme_color": "#A855F7"
     }
   },
   "rarity_tiers": {

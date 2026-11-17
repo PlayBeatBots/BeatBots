@@ -49,12 +49,12 @@
     },
     {
       "trait_type": "Attack",
-      "value": "96",
+      "value": "95",
       "display_type": "number"
     },
     {
       "trait_type": "Defense",
-      "value": "99",
+      "value": "100",
       "display_type": "number"
     },
     {

@@ -28,7 +28,7 @@
     },
     {
       "trait_type": "Stage Backdrop",
-      "value": "Color Map Modular Arena"
+      "value": "Spectrum Modular Arena"
     },
     {
       "trait_type": "Battle Ability",
@@ -49,12 +49,12 @@
     },
     {
       "trait_type": "Attack",
-      "value": "88",
+      "value": "83",
       "display_type": "number"
     },
     {
       "trait_type": "Defense",
-      "value": "92",
+      "value": "91",
       "display_type": "number"
     },
     {
@@ -64,7 +64,7 @@
     },
     {
       "trait_type": "Power Rating",
-      "value": "273",
+      "value": "267",
       "display_type": "number"
     },
     {

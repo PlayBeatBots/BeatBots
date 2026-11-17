@@ -49,17 +49,17 @@
     },
     {
       "trait_type": "Attack",
-      "value": "94",
+      "value": "89",
       "display_type": "number"
     },
     {
       "trait_type": "Defense",
-      "value": "92",
+      "value": "93",
       "display_type": "number"
     },
     {
       "trait_type": "Speed",
-      "value": "96",
+      "value": "100",
       "display_type": "number"
     },
     {
