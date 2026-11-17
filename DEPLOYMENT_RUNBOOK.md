@@ -22,7 +22,7 @@ checked_at: 2026-10-23T16:45Z (Claude)
 | Collection NFT | GzGaVXPwRxMn3D89NsdwUPTHAFUyjyUyv1AtkqJmNJzf |
 | Guards | solPayment 0.5 SOL, botTax 0.01, mintLimit 5 per wallet, startDate |
 | Minted (devnet) | ~11 / 888 (test mints) |
-| Site | https://playbeatbots.pages.dev (live). playbeatbots.com custom domain NOT attached yet. |
+| Site | https://playbeatbots.com (custom domain live 2026-11-17, www too); https://playbeatbots.pages.dev still serves. |
 | Hosting | Cloudflare Pages, Git-connected to PlayBeatBots/BeatBots (branch main), output dir `site/`. Every push to main redeploys. |
 | Art model | Option 1: shared clan-edition art; Cozza Frenzy is the main display image. "Inspiration" trait removed; each theme is nodded to in copy/traits. |
 | Mainnet config | `config.json` (start date Nov 1) — wallets are placeholders. |
@@ -81,6 +81,7 @@ Verify: `curl -s https://playbeatbots.pages.dev/ | grep BBRhythm` and run the br
 SITE_URL=... node tools/browser_e2e.cjs        # page + mint flow
 node tools/audio_test.cjs site <shotDir>       # engine voices, levels, export
 node tools/rhythm_test.cjs site <shotDir>      # bot play-test, late-press, idle, station export
+tools/qa/run_all.sh site qa-out                 # ALL of: ui (5 viewports, nav, anchors, banned names), img, overflow, timing, audio, rhythm
 ```
 Headless tests serve the site via Playwright page.route on http://beatbots.test (the proxy blocks localhost).
 
@@ -96,6 +97,9 @@ Headless tests serve the site via Playwright page.route on http://beatbots.test 
 Troubleshooting: "unknown variant irys" -> bundlr. Bot tax charged but no NFT -> guard rejected (limit/date/funds); pre-flight now blocks this. Sugar "config file not found" -> solana config set. Cloudflare GitHub app stuck -> uninstall in a normal browser, reinstall on PlayBeatBots with BeatBots repo only.
 
 ## 10. CHANGE LOG (newest first; append a line for every change)
+- 2026-11-17 11:40 — 2a02ae9 Custom domain live (Nori, Q-001): sitemap.xml, robots.txt and <link rel=canonical> now point at https://playbeatbots.com. Verified: full QA suite 6/6 pass; playbeatbots.com + www 200; live robots.txt shows .com sitemap. feat/boombox synced (c9ff331). — Claude
+- 2026-11-17 11:15 — 3934c48 tools/qa/ committed (ui_check, imgcheck, overflow, timing, run_all.sh); QA scripts no longer live only in a chat workspace. Run: `tools/qa/run_all.sh site qa-out`. main + feat/boombox: 6/6 pass. — Claude
+- 2026-11-17 10:58 — c282d4b NFT metadata: theme names replace real names; rarer tier = higher Power Rating bands; chain label 'Solana'; config price TBD. — Claude
 - 2026-10-23 17:05 — DECISION: music policy added (rule 7). Boombox player / TRACK_LIBRARY / ranked-vs-sandbox build is next, waiting on Jake's tracks from his iMac. — Claude
 - 2026-10-23 16:45 — Runbook rewritten to current reality (was stale: Irys/Wrangler/old budget). Repo + Drive copies synced. — Claude
 - 2026-10-23 16:31 — 25062a7 Rhythm battle: BeatMap engine, pluck synth, Track 01, station export. Verified: perfect bot 29/29 PERFECT S+, 70 ms late = GREAT, idle = F, station export OK, no console errors; live on pages.dev. — Claude
