@@ -32,7 +32,6 @@ EDITION_ART = {
     ("Intergalactic B-Boys", "V2 TURNTABLE VARIANT"): "bboy_2.jpg",
     ("140 Dub Operators", "V3 COZZA FRENZY STAGE"): "dub_0.jpg",
     ("140 Dub Operators", "V2 BASEMENT SYNTH"): "dub_1.jpg",
-    ("140 Dub Operators", "V1 OG TUBE RIG"): "dub_2.jpg",
     ("Electro-Soul Alchemists", "V2 MODULAR LASER STAGE"): "alchemist_0.jpg",
     ("Electro-Soul Alchemists", "V1 OG WAREHOUSE"): "alchemist_1.jpg",
     ("Industrial Mecha", "V2 STEEL FOUNDRY MECH"): "industrial_0.jpg",
