@@ -7,7 +7,7 @@
   <title>BeatBots: Genesis Mint | Underground Audio Battlers</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script>
     tailwind.config = {
@@ -17,27 +17,32 @@
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
             display: ['Chakra Petch', 'sans-serif'],
-            mono: ['Space Mono', 'monospace'],
+            mono: ['JetBrains Mono', 'Space Mono', 'monospace'],
           },
+          gridTemplateColumns: { 16: 'repeat(16, minmax(0, 1fr))' },
           colors: {
             bass: {
-              black: '#06080C',
-              darker: '#0A0E17',
-              card: '#111724',
-              border: '#1E293B',
-              neon: '#10B981',
-              toxic: '#00FF87',
+              black: '#03050C',
+              darker: '#060A16',
+              card: '#0A1124',
+              border: '#18264A',
+              neon: '#3CFFB4',
+              toxic: '#00E5FF',
               amber: '#FFB020',
-              purple: '#A855F7',
-              cyan: '#06B6D4',
+              purple: '#FF2BD6',
+              cyan: '#2F7BFF',
               crimson: '#FF2E54'
-            }
+            },
+            emerald: { 300: '#7FD8FF', 400: '#2F7BFF', 500: '#2F7BFF' },
+            slate: { 200: '#DCE6FF', 300: '#B4C0E2', 400: '#8C9AC2', 500: '#7F8DB5', 600: '#4A5880', 700: '#24396B' }
           }
         }
       }
     };
   </script>
   <style>
+    /* 16-step sequencer grid: Tailwind's default build stops at grid-cols-12 */
+    .grid-cols-16 { grid-template-columns: repeat(16, minmax(0, 1fr)); }
     body {
       background-color: #06080C;
       color: #E2E8F0;
@@ -49,10 +54,10 @@
       pointer-events: none;
     }
     .glow-toxic {
-      box-shadow: 0 0 25px rgba(0, 255, 135, 0.25);
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.25);
     }
     .glow-cyan {
-      box-shadow: 0 0 25px rgba(6, 182, 212, 0.25);
+      box-shadow: 0 0 25px rgba(47, 123, 255, 0.25);
     }
     .glow-amber {
       box-shadow: 0 0 25px rgba(255, 176, 32, 0.25);
@@ -64,7 +69,7 @@
       box-shadow: 0 0 25px rgba(255, 46, 84, 0.25);
     }
     .text-glow-toxic {
-      text-shadow: 0 0 12px rgba(0, 255, 135, 0.6);
+      text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
     }
     .text-glow-amber {
       text-shadow: 0 0 12px rgba(255, 176, 32, 0.6);
@@ -76,8 +81,8 @@
         linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     }
     .step-active {
-      background-color: #00FF87 !important;
-      box-shadow: 0 0 12px #00FF87;
+      background-color: #00E5FF !important;
+      box-shadow: 0 0 12px #00E5FF;
     }
     .step-current {
       border-color: #FFB020 !important;
@@ -96,228 +101,120 @@
       border-radius: 3px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #00FF87;
+      background: #00E5FF;
     }
   </style>
+  <link rel="stylesheet" href="command-center.css">
 
   <!-- Solana Web3.js SDK v1.95.4 -->
   <script src="https://unpkg.com/@solana/web3.js@1.95.4/lib/index.iife.min.js"></script>
 </head>
-<body class="font-sans antialiased selection:bg-bass-toxic selection:text-black relative">
+<body class="cc font-sans antialiased selection:bg-bass-toxic selection:text-black relative">
 
   <!-- Optional CRT Scanline Layer -->
   <div id="crt-overlay" class="fixed inset-0 z-50 crt-scanlines hidden"></div>
 
-  <!-- Top Announcement Bar -->
-  <aside aria-label="Announcement" class="bg-gradient-to-r from-bass-card via-bass-darker to-bass-card border-b border-bass-border py-2 px-4 text-xs font-mono text-center text-slate-300 flex items-center justify-between">
-    <div class="hidden sm:flex items-center space-x-2">
-      <button id="cluster-switch-btn" class="flex items-center space-x-1.5 px-2.5 py-1 rounded bg-bass-darker border border-bass-border hover:border-bass-toxic text-slate-300 hover:text-white transition-all text-xs font-mono">
-        <span id="cluster-indicator" class="w-2 h-2 rounded-full bg-bass-toxic animate-ping inline-block"></span>
-        <span>CLUSTER: <strong id="cluster-label" class="text-bass-toxic">MAINNET-BETA</strong></span>
-        <span class="text-[10px] text-slate-400 bg-bass-card px-1 rounded border border-bass-border ml-1">SWITCH</span>
-      </button>
-    </div>
-    <div class="mx-auto sm:mx-0 flex items-center space-x-2">
-      <span class="inline-block px-2 py-0.5 rounded bg-bass-toxic/20 text-bass-toxic font-bold">GENESIS DROP</span>
-      <span>888 Handcrafted Autonomous Audio Battlers • DEVNET TEST, mainnet date TBA</span>
-    </div>
-    <div class="flex items-center space-x-3">
-      <button id="toggle-crt-btn" class="text-[11px] text-slate-400 hover:text-bass-toxic flex items-center space-x-1 transition-colors">
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-        <span>CRT FX: <span id="crt-status">OFF</span></span>
-      </button>
+  <!-- Command Center status bar -->
+  <header class="status">
+    <a class="brand" href="#hero-section"><span class="logo"><i></i></span><span>BEAT<b>BOTS</b></span></a>
+    <span class="hide-m" style="white-space:nowrap"><span class="led"></span><span class="v">SYSTEM ONLINE</span></span>
+    <span class="devnet-m"><span class="led amber"></span>DEVNET TEST</span>
+    <span class="sep hide-m"></span>
+    <button id="cluster-switch-btn" class="net hide-m" title="Switch Solana cluster"><span id="cluster-indicator"></span>NET <span class="v">SOLANA <strong id="cluster-label" class="text-bass-toxic">MAINNET-BETA</strong></span></button>
+    <span class="sep hide-m hide-t"></span>
+    <span class="hide-m hide-t" style="white-space:nowrap">BPM <span class="v" id="cc-bpm">105</span></span>
+    <span class="sep hide-m"></span>
+    <div class="ticker hide-m"><span><em>◆ GENESIS DROP</em> &nbsp;888 Handcrafted Autonomous Audio Battlers &nbsp;//&nbsp; <em>DEVNET TEST, mainnet date TBA</em> &nbsp;//&nbsp; Five Legendary Sound Clans &nbsp;//&nbsp; All audio rendered live in your browser</span></div>
+    <span class="hide-m hide-t" id="cc-clock">--:--:--</span>
+    <canvas id="header-wave-canvas" width="60" height="24" class="hide-m"></canvas>
+    <button id="wallet-connect-btn" class="btn-wallet">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+      <span id="wallet-btn-text">Connect Solana</span>
+    </button>
+  </header>
+
+  <!-- Command Center side console (desktop) -->
+  <aside class="console" aria-label="Sections">
+    <h6><span>CONTROL MODULES</span><span>v3.0</span></h6>
+    <a class="mod on" href="#hero-section"><span class="hex"><span>00</span></span><span>Command<small>HERO // STATUS</small></span><i class="st"></i></a>
+    <a class="mod" href="#mint-section"><span class="hex"><span>01</span></span><span>Genesis Mint<small>DEVNET TEST</small></span><i class="st"></i></a>
+    <a class="mod" href="#clans-section"><span class="hex"><span>02</span></span><span>Sound Clans<small>5 FACTIONS</small></span><i class="st"></i></a>
+    <a class="mod" href="#audio-section"><span class="hex"><span>03</span></span><span>Sound Station<small>8CH SEQUENCER</small></span><i class="st"></i></a>
+    <a class="mod" href="#arcade-section"><span class="hex"><span>04</span></span><span>Battle Arcade<small>3-LANE DUEL</small></span><i class="st"></i></a>
+    <a class="mod" href="#armory-section"><span class="hex"><span>05</span></span><span>Armory &amp; Forge<small>TRAIT FORGE v1.0</small></span><i class="st"></i></a>
+    <a class="mod" href="#vault-section"><span class="hex"><span>06</span></span><span>Founder Vault<small>TECSUPORT ARCHIVE</small></span><i class="st"></i></a>
+    <a class="mod" href="#token-section"><span class="hex"><span>07</span></span><span>$BEATBOT<small>BATTLE SCRAP</small></span><i class="st"></i></a>
+    <a class="mod" href="#faq-section"><span class="hex"><span>08</span></span><span>FAQ<small>SUPPORT LOG</small></span><i class="st"></i></a>
+    <div class="meter">
+      <div class="lbl" style="margin-bottom:10px;display:flex;justify-content:space-between"><span>MASTER OUT</span><span class="c-cyan">L/R</span></div>
+      <div class="vu" id="cc-vu"></div>
+      <div class="meta">CLUSTER <b>DEVNET</b><br>MAINNET <b class="c-amber">DATE TBA</b><br><button id="toggle-crt-btn">CRT FX: <span id="crt-status">OFF</span></button></div>
     </div>
   </aside>
 
-  <!-- Navigation -->
-  <header class="sticky top-0 z-40 bg-bass-black/90 backdrop-blur-md border-b border-bass-border">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-      <!-- Logo -->
-      <a href="#hero-section" class="flex items-center space-x-3 group">
-        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-bass-toxic via-bass-cyan to-bass-amber p-0.5 shadow-lg group-hover:scale-105 transition-transform">
-          <div class="w-full h-full bg-bass-black rounded-[7px] flex items-center justify-center">
-            <svg class="w-6 h-6 text-bass-toxic" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-            </svg>
-          </div>
-        </div>
-        <div>
-          <span class="font-display font-bold text-2xl tracking-wider text-white flex items-center">
-            BEAT<span class="text-bass-toxic">BOTS</span>
-          </span>
-          <span class="text-[10px] font-mono tracking-widest text-slate-400 block -mt-1">GENESIS SOUND SYSTEM</span>
-        </div>
-      </a>
-
-      <!-- Desktop Nav Links -->
-      <nav class="hidden lg:flex items-center space-x-7 text-sm font-medium text-slate-300">
-        <a href="#mint-section" class="hover:text-bass-toxic transition-colors">Mint</a>
-        <a href="#clans-section" class="hover:text-bass-toxic transition-colors">Sound Clans</a>
-        <a href="#audio-section" class="hover:text-bass-toxic transition-colors">Sound Station</a>
-        <a href="#arcade-section" class="hover:text-bass-toxic transition-colors">Battle Arcade</a>
-        <a href="#armory-section" class="hover:text-bass-toxic transition-colors">Bot Armory</a>
-        <a href="#vault-section" class="hover:text-bass-amber transition-colors">TecSuport Vault</a>
-        <a href="#token-section" class="hover:text-bass-toxic transition-colors">$BEATBOT</a>
-      </nav>
-
-      <!-- Right Header Actions -->
-      <div class="flex items-center space-x-3">
-        <!-- Live Audio Wave Mini-Canvas -->
-        <canvas id="header-wave-canvas" width="60" height="24" class="hidden sm:block rounded bg-bass-darker border border-bass-border"></canvas>
-
-        <!-- Wallet Controls -->
-        <div class="relative">
-          <button id="wallet-connect-btn" class="flex items-center space-x-2 bg-gradient-to-r from-bass-toxic to-emerald-400 hover:from-emerald-400 hover:to-bass-toxic text-bass-black font-display font-bold px-4 py-2 rounded-lg text-sm transition-all duration-200 shadow-md hover:shadow-bass-toxic/30 active:scale-95">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
-            <span id="wallet-btn-text">Connect Solana</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
-
   <!-- Hero Section -->
-  <main>
-    <section id="hero-section" class="relative min-h-[92vh] flex items-center justify-center pt-8 pb-16 overflow-hidden">
-      <!-- Hero Background Image with Overlay -->
-      <div class="absolute inset-0 z-0">
-        <img src="img/5beb69bc15.jpg" alt="Underground Rave Arena" class="w-full h-full object-cover object-center filter brightness-30 opacity-40">
-        <div class="absolute inset-0 bg-gradient-to-b from-bass-black/80 via-bass-black/60 to-bass-black"></div>
-        <div class="absolute inset-0 grid-pattern opacity-40"></div>
-      </div>
-
-      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col lg:flex-row items-center gap-12">
-        <!-- Left Hero Content -->
-        <div class="flex-1 text-center lg:text-left space-y-6">
-          <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-bass-card border border-bass-border text-xs font-mono text-slate-300">
-            <span class="w-2 h-2 rounded-full bg-bass-toxic animate-pulse"></span>
-            <span>GENESIS COLLECTION // 888 AUTONOMOUS AUDIO BATTLERS</span>
-          </div>
-
-          <h1 class="font-display font-bold text-4xl sm:text-6xl lg:text-7xl tracking-tight text-white leading-[1.08]">
-            UNDERGROUND <br>
-            <span class="bg-gradient-to-r from-bass-toxic via-emerald-300 to-bass-cyan bg-clip-text text-transparent">BASS CULTURE.</span> <br>
-            RHYTHM DUELS.
-          </h1>
-
-          <p class="text-slate-300 text-base sm:text-lg max-w-2xl font-normal leading-relaxed">
-            BeatBots is an asynchronous 3-lane rhythm battle universe built for bassheads and breakbeat purists. Collect handcrafted Genesis NFT battlers across Five Legendary Sound Clans, forge beats in our 16-step modular sequencer, and duel for $SCRAP on Solana.
-          </p>
-
-          <!-- Clan Fast-Selector Pills -->
-          <div class="pt-2">
-            <span class="text-xs font-mono text-slate-400 block mb-2 uppercase tracking-widest">Select Featured Sound Clan:</span>
-            <div class="flex flex-wrap justify-center lg:justify-start gap-2">
-              <button class="hero-clan-pill px-3 py-1.5 rounded-lg border border-bass-toxic bg-bass-toxic/10 text-bass-toxic text-xs font-mono font-bold transition-all" data-clan="bboy">01: B-Boys</button>
-              <button class="hero-clan-pill px-3 py-1.5 rounded-lg border border-bass-border bg-bass-darker text-slate-400 hover:text-slate-200 text-xs font-mono transition-all" data-clan="dub">02: 140 Dub</button>
-              <button class="hero-clan-pill px-3 py-1.5 rounded-lg border border-bass-border bg-bass-darker text-slate-400 hover:text-slate-200 text-xs font-mono transition-all" data-clan="alchemist">03: Electro-Soul</button>
-              <button class="hero-clan-pill px-3 py-1.5 rounded-lg border border-bass-border bg-bass-darker text-slate-400 hover:text-slate-200 text-xs font-mono transition-all" data-clan="industrial">04: Industrial</button>
-              <button class="hero-clan-pill px-3 py-1.5 rounded-lg border border-bass-border bg-bass-darker text-slate-400 hover:text-slate-200 text-xs font-mono transition-all" data-clan="biomech">05: Biomechs</button>
+  <main id="top">
+    <nav class="mob-nav" aria-label="Sections">
+      <a href="#mint-section"><i>01</i>Mint</a><a href="#clans-section"><i>02</i>Clans</a><a href="#audio-section"><i>03</i>Station</a><a href="#arcade-section"><i>04</i>Arcade</a><a href="#armory-section"><i>05</i>Armory</a><a href="#vault-section"><i>06</i>Vault</a><a href="#token-section"><i>07</i>$BEATBOT</a><a href="#faq-section"><i>08</i>FAQ</a>
+    </nav>
+    <section id="hero-section" class="hero">
+      <div class="bgimg"></div>
+      <div class="wrap">
+        <div class="hero-grid">
+          <div>
+            <span class="tag cy"><span class="led cyan"></span>GENESIS COLLECTION // 888 AUTONOMOUS AUDIO BATTLERS</span>
+            <h1>Underground<br><span class="g">Bass Culture.</span><br><span class="o">Rhythm Duels.</span></h1>
+            <p class="lede">BeatBots is an asynchronous 3-lane rhythm battle universe built for bassheads and breakbeat purists. Collect handcrafted Genesis NFT battlers across Five Legendary Sound Clans, forge beats in our 16-step modular sequencer, and duel for $SCRAP on Solana.</p>
+            <div class="clansel">
+              <div class="lbl">&gt; Select featured sound clan</div>
+              <div class="chips">
+                <button class="hero-clan-pill chip border-bass-toxic" data-clan="bboy">01: B-Boys</button>
+                <button class="hero-clan-pill chip" data-clan="dub">02: 140 Dub</button>
+                <button class="hero-clan-pill chip" data-clan="alchemist">03: Electro-Soul</button>
+                <button class="hero-clan-pill chip" data-clan="industrial">04: Industrial</button>
+                <button class="hero-clan-pill chip" data-clan="biomech">05: Biomechs</button>
+              </div>
+            </div>
+            <div class="cta">
+              <a class="btn pri" href="#arcade-section">▶ Play Rhythm Arcade</a>
+              <a class="btn sec" href="#mint-section">Mint Genesis Bot <span>→</span></a>
+            </div>
+            <div class="hstats">
+              <div><span class="lbl">Genesis Supply</span><b>888</b></div>
+              <div><span class="lbl">$SCRAP Boost</span><b>1.5x</b></div>
+              <div><span class="lbl">Sound Clans</span><b>05</b></div>
             </div>
           </div>
 
-          <!-- Hero Action Buttons -->
-          <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
-            <a href="#mint-section" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-bass-toxic to-emerald-400 hover:from-emerald-400 hover:to-bass-toxic text-bass-black font-display font-bold text-lg text-center shadow-lg hover:shadow-bass-toxic/40 transition-all duration-200 active:scale-95">
-              MINT GENESIS BOT
-            </a>
-            <a href="#arcade-section" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-bass-card hover:bg-bass-border border border-bass-border text-white font-display font-bold text-lg text-center transition-all duration-200 flex items-center justify-center space-x-2">
-              <svg class="w-5 h-5 text-bass-toxic" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>PLAY RHYTHM ARCADE</span>
-            </a>
-          </div>
-
-          <!-- Quick Metrics Bar -->
-          <div class="grid grid-cols-3 gap-4 pt-4 border-t border-bass-border/60 max-w-lg mx-auto lg:mx-0">
-            <div>
-              <span class="block text-2xl font-display font-bold text-white">888</span>
-              <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">Genesis Supply</span>
-            </div>
-            <div>
-              <span class="block text-2xl font-display font-bold text-bass-amber">1.5x</span>
-              <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">$SCRAP Boost</span>
-            </div>
+          <div class="reactor">
+            <svg class="rings" viewBox="0 0 500 500" aria-hidden="true">
+              <defs><linearGradient id="cc-gcm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00E5FF"/><stop offset=".6" stop-color="#2F7BFF"/><stop offset="1" stop-color="#FF2BD6"/></linearGradient></defs>
+              <circle cx="250" cy="250" r="246" fill="none" stroke="#18264A"/>
+              <g class="spin"><circle cx="250" cy="250" r="234" fill="none" stroke="url(#cc-gcm)" stroke-width="1.5" stroke-dasharray="2 6"/></g>
+              <g class="spin r"><circle cx="250" cy="250" r="218" fill="none" stroke="#00E5FF" stroke-opacity=".85" stroke-width="3" stroke-dasharray="120 40 18 40 60 400"/></g>
+              <g class="spin f"><circle cx="250" cy="250" r="202" fill="none" stroke="#FF2BD6" stroke-width="2" stroke-dasharray="40 260 80 900" stroke-linecap="round"/></g>
+              <g id="cc-ticks"></g>
+              <circle cx="250" cy="250" r="168" fill="none" stroke="#2F7BFF" stroke-opacity=".5"/>
+              <g stroke="#00E5FF" opacity=".6"><line x1="250" y1="-8" x2="250" y2="26"/><line x1="250" y1="474" x2="250" y2="508"/><line x1="-8" y1="250" x2="26" y2="250"/><line x1="474" y1="250" x2="508" y2="250"/></g>
+            </svg>
+            <div class="core"><img id="hero-bot-img" src="img/175697cfe7.jpg" alt="Featured BeatBot"></div>
+            <div class="scan"></div>
+            <div class="callout c1"><span class="hex"><span>001</span></span><div class="box"><div class="lbl">Audio Attack</div><b id="hero-stat-atk">96 / 100</b><div class="bar"><i id="hero-bar-atk" style="width:96%"></i></div></div></div>
+            <div class="callout c2"><span class="hex"><span>002</span></span><div class="box"><div class="lbl">Sub-Bass Defense</div><b id="hero-stat-def">88 / 100</b><div class="bar"><i id="hero-bar-def" style="width:88%"></i></div></div></div>
+            <div class="callout c3"><span class="hex"><span>003</span></span><div class="box"><div class="lbl">Syncopation Speed</div><b id="hero-stat-spd">92 / 100</b><div class="bar"><i id="hero-bar-spd" style="width:92%"></i></div></div></div>
+            <div class="callout c4"><div class="box"><div class="lbl">Serial #042/888 · Stage Edition</div><b id="hero-bot-edition">V2 SPEAKER-CITY</b></div></div>
+            <div class="idplate"><span id="hero-bot-clan-badge">CLAN 01 // INTERGALACTIC CYPHER CREW</span><b id="hero-bot-trait">Scratch Fader Stutter</b><button id="hero-test-sound-btn">▶ Preview Trait SFX</button></div>
           </div>
         </div>
-
-        <!-- Right Hero Hologram Card & Live Stats -->
-        <div class="w-full max-w-md lg:w-96 flex-shrink-0">
-          <div id="hero-bot-card" class="bg-bass-card/90 backdrop-blur-md rounded-2xl border-2 border-bass-toxic p-6 shadow-2xl relative transition-all duration-300">
-            <!-- Glow effect element -->
-            <div id="hero-card-glow" class="absolute -inset-1 bg-gradient-to-r from-bass-toxic to-bass-cyan rounded-2xl opacity-20 filter blur-xl -z-10"></div>
-
-            <!-- Card Header -->
-            <div class="flex items-center justify-between pb-3 border-b border-bass-border">
-              <span id="hero-bot-clan-badge" class="px-2.5 py-1 rounded bg-bass-toxic/20 text-bass-toxic text-xs font-mono font-bold">CLAN 02 // 140 DUB OPERATORS</span>
-              <span class="text-xs font-mono text-slate-400">SERIAL #042/888</span>
-            </div>
-
-            <!-- Card Image Container -->
-            <div class="relative my-4 aspect-square rounded-xl overflow-hidden bg-bass-darker border border-bass-border">
-              <img id="hero-bot-img" src="img/175697cfe7.jpg" alt="Featured BeatBot" class="w-full h-full object-cover">
-              <div class="absolute bottom-2 left-2 right-2 bg-bass-black/85 backdrop-blur-sm p-2 rounded-lg border border-bass-border flex items-center justify-between text-[11px] font-mono">
-                <span class="text-slate-300">STAGE EDITION:</span>
-                <span id="hero-bot-edition" class="text-bass-toxic font-bold">V2 SPEAKER-CITY</span>
-              </div>
-            </div>
-
-            <!-- Bot Live Attributes -->
-            <div class="space-y-2 text-xs font-mono">
-              <div class="flex justify-between items-center text-slate-300">
-                <span>AUDIO ATTACK:</span>
-                <span id="hero-stat-atk" class="text-white font-bold">96 / 100</span>
-              </div>
-              <div class="w-full bg-bass-darker rounded-full h-1.5 overflow-hidden">
-                <div id="hero-bar-atk" class="bg-bass-toxic h-full rounded-full transition-all duration-300" style="width: 96%"></div>
-              </div>
-
-              <div class="flex justify-between items-center text-slate-300 pt-1">
-                <span>SUB-BASS DEFENSE:</span>
-                <span id="hero-stat-def" class="text-white font-bold">88 / 100</span>
-              </div>
-              <div class="w-full bg-bass-darker rounded-full h-1.5 overflow-hidden">
-                <div id="hero-bar-def" class="bg-bass-cyan h-full rounded-full transition-all duration-300" style="width: 88%"></div>
-              </div>
-
-              <div class="flex justify-between items-center text-slate-300 pt-1">
-                <span>SYNCOPATION SPEED:</span>
-                <span id="hero-stat-spd" class="text-white font-bold">92 / 100</span>
-              </div>
-              <div class="w-full bg-bass-darker rounded-full h-1.5 overflow-hidden">
-                <div id="hero-bar-spd" class="bg-bass-amber h-full rounded-full transition-all duration-300" style="width: 92%"></div>
-              </div>
-            </div>
-
-            <!-- Signature Trait Badge -->
-            <div class="mt-4 p-2.5 rounded-lg bg-bass-darker/80 border border-bass-border flex items-center justify-between">
-              <div class="text-[11px] font-mono">
-                <span class="text-slate-400 block text-[9px]">SPECIAL BATTLE TRAIT:</span>
-                <span id="hero-bot-trait" class="text-bass-toxic font-bold">Scratch Fader Stutter</span>
-              </div>
-              <button id="hero-test-sound-btn" class="px-2.5 py-1 rounded bg-bass-card hover:bg-bass-border text-slate-200 text-xs font-mono flex items-center space-x-1 border border-bass-border">
-                <span>▶ Preview</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        <div class="spectrum" id="cc-spectrum" aria-hidden="true"></div>
+        <div class="spec-lbl lbl" aria-hidden="true"><span>30Hz</span><span>125Hz</span><span>500Hz</span><span>2kHz</span><span>8kHz</span><span>20kHz</span></div>
       </div>
     </section>
 
     <!-- Mint Section -->
     <section id="mint-section" class="py-20 bg-bass-darker border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto space-y-4 mb-12">
-          <span class="text-bass-toxic font-mono text-xs uppercase tracking-widest block font-bold">DEVNET TEST, mainnet date TBA</span>
-          <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">GENESIS BEATBOT MINT</h2>
-          <p class="text-slate-400 text-sm sm:text-base">
-            Each Genesis NFT is a 1-of-1 autonomous battler with randomized clan alignment, chassis geometry, and custom audio traits. Minting grants full game utility, custom sequencer sound packs, and lifetime asynchronous tournament entry.
-          </p>
-        </div>
+        <div class="sec-head"><span class="hex"><span>01</span></span><div class="tl"><div class="eyebrow">DEVNET TEST, mainnet date TBA</div><h2>GENESIS BEATBOT MINT</h2><p>Each Genesis NFT is a 1-of-1 autonomous battler with randomized clan alignment, chassis geometry, and custom audio traits. Minting grants full game utility, custom sequencer sound packs, and lifetime asynchronous tournament entry.</p></div><div class="rule" data-r="MODULE 01 // MINT"></div></div>
 
         <div class="max-w-xl mx-auto bg-bass-card rounded-2xl border border-bass-border p-6 sm:p-8 shadow-xl relative overflow-hidden">
           <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-bass-toxic via-bass-cyan to-bass-amber"></div>
@@ -367,13 +264,7 @@
     <!-- Clans Section -->
     <section id="clans-section" class="py-24 bg-bass-black relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
-          <span class="text-bass-toxic font-mono text-xs uppercase tracking-widest block font-bold">GENESIS FACTIONS</span>
-          <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">THE FIVE SOUND CLANS</h2>
-          <p class="text-slate-400 text-sm sm:text-base">
-            Each clan represents a foundational pillar of underground electronic and breakbeat history, armed with distinct audio signatures, visual blueprints, and passive game perks.
-          </p>
-        </div>
+        <div class="sec-head"><span class="hex"><span>02</span></span><div class="tl"><div class="eyebrow">GENESIS FACTIONS</div><h2>THE FIVE SOUND CLANS</h2><p>Each clan represents a foundational pillar of underground electronic and breakbeat history, armed with distinct audio signatures, visual blueprints, and passive game perks.</p></div><div class="rule" data-r="MODULE 02 // FACTIONS"></div></div>
 
         <!-- Clan Tabs -->
         <div class="flex justify-center flex-wrap gap-2 sm:gap-3 mb-10">
@@ -468,16 +359,7 @@
         <!-- Sound Design Station & 16-Step Modular Studio -->
     <section id="audio-section" class="py-24 bg-bass-darker border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto space-y-4 mb-14">
-          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded bg-bass-toxic/15 text-bass-toxic text-xs font-mono font-bold">
-            <span class="w-2 h-2 rounded-full bg-bass-toxic animate-pulse"></span>
-            <span>PRO AUDIO WORKSTATION v3.0 // 8-CHANNEL MODULAR SYNTH & LIVE KEYBOARD LAB</span>
-          </div>
-          <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">SOUND DESIGN STATION</h2>
-          <p class="text-slate-400 text-sm sm:text-base">
-            Professional browser-based electronic sound design suite. Features 8 synthesized instrument channels, per-track pitch & decay shaping, playable 13-key synth lab, 4 pattern memory banks, stereo delay echo, master distortion overdrive, and live performance FX pads.
-          </p>
-        </div>
+        <div class="sec-head"><span class="hex"><span>03</span></span><div class="tl"><div class="eyebrow">PRO AUDIO WORKSTATION v3.0 // 8-CHANNEL MODULAR SYNTH & LIVE KEYBOARD LAB</div><h2>SOUND DESIGN STATION</h2><p>Professional browser-based electronic sound design suite. Features 8 synthesized instrument channels, per-track pitch & decay shaping, playable 13-key synth lab, 4 pattern memory banks, stereo delay echo, master distortion overdrive, and live performance FX pads.</p></div><div class="rule" data-r="MODULE 03 // SYNTH"></div></div>
 
         <!-- Main Station Chassis -->
         <div class="bg-bass-card rounded-2xl border-2 border-bass-border p-6 sm:p-8 shadow-2xl relative space-y-8">
@@ -872,15 +754,7 @@
     <!-- Upgraded 3-Lane Rhythm Arcade Engine -->
     <section id="arcade-section" class="py-24 bg-bass-black relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto space-y-4 mb-14">
-          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded bg-bass-amber/15 text-bass-amber text-xs font-mono font-bold">
-            <span>RHYTHM CYPHER // ASYNCHRONOUS DUEL MODE</span>
-          </div>
-          <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">RHYTHM BATTLE ARCADE</h2>
-          <p class="text-slate-400 text-sm sm:text-base">
-            Hit rhythmic drops on the 3-lane note highway. Sustain perfect streaks to trigger clan multipliers, keep your bot from overheating, and earn in-game $SCRAP tokens.
-          </p>
-        </div>
+        <div class="sec-head"><span class="hex"><span>04</span></span><div class="tl"><div class="eyebrow">RHYTHM CYPHER // ASYNCHRONOUS DUEL MODE</div><h2>RHYTHM BATTLE ARCADE</h2><p>Hit rhythmic drops on the 3-lane note highway. Sustain perfect streaks to trigger clan multipliers, keep your bot from overheating, and earn in-game $SCRAP tokens.</p></div><div class="rule" data-r="MODULE 04 // ARENA"></div></div>
 
         <!-- Arcade Main Console Wrapper -->
         <div class="max-w-2xl mx-auto bg-bass-card rounded-2xl border-2 border-bass-border overflow-hidden shadow-2xl relative">
@@ -1000,15 +874,7 @@
     <!-- NEW FEATURE: BeatBot Armory & Trait Forge -->
     <section id="armory-section" class="py-24 bg-bass-darker border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
-          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded bg-bass-cyan/15 text-bass-cyan text-xs font-mono font-bold">
-            <span>TRAIT FORGE v1.0 // BOT CUSTOMIZATION</span>
-          </div>
-          <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">BEATBOT ARMORY & FORGE</h2>
-          <p class="text-slate-400 text-sm sm:text-base">
-            Simulate custom modular bot builds. Select chassis materials, optical visor heads, audio gauntlets, and clan badges to calculate live battle power ratings and rarity tiers.
-          </p>
-        </div>
+        <div class="sec-head"><span class="hex"><span>05</span></span><div class="tl"><div class="eyebrow">TRAIT FORGE v1.0 // BOT CUSTOMIZATION</div><h2>BEATBOT ARMORY & FORGE</h2><p>Simulate custom modular bot builds. Select chassis materials, optical visor heads, audio gauntlets, and clan badges to calculate live battle power ratings and rarity tiers.</p></div><div class="rule" data-r="MODULE 05 // FORGE"></div></div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-bass-card rounded-2xl border border-bass-border p-6 sm:p-10 shadow-2xl">
           <!-- Left: 3D Hologram Preview -->
@@ -1108,15 +974,7 @@
     <!-- NEW FEATURE: TecSuport Founder Vault & Lore Archive -->
     <section id="vault-section" class="py-24 bg-bass-black border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
-          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded bg-bass-amber/15 text-bass-amber text-xs font-mono font-bold">
-            <span>FOUNDER ARCHIVE // 18 YEARS OF LIVE AUDIO</span>
-          </div>
-          <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">TECSUPORT FOUNDER VAULT</h2>
-          <p class="text-slate-400 text-sm sm:text-base">
-            BeatBots is grounded in 18 years of real underground live production, DJing, and glitch-trap history. Tracing the moniker evolution from TecSupport to TecSuport to Web3 architect Tec5uport.
-          </p>
-        </div>
+        <div class="sec-head"><span class="hex"><span>06</span></span><div class="tl"><div class="eyebrow">FOUNDER ARCHIVE // 18 YEARS OF LIVE AUDIO</div><h2>TECSUPORT FOUNDER VAULT</h2><p>BeatBots is grounded in 18 years of real underground live production, DJing, and glitch-trap history. Tracing the moniker evolution from TecSupport to TecSuport to Web3 architect Tec5uport.</p></div><div class="rule" data-r="MODULE 06 // ARCHIVE"></div></div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-bass-card rounded-2xl border-2 border-bass-amber/40 p-6 sm:p-10 shadow-2xl relative">
           <!-- Left: Moniker Evolution Timeline -->
@@ -1185,13 +1043,7 @@
     <!-- Token & Economy Section -->
     <section id="token-section" class="py-24 bg-bass-darker border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto space-y-4 mb-16">
-          <span class="text-bass-toxic font-mono text-xs uppercase tracking-widest block font-bold">CIRCULAR ARCADE ECONOMY</span>
-          <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">$BEATBOT & BATTLE SCRAP</h2>
-          <p class="text-slate-400 text-sm sm:text-base">
-            A zero pay-to-win ecosystem. Free-to-play guests battle with starter bots; Genesis NFT holders earn cosmetic scrap multipliers and tournament pool allocations.
-          </p>
-        </div>
+        <div class="sec-head"><span class="hex"><span>07</span></span><div class="tl"><div class="eyebrow">CIRCULAR ARCADE ECONOMY</div><h2>$BEATBOT & BATTLE SCRAP</h2><p>A zero pay-to-win ecosystem. Free-to-play guests battle with starter bots; Genesis NFT holders earn cosmetic scrap multipliers and tournament pool allocations.</p></div><div class="rule" data-r="MODULE 07 // ECONOMY"></div></div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Card 1 -->
@@ -1227,10 +1079,7 @@
     <!-- FAQ Section -->
     <section id="faq-section" class="py-20 bg-bass-black border-t border-bass-border">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div class="text-center space-y-2">
-          <h2 class="text-3xl font-display font-bold text-white">FREQUENTLY ASKED QUESTIONS</h2>
-          <p class="text-slate-400 text-xs font-mono">ALL YOU NEED TO KNOW ABOUT BEATBOTS</p>
-        </div>
+        <div class="sec-head"><span class="hex"><span>08</span></span><div class="tl"><div class="eyebrow">ALL YOU NEED TO KNOW ABOUT BEATBOTS</div><h2>FREQUENTLY ASKED QUESTIONS</h2></div><div class="rule" data-r="MODULE 08 // SUPPORT"></div></div>
 
         <div class="space-y-4">
           <details class="group bg-bass-card p-5 rounded-xl border border-bass-border cursor-pointer">
@@ -1428,6 +1277,7 @@
 
   <script src="beatbots-audio.js"></script>
   <script src="beatbots-rhythm.js"></script>
+  <script src="command-center.js" defer></script>
   <!-- SCRIPT LOGIC (Web Audio, Sequencer, Clans, Arcade, Armory, Mint) -->
   <script>
     // ==========================================
@@ -2173,7 +2023,7 @@
     }
 
     const HIT_Y = 340;
-    const LANE_COLORS = ['#00FF87', '#06B6D4', '#FFB020'];
+    const LANE_COLORS = ['#FF2BD6', '#00E5FF', '#2F7BFF'];
     function arcadeLoop() {
       if (!isArcadeRunning || !rhythm) return;
       const f = rhythm.frame();
@@ -2210,7 +2060,7 @@
       ctx.stroke();
 
       // strike line
-      ctx.strokeStyle = '#00FF87';
+      ctx.strokeStyle = '#00E5FF';
       ctx.lineWidth = 3;
       ctx.beginPath(); ctx.moveTo(0, HIT_Y); ctx.lineTo(W, HIT_Y); ctx.stroke();
 
@@ -3125,7 +2975,7 @@
       let t = 0;
       function loop() {
         ctx2.clearRect(0, 0, c.width, c.height);
-        ctx2.strokeStyle = isSeqPlaying ? '#00FF87' : '#06B6D4';
+        ctx2.strokeStyle = isSeqPlaying ? '#00E5FF' : '#2F7BFF';
         ctx2.lineWidth = 1.5;
         ctx2.beginPath();
         for (let x = 0; x < c.width; x++) {

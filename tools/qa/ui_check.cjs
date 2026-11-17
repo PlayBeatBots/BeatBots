@@ -26,11 +26,15 @@ const BANNED = [/danny carey/i, /\bmarshall\b/i, /\bmpc\b/i, /cozza frenzy/i];
         const tops = new Set([...nav.querySelectorAll('a,button')].filter(e => e.offsetParent).map(e => Math.round(e.getBoundingClientRect().top / 8)));
         navLines = tops.size;
       }
-      return { brokenAnchors, navLines, text: document.body.innerText, title: document.title };
+      const g = document.getElementById('grid-track-0');
+      const seqCols = g ? getComputedStyle(g).gridTemplateColumns.split(' ').length : null;
+      const seqSection = g && g.closest('section');
+      return { brokenAnchors, navLines, seqCols, seqHeight: seqSection ? Math.round(seqSection.getBoundingClientRect().height) : null, text: document.body.innerText, title: document.title };
     });
     const banned = BANNED.filter(r => r.test(info.text)).map(String);
     await page.screenshot({ path: path.join(outDir, `${name}-${w}.png`), fullPage: true });
-    report.viewports[name] = { w, errors, missing: [...new Set(missing)], brokenAnchors: info.brokenAnchors, navLines: info.navLines, bannedVisible: banned };
+    report.viewports[name] = { w, errors, missing: [...new Set(missing)], brokenAnchors: info.brokenAnchors, navLines: info.navLines, seqCols: info.seqCols, seqHeight: info.seqHeight, bannedVisible: banned };
+    if (info.seqCols !== null && info.seqCols !== 16) report.fail.push(`${name}: sequencer grid has ${info.seqCols} columns (want 16)`);
     if (errors.length) report.fail.push(`${name}: ${errors.length} JS errors`);
     if (info.brokenAnchors.length) report.fail.push(`${name}: broken anchors ${info.brokenAnchors.join(' ')}`);
     if (w >= 1280 && info.navLines > 1) report.fail.push(`${name}: nav wraps to ${info.navLines} lines`);
@@ -38,6 +42,6 @@ const BANNED = [/danny carey/i, /\bmarshall\b/i, /\bmpc\b/i, /cozza frenzy/i];
   }
   await b.close();
   fs.writeFileSync(path.join(outDir, 'ui_report.json'), JSON.stringify(report, null, 2));
-  console.log(JSON.stringify({ fail: report.fail, banned: Object.values(report.viewports)[0].bannedVisible, missing: Object.values(report.viewports)[0].missing }, null, 1));
+  console.log(JSON.stringify({ seq: Object.fromEntries(Object.entries(report.viewports).map(([k,v])=>[k,[v.seqCols,v.seqHeight]])), fail: report.fail, banned: Object.values(report.viewports)[0].bannedVisible, missing: Object.values(report.viewports)[0].missing }, null, 1));
   process.exit(report.fail.length ? 1 : 0);
 })();
