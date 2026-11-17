@@ -1,27 +1,30 @@
 {
   "clan": "industrial",
   "name": "Industrial Mecha \u2014 foundry metal kit",
-  "version": 1,
+  "version": 2,
   "tracks": {
     "0": {
       "sub": {
-        "file": "kick_sub.wav"
+        "file": "kick_sub.wav",
+        "gain": 0.76
       },
       "punch": {
         "file": "kick_punch.wav",
-        "gain": 1.27
+        "gain": 0.5
       },
       "hard": {
-        "file": "kick_hard.wav"
+        "file": "kick_hard.wav",
+        "gain": 0.45
       }
     },
     "1": {
       "crisp": {
-        "file": "snare_crisp.wav"
+        "file": "snare_crisp.wav",
+        "gain": 0.51
       },
       "clap": {
         "file": "snare_clap.wav",
-        "gain": 0.7
+        "gain": 1.54
       },
       "rim": {
         "file": "snare_anvil.wav",
@@ -30,16 +33,15 @@
     },
     "2": {
       "closed": {
-        "file": "hat_closed.wav",
-        "gain": 0.56
+        "file": "hat_closed.wav"
       },
       "open": {
         "file": "hat_open.wav",
-        "gain": 0.63
+        "gain": 0.51
       },
       "shaker": {
         "file": "hat_shaker.wav",
-        "gain": 0.59
+        "gain": 0.81
       }
     },
     "3": {
@@ -59,6 +61,60 @@
       "tom": {
         "file": "glitch_tom.wav",
         "gain": 1.22
+      }
+    },
+    "4": {
+      "sine": {
+        "multi": [
+          {
+            "file": "../_shared/808_F1.wav",
+            "root": 29
+          },
+          {
+            "file": "../_shared/808_Fs1.wav",
+            "root": 30
+          },
+          {
+            "file": "../_shared/808_G1.wav",
+            "root": 31
+          },
+          {
+            "file": "../_shared/808_Gs1.wav",
+            "root": 32
+          },
+          {
+            "file": "../_shared/808_A1.wav",
+            "root": 33
+          },
+          {
+            "file": "../_shared/808_As1.wav",
+            "root": 34
+          },
+          {
+            "file": "../_shared/808_B1.wav",
+            "root": 35
+          },
+          {
+            "file": "../_shared/808_C2.wav",
+            "root": 36
+          },
+          {
+            "file": "../_shared/808_Cs2.wav",
+            "root": 37
+          },
+          {
+            "file": "../_shared/808_D2.wav",
+            "root": 38
+          },
+          {
+            "file": "../_shared/808_Ds2.wav",
+            "root": 39
+          },
+          {
+            "file": "../_shared/808_E2.wav",
+            "root": 40
+          }
+        ]
       }
     }
   },

@@ -21,3 +21,23 @@ Files (processed: trimmed, peak-normalised, faded, 44.1 kHz mono):
   keys_C3.wav  <-  Electrophones/TX81Z/FM Piano/FMPiano_C3_vl2.wav  [vc]
   keys_C4.wav  <-  Electrophones/TX81Z/FM Piano/FMPiano_C4_vl2.wav  [vc]
   glitch_tom.wav  <-  TR808WAV/LT/LT50.WAV  [808]
+
+
+[2026-11 upgrade]
+  [cb] Clipabay Free Drum Kit by Black Ribbon Studios, CC0 1.0 Universal (no credit needed;
+       commercial use and redistribution allowed). https://clipabay.com/free-drum-kit
+  These slots now use [cb] files (trimmed, peak -1 dBFS, 44.1 kHz 16-bit mono):
+    kick_sub.wav  <-  Kicks/Kick 05 - Round.wav  [cb]
+    kick_punch.wav  <-  Kicks/Kick 07 - Boom Bap.wav  [cb]
+    kick_hard.wav  <-  Kicks/Kick 10 - Hard.wav  [cb]
+    snare_crisp.wav  <-  Snares/Snare 06 - Lofi.wav  [cb]
+    snare_clap.wav  <-  Claps/Clap 01 - Classic.wav  [cb]
+    snare_rim.wav  <-  Percussion/Rim.wav  [cb]
+    hat_closed.wav  <-  Hats/Hat 05 - Closed Dark.wav  [cb]
+    hat_open.wav  <-  Hats/Open Hat 04 - Open Dark.wav  [cb]
+    hat_shaker.wav  <-  Percussion/Shaker.wav  [cb]
+    perc_cowbell.wav  <-  Percussion/Cowbell.wav  [cb]
+    perc_bongo.wav  <-  Percussion/Conga High.wav  [cb]
+    perc_wood.wav  <-  Percussion/Woodblock.wav  [cb]
+    glitch_tom.wav  <-  Percussion/Tom Mid.wav  [cb]
+  Sub Synth "sine" plays the tuned [cb] 808s in ../_shared/ (see ../_shared/LICENSE.txt).

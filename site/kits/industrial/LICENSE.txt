@@ -19,3 +19,18 @@ Files (processed: trimmed, peak-normalised, faded, 44.1 kHz mono):
   perc_brake2.wav  <-  Idiophones/Struck Idiophones/Brake Drum/BrakeDrum2_Hammer1_v2_rr1_Mid.wav  [vc]
   glitch_tom.wav  <-  Membranophones/Struck Membranophones/Tom 1/Stick/TomH_HitS_v4_rr1_Mid.wav  [vc]
   fx_metal.wav  <-  Idiophones/Struck Idiophones/Anvil/Anvil_Hit3_v3_rr1_Mid.wav  [vc]
+
+
+[2026-11 upgrade]
+  [cb] Clipabay Free Drum Kit by Black Ribbon Studios, CC0 1.0 Universal (no credit needed;
+       commercial use and redistribution allowed). https://clipabay.com/free-drum-kit
+  These slots now use [cb] files (trimmed, peak -1 dBFS, 44.1 kHz 16-bit mono):
+    kick_sub.wav  <-  Kicks/Kick 03 - Short.wav  [cb]
+    kick_punch.wav  <-  Kicks/Kick 10 - Hard.wav  [cb]
+    kick_hard.wav  <-  Kicks/Kick 04 - Distorted.wav  [cb]
+    snare_crisp.wav  <-  Snares/Snare 03 - Crack.wav  [cb]
+    snare_clap.wav  <-  Claps/Clap 02 - Tight.wav  [cb]
+    hat_closed.wav  <-  Hats/Hat 06 - Closed Bright.wav  [cb]
+    hat_open.wav  <-  Hats/Open Hat 05 - Open Bright.wav  [cb]
+    hat_shaker.wav  <-  Hats/Hat 07 - Closed Noisy.wav  [cb]
+  Sub Synth "sine" plays the tuned [cb] 808s in ../_shared/ (see ../_shared/LICENSE.txt).

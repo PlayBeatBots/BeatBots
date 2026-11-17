@@ -1609,8 +1609,12 @@
       }
       if (audioCtx.state === 'suspended') audioCtx.resume();
     }
-    // Unlock audio on the first interaction so UI sounds work right away
+    // Unlock audio on the first interaction so UI sounds work right away, and resume it again
+    // whenever the browser suspends it (backgrounded tab, phone lock screen, iOS interruptions)
     document.addEventListener('pointerdown', () => initAudio(), { once: true, capture: true });
+    ['pointerdown', 'keydown', 'touchend'].forEach((ev) => document.addEventListener(ev, () => {
+      if (audioCtx && audioCtx.state !== 'running') audioCtx.resume();
+    }, { capture: true, passive: true }));
 
     function uiSound(type, opts) {
       if (bbEngine && audioCtx && audioCtx.state === 'running') bbEngine.ui(type, opts);
@@ -1822,10 +1826,38 @@
       bbEngine.playTrack(trackIdx, time, model, step == null ? currentStep : step);
     }
 
-    // Lookahead scheduler: a 25 ms timer queues notes ~120 ms ahead on the audio clock,
-    // so timing stays tight even when the page is busy.
-    const SCHED_LOOKAHEAD = 0.12;
+    // Lookahead scheduler: a 25 ms tick queues notes 300 ms ahead on the audio clock, so a busy
+    // page (or a 100-200 ms main-thread stall) can't make hits late. The tick comes from a Worker,
+    // which browsers don't throttle like a main-thread setInterval; setInterval is the fallback.
+    const SCHED_LOOKAHEAD = 0.3;
     let nextStepTime = 0;
+    let seqTicker = null;   // Worker driving stepSequencer
+    const stepMarks = [];   // [{ step, time }] waiting for the audio clock, drawn by drawStepMarks
+    let stepMarkRaf = 0;
+    function startTicker() {
+      try {
+        const src = 'let t=null;onmessage=(e)=>{if(e.data==="start"){clearInterval(t);t=setInterval(()=>postMessage(0),25);}else{clearInterval(t);t=null;}};';
+        seqTicker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+        seqTicker.onmessage = stepSequencer;
+        seqTicker.postMessage('start');
+      } catch (e) {
+        seqTicker = null;
+        seqInterval = setInterval(stepSequencer, 25);
+      }
+    }
+    function stopTicker() {
+      if (seqTicker) { seqTicker.postMessage('stop'); seqTicker.terminate(); seqTicker = null; }
+      clearInterval(seqInterval); seqInterval = null;
+    }
+    // light the current step when the audio clock actually reaches it (not from a drifting setTimeout)
+    function drawStepMarks() {
+      if (!isSeqPlaying) { stepMarks.length = 0; stepMarkRaf = 0; return; }
+      const now = audioCtx.currentTime;
+      let last = null;
+      while (stepMarks.length && stepMarks[0].time <= now) last = stepMarks.shift();
+      if (last) highlightStep(last.step);
+      stepMarkRaf = requestAnimationFrame(drawStepMarks);
+    }
 
     function highlightStep(step) {
       document.querySelectorAll('.step-current').forEach(el => el.classList.remove('step-current'));
@@ -1846,30 +1878,42 @@
         for (let t = 0; t < NUM_TRACKS; t++) {
           if (pattern[t][step]) playTrackSound(t, time, step);
         }
-        const wait = Math.max(0, (time - audioCtx.currentTime) * 1000);
-        setTimeout(() => { if (isSeqPlaying) highlightStep(step); }, wait);
+        stepMarks.push({ step, time });
         nextStepTime += stepDur;
         currentStep = (currentStep + 1) % NUM_STEPS;
       }
     }
 
-    function toggleSequencer() {
+    let seqStarting = false;
+    async function toggleSequencer() {
       initAudio();
-      isSeqPlaying = !isSeqPlaying;
       const btn = document.getElementById('seq-play-btn');
       const text = document.getElementById('play-btn-text');
+      if (seqStarting) return;
 
-      if (isSeqPlaying) {
+      if (!isSeqPlaying) {
+        // wait for this clan's kit so the first bars don't play synth stand-ins and then switch
+        seqStarting = true;
+        text.textContent = 'LOADING KIT...';
+        try {
+          await Promise.race([bbEngine.loadKit(activeClanKey), new Promise((r) => setTimeout(r, 6000))]);
+          if (audioCtx.state !== 'running') await audioCtx.resume();
+        } finally { seqStarting = false; }
+        isSeqPlaying = true;
         btn.classList.replace('bg-bass-toxic', 'bg-bass-amber');
         text.textContent = 'STOP PATTERN';
         currentStep = 0;
-        nextStepTime = audioCtx.currentTime + 0.06;
+        stepMarks.length = 0;
+        nextStepTime = audioCtx.currentTime + 0.08;
         stepSequencer();
-        seqInterval = setInterval(stepSequencer, 25);
+        startTicker();
+        if (!stepMarkRaf) stepMarkRaf = requestAnimationFrame(drawStepMarks);
       } else {
+        isSeqPlaying = false;
         btn.classList.replace('bg-bass-amber', 'bg-bass-toxic');
         text.textContent = 'PLAY PATTERN';
-        clearInterval(seqInterval);
+        stopTicker();
+        stepMarks.length = 0;
         document.querySelectorAll('.step-current').forEach(el => el.classList.remove('step-current'));
         currentStep = 0;
       }
