@@ -1,7 +1,7 @@
 {
   "name": "BeatBot #767 The Reanimator",
   "symbol": "BEAT",
-  "description": "BeatBot #767 - The Dragonfly Reanimator of the Industrial Mecha. Built to dominate the rhythm battlefield with Distortion Surge (Absorbs 1 Missed Beat per Match).",
+  "description": "BeatBot #767 - The Winged Foundry Revenant of the Industrial Mecha. Built to dominate the rhythm battlefield with Distortion Surge (Absorbs 1 Missed Beat per Match).",
   "seller_fee_basis_points": 500,
   "image": "767.jpg",
   "external_url": "https://playbeatbots.com",
@@ -12,7 +12,7 @@
     },
     {
       "trait_type": "Mythic Title",
-      "value": "The Dragonfly Reanimator"
+      "value": "The Winged Foundry Revenant"
     },
     {
       "trait_type": "Rarity Tier",
@@ -63,12 +63,12 @@
     },
     {
       "trait_type": "Speed",
-      "value": "90",
+      "value": "100",
       "display_type": "number"
     },
     {
       "trait_type": "Power Rating",
-      "value": "288",
+      "value": "298",
       "display_type": "number"
     },
     {

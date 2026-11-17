@@ -24,7 +24,7 @@
     },
     {
       "trait_type": "Audio Chest Rig",
-      "value": "Crown Macro-Tech 5000VZ Rig"
+      "value": "Macro-Watt 5000 Power Amp Rig"
     },
     {
       "trait_type": "Stage Backdrop",
@@ -49,22 +49,22 @@
     },
     {
       "trait_type": "Attack",
-      "value": "93",
+      "value": "91",
       "display_type": "number"
     },
     {
       "trait_type": "Defense",
-      "value": "98",
+      "value": "91",
       "display_type": "number"
     },
     {
       "trait_type": "Speed",
-      "value": "84",
+      "value": "87",
       "display_type": "number"
     },
     {
       "trait_type": "Power Rating",
-      "value": "275",
+      "value": "269",
       "display_type": "number"
     },
     {

@@ -49,12 +49,12 @@
     },
     {
       "trait_type": "Attack",
-      "value": "97",
+      "value": "93",
       "display_type": "number"
     },
     {
       "trait_type": "Defense",
-      "value": "100",
+      "value": "96",
       "display_type": "number"
     },
     {
@@ -64,7 +64,7 @@
     },
     {
       "trait_type": "Power Rating",
-      "value": "291",
+      "value": "283",
       "display_type": "number"
     },
     {

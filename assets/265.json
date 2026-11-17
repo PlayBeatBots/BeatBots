@@ -20,7 +20,7 @@
     },
     {
       "trait_type": "Head Chassis",
-      "value": "Red Dragonfly Stencil Helmet"
+      "value": "Red Winged-Soldier Stencil Helmet"
     },
     {
       "trait_type": "Audio Chest Rig",
@@ -49,7 +49,7 @@
     },
     {
       "trait_type": "Attack",
-      "value": "100",
+      "value": "99",
       "display_type": "number"
     },
     {
@@ -64,7 +64,7 @@
     },
     {
       "trait_type": "Power Rating",
-      "value": "285",
+      "value": "284",
       "display_type": "number"
     },
     {
