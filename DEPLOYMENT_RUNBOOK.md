@@ -33,7 +33,7 @@ checked_at: 2026-10-23T16:45Z (Claude)
 - `mint-client/src/mint.js` — Umi mintV2 module: init, getStats, walletMinted, mint, explorerTx, explorerAddress. Pre-flight checks supply, start/end date, mint-limit counter and balance (price + 0.025 SOL/NFT) BEFORE sending, and verifies the NFT account exists after — so a guard rejection can no longer show "MINTED".
 - `site-src/index.html` — page template (Gemini edits here).
 - `site-src/beatbots-audio.js` — audio engine v4 (`BBAudio.createEngine(ctx)`).
-- `site-src/beatbots-rhythm.js` — rhythm battle (`BBRhythm`).
+- `site-src/beatbots-padbattle.js` — Beat Pad Battle arcade (`BBPadBattle`): 4x4 sampler pads, call/response vs a rival bot, 5 clan tracks. Instruments in `site-src/kits/pads/` (VCSL CC0, built by `tools/build_pad_samples.py`).
 - `site-src/kits/<clan>/` — per-clan WAV kits + kit.json + LICENSE.txt (bboy, dub, alchemist, industrial, biomech).
 - `site/` — BUILT output, published by Cloudflare. Generated; do not hand-edit.
 - `scripts/` — build_site.sh, deploy.sh, set_wallets.py, validate_assets.py, build_clan_assets.py, cloudflare_pages_deploy.sh (legacy Wrangler path, not used).
@@ -60,8 +60,8 @@ Devnet SOL: faucet is rate-limited; Jake funds the deployer manually when needed
 scripts/build_site.sh devnet https://api.devnet.solana.com FCrJhgeHCdZyAbTPAjG6TgC3f9XeqMucoZ1mQHjbemPo
 git add -A && git commit -m "..." && git push origin main   # Cloudflare auto-deploys site/
 ```
-build_site.sh: bundles mint-client -> site/beatbots-mint.js, runs patch_site.py (injects BEATBOTS_CONFIG, real mint, live counter, theme nods, mint chime), copies audio + rhythm JS and kits.
-Verify: `curl -s https://playbeatbots.pages.dev/ | grep BBRhythm` and run the browser e2e (section 8).
+build_site.sh: bundles mint-client -> site/beatbots-mint.js, runs patch_site.py (injects BEATBOTS_CONFIG, real mint, live counter, theme nods, mint chime), copies audio + pad battle JS and kits.
+Verify: `curl -s https://playbeatbots.pages.dev/ | grep padbattle` and run the browser e2e (section 8).
 
 ## 6. Sound kits (Drive -> site)
 - Drive: BeatBots / Sound Kits (folder 1fVKWuqurjg4ySpn8aHG7ULadvVAjesp4), one folder per clan with one sub-folder per slot, plus a contents doc per clan and a guide doc. IDs in `tools/drive_kits.json`.
@@ -70,7 +70,7 @@ Verify: `curl -s https://playbeatbots.pages.dev/ | grep BBRhythm` and run the br
 
 ## 7. Audio + rhythm engine APIs
 - `BBAudio.createEngine(ctx)` voices: kick, snare, hat, perc, bass, chord, vocal, glitch, fx, keyNote, ui. Also playTrack, loadKit/useKit/kitBase/prefetchKits, lanePluck, connectVoice, renderPattern + bufferToWav (WAV export). CLANS table holds per-clan EQ, reverb/delay, root, bassline, chords. Master filter is 0-100 exponential up to 20 kHz.
-- `BBRhythm`: RhythmEngine (loadBeatMap, start({travelTime, duration, onHit, onMiss, onEnd}), frame, hit(lane), stop, now via audio-clock getOutputTimestamp), RhythmSynth (pluck), LIBRARY, registerTrack, fromSequencerGrid, normalizeBeatMap, noteToMidi, SCALES, DEFAULT_LANE_MAP.
+- `BBPadBattle`: mount(root, {getCtx, kitBase, clans, onRunningChange, onStart, getHolderBot}), SONGS (song format documented at the top of the file; add `audio: 'tracks/<file>.mp3', audioOffset` for an original TecSupport track), DIFFS (standard 4 pads / turbo 8 / hyper 16), compile(song, diff), renderSong(id, {diff}) (offline full render for QA/previews), selectBot(clan). (`BBRhythm` 3-lane engine retired 2026-11-17.)
 - Judgement windows: perfect 50 ms, great 90 ms, good 135 ms.
 - BeatMap format: `{ id, title, bpm, bars, scale, laneNotes:[3 notes], notes:[{beat, lanes:[0..2]}], backing:{...} }`. Lanes 0/1/2 = D/F/J.
 - Track 01 "Intergalactic Cypher": 96 BPM, 4 bars, A minor pentatonic, lanes A4/C5/E5, 27 notes incl. chords + syncopation.
@@ -80,8 +80,8 @@ Verify: `curl -s https://playbeatbots.pages.dev/ | grep BBRhythm` and run the br
 ```bash
 SITE_URL=... node tools/browser_e2e.cjs        # page + mint flow
 node tools/audio_test.cjs site <shotDir>       # engine voices, levels, export
-node tools/rhythm_test.cjs site <shotDir>      # bot play-test, late-press, idle, station export
-tools/qa/run_all.sh site qa-out                 # ALL of: ui (5 viewports, nav, anchors, banned names), img, overflow, timing, audio, rhythm
+node tools/padbattle_test.cjs site <outDir> [--render]  # charts, perfect bot wins, 70 ms late = GREAT, idle loses, phone layout; --render writes each track as WAV + levels
+tools/qa/run_all.sh site qa-out                 # ALL of: ui (5 viewports, nav, anchors, banned names), img, overflow, timing, audio, padbattle
 ```
 Headless tests serve the site via Playwright page.route on http://beatbots.test (the proxy blocks localhost).
 
@@ -97,6 +97,7 @@ Headless tests serve the site via Playwright page.route on http://beatbots.test 
 Troubleshooting: "unknown variant irys" -> bundlr. Bot tax charged but no NFT -> guard rejected (limit/date/funds); pre-flight now blocks this. Sugar "config file not found" -> solana config set. Cloudflare GitHub app stuck -> uninstall in a normal browser, reinstall on PlayBeatBots with BeatBots repo only.
 
 ## 10. CHANGE LOG (newest first; append a line for every change)
+- 2026-11-17 12:30 — feat/pad-battle (PREVIEW ONLY, not merged) Rhythm arcade rebuilt as Beat Pad Battle (Jake's call): 4x4 sampler pads, rival plays a phrase then you answer it, battle bar + KO, clan abilities (Space), 5 original clan tracks from CC0 kits + new VCSL piano/vibes/horn/crash/timpani (kits/pads, LICENSE.txt), Bluetooth latency option, styled to the 11-17 command-center redesign tokens. Old 3-lane BBRhythm removed. Verified: QA 6/6 incl. new tools/padbattle_test.cjs (perfect bot KO win, 70 ms late = GREAT, idle KO loss, phone 390 px no overflow, 77 px pads). Waiting on Jake's sign-off. — Claude
 - 2026-11-17 11:40 — 2a02ae9 Custom domain live (Nori, Q-001): sitemap.xml, robots.txt and <link rel=canonical> now point at https://playbeatbots.com. Verified: full QA suite 6/6 pass; playbeatbots.com + www 200; live robots.txt shows .com sitemap. feat/boombox synced (c9ff331). — Claude
 - 2026-11-17 11:15 — 3934c48 tools/qa/ committed (ui_check, imgcheck, overflow, timing, run_all.sh); QA scripts no longer live only in a chat workspace. Run: `tools/qa/run_all.sh site qa-out`. main + feat/boombox: 6/6 pass. — Claude
 - 2026-11-17 10:58 — c282d4b NFT metadata: theme names replace real names; rarer tier = higher Power Rating bands; chain label 'Solana'; config price TBD. — Claude

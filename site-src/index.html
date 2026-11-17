@@ -7,7 +7,7 @@
   <title>BeatBots: Genesis Mint | Underground Audio Battlers</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script>
     tailwind.config = {
@@ -203,7 +203,7 @@
           </h1>
 
           <p class="text-slate-300 text-base sm:text-lg max-w-2xl font-normal leading-relaxed">
-            BeatBots is an asynchronous 3-lane rhythm battle universe built for bassheads and breakbeat purists. Collect handcrafted Genesis NFT battlers across Five Legendary Sound Clans, forge beats in our 16-step modular sequencer, and duel for $SCRAP on Solana.
+            BeatBots is an asynchronous pad-battle rhythm universe built for bassheads and breakbeat purists. Collect handcrafted Genesis NFT battlers across Five Legendary Sound Clans, forge beats in our 16-step modular sequencer, and duel for $SCRAP on Solana.
           </p>
 
           <!-- Clan Fast-Selector Pills -->
@@ -869,131 +869,19 @@
       </div>
     </section>
 
-    <!-- Upgraded 3-Lane Rhythm Arcade Engine -->
+    <!-- Beat Pad Battle (rendered by beatbots-padbattle.js) -->
     <section id="arcade-section" class="py-24 bg-bass-black relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto space-y-4 mb-14">
+        <div class="text-center max-w-3xl mx-auto space-y-4 mb-10">
           <div class="inline-flex items-center space-x-2 px-3 py-1 rounded bg-bass-amber/15 text-bass-amber text-xs font-mono font-bold">
-            <span>RHYTHM CYPHER // ASYNCHRONOUS DUEL MODE</span>
+            <span>RHYTHM CYPHER // PAD BATTLE MODE</span>
           </div>
           <h2 class="text-3xl sm:text-5xl font-display font-bold text-white tracking-tight">RHYTHM BATTLE ARCADE</h2>
           <p class="text-slate-400 text-sm sm:text-base">
-            Hit rhythmic drops on the 3-lane note highway. Sustain perfect streaks to trigger clan multipliers, keep your bot from overheating, and earn in-game $SCRAP tokens.
+            Pick your BeatBot and face a rival on the 16-pad sampler. Your rival plays a pattern, you play it back. Every pad is a real sample, so nail the timing and you play the whole beat. Land perfect streaks to charge your clan ability and earn in-game $SCRAP.
           </p>
         </div>
-
-        <!-- Arcade Main Console Wrapper -->
-        <div class="max-w-2xl mx-auto bg-bass-card rounded-2xl border-2 border-bass-border overflow-hidden shadow-2xl relative">
-          
-          <!-- Arcade Top HUD -->
-          <div class="bg-bass-darker p-4 border-b border-bass-border flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
-            <!-- Score & Streak -->
-            <div class="flex items-center space-x-4">
-              <div>
-                <span class="text-slate-400 block text-[10px]">SCORE</span>
-                <span id="arcade-score" class="text-white font-bold text-lg font-display">0000</span>
-              </div>
-              <div>
-                <span class="text-slate-400 block text-[10px]">COMBO MULTIPLIER</span>
-                <span id="arcade-streak" class="text-bass-toxic font-bold text-lg font-display">x1 (0)</span>
-              </div>
-            </div>
-
-            <!-- Song & Difficulty Picker -->
-            <div class="flex items-center space-x-2">
-              <select id="arcade-song-select" class="bg-bass-card text-slate-200 border border-bass-border rounded px-2 py-1 text-xs">
-                <option value="track01">01: Intergalactic Cypher</option>
-              </select>
-              <select id="arcade-diff-select" class="bg-bass-card text-slate-200 border border-bass-border rounded px-2 py-1 text-xs">
-                <option value="standard">Standard</option>
-                <option value="turbo">Turbo (Fast)</option>
-                <option value="hyper">Hyper (Hardcore)</option>
-              </select>
-            </div>
-
-            <!-- Health / Battery Meter -->
-            <div class="w-full sm:w-40 space-y-1">
-              <div class="flex justify-between text-[10px]">
-                <span class="text-slate-400">BOT ENERGY:</span>
-                <span id="arcade-hp-text" class="text-bass-toxic font-bold">100%</span>
-              </div>
-              <div class="w-full bg-bass-black rounded-full h-2 overflow-hidden border border-bass-border">
-                <div id="arcade-hp-bar" class="bg-bass-toxic h-full transition-all duration-200" style="width: 100%"></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Time Countdown Progress Bar -->
-          <div class="w-full bg-bass-black h-1.5 overflow-hidden">
-            <div id="arcade-time-bar" class="bg-gradient-to-r from-bass-amber to-bass-toxic h-full transition-all duration-200" style="width: 100%"></div>
-          </div>
-
-          <!-- Game Canvas Container -->
-          <div class="relative w-full h-[400px] bg-bass-black overflow-hidden flex items-center justify-center">
-            <canvas id="arcade-canvas" width="600" height="400" class="w-full h-full block"></canvas>
-
-            <!-- Hit Notification Overlay (Flash Text) -->
-            <div id="hit-feedback" class="absolute top-20 font-display font-bold text-2xl text-bass-toxic opacity-0 transition-opacity pointer-events-none drop-shadow-md">
-              PERFECT!
-            </div>
-
-            <!-- Start / Game Over Overlay Modal inside canvas -->
-            <div id="arcade-overlay" class="absolute inset-0 bg-bass-black/85 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20">
-              <div id="overlay-pre-game" class="space-y-4">
-                <div class="w-16 h-16 mx-auto rounded-2xl bg-bass-toxic/20 border border-bass-toxic flex items-center justify-center text-bass-toxic text-2xl">
-                  ⚡
-                </div>
-                <h3 class="font-display font-bold text-2xl text-white">READY FOR THE RHYTHM CYPHER?</h3>
-                <p class="text-slate-400 text-xs font-mono max-w-sm">
-                  Catch the falling audio notes using keys <kbd class="px-1.5 py-0.5 rounded bg-bass-card border border-bass-border text-white">D</kbd> (Left), <kbd class="px-1.5 py-0.5 rounded bg-bass-card border border-bass-border text-white">F</kbd> (Center), and <kbd class="px-1.5 py-0.5 rounded bg-bass-card border border-bass-border text-white">J</kbd> (Right), or tap the on-screen buttons below.
-                </p>
-                <button id="start-arcade-btn" class="px-8 py-3 rounded-xl bg-bass-toxic hover:bg-emerald-400 text-bass-black font-display font-bold text-base shadow-lg transition-all active:scale-95">
-                  START 45s ROUND
-                </button>
-              </div>
-
-              <!-- Post Game Scorecard -->
-              <div id="overlay-post-game" class="space-y-4 hidden">
-                <span id="result-grade" class="block font-display font-bold text-6xl text-bass-toxic animate-bounce">S+</span>
-                <h3 id="result-title" class="font-display font-bold text-xl text-white">CYPHER DOMINATED</h3>
-                <div class="p-4 rounded-xl bg-bass-darker border border-bass-border font-mono text-xs space-y-2 text-slate-300 w-64 mx-auto text-left">
-                  <div class="flex justify-between">
-                    <span>ACCURACY:</span>
-                    <span id="result-acc" class="text-white font-bold">96%</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span>MAX STREAK:</span>
-                    <span id="result-streak" class="text-white font-bold">38</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span>TOTAL SCORE:</span>
-                    <span id="result-score" class="text-bass-toxic font-bold">4,120</span>
-                  </div>
-                  <div class="flex justify-between border-t border-bass-border pt-1">
-                    <span>$SCRAP REWARD:</span>
-                    <span id="result-scrap" class="text-bass-amber font-bold">+185 $SCRAP</span>
-                  </div>
-                </div>
-                <button id="restart-arcade-btn" class="px-6 py-2.5 rounded-xl bg-bass-toxic hover:bg-emerald-400 text-bass-black font-display font-bold text-sm transition-all">
-                  PLAY AGAIN
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Bottom Lane Touch Trigger Buttons for Mobile / Mouse -->
-          <div class="bg-bass-darker p-3 border-t border-bass-border grid grid-cols-3 gap-3">
-            <button id="lane-touch-0" class="arcade-touch-btn py-4 rounded-xl bg-bass-card hover:bg-bass-border active:bg-bass-toxic active:text-bass-black font-display font-bold text-slate-300 text-sm border border-bass-border transition-colors">
-              LEFT [D]
-            </button>
-            <button id="lane-touch-1" class="arcade-touch-btn py-4 rounded-xl bg-bass-card hover:bg-bass-border active:bg-bass-cyan active:text-bass-black font-display font-bold text-slate-300 text-sm border border-bass-border transition-colors">
-              CENTER [F]
-            </button>
-            <button id="lane-touch-2" class="arcade-touch-btn py-4 rounded-xl bg-bass-card hover:bg-bass-border active:bg-bass-amber active:text-bass-black font-display font-bold text-slate-300 text-sm border border-bass-border transition-colors">
-              RIGHT [J]
-            </button>
-          </div>
-        </div>
+        <div id="padbattle-root"></div>
       </div>
     </section>
 
@@ -1427,7 +1315,7 @@
   </div>
 
   <script src="beatbots-audio.js"></script>
-  <script src="beatbots-rhythm.js"></script>
+  <script src="beatbots-padbattle.js"></script>
   <!-- SCRIPT LOGIC (Web Audio, Sequencer, Clans, Arcade, Armory, Mint) -->
   <script>
     // ==========================================
@@ -1956,293 +1844,20 @@
     }
 
     // ==========================================
-    // 4. UPGRADED BATTLE ARCADE GAME
+    // 4. BEAT PAD BATTLE (beatbots-padbattle.js)
     // ==========================================
-    const canvas = document.getElementById('arcade-canvas');
-    const ctx = canvas.getContext('2d');
-    let isArcadeRunning = false;
-    let arcadeTimer = null;
-    let arcadeRoundSeconds = 45;
-    let roundTimeRemaining = 45;
-
-    let score = 0;
-    let comboStreak = 0;
-    let maxCombo = 0;
-    let totalNotesSpawned = 0;
-    let totalNotesHit = 0;
-    let botHP = 100;
-
-    // 3 Lanes (0 = Left, 1 = Center, 2 = Right)
-    const LANE_COORDS = [100, 300, 500];
-    let activeNotes = [];
-
-    // ---- BeatMap library: Track 01 + the five clan presets + the player's own station loop ----
-    let rhythm = null;
-    const ARCADE_TRAVEL = { standard: 1.9, turbo: 1.4, hyper: 1.0 }; // seconds a note takes to fall
-    const PRESET_TRACKS = [
-      { key: 'bboy', title: 'B-Boy Funk Break', bpm: 96, clan: 'bboy', scale: { root: 'A4', mode: 'minorPentatonic' }, swing: 22,
-        models: ['punch', 'crisp', 'closed', 'cowbell', 'sine', 'soul', 'hey', 'tom'] },
-      { key: 'dub', title: '140 Deep Dub Siren', bpm: 140, clan: 'dub', scale: { root: 'G4', mode: 'minorPentatonic' }, swing: 8,
-        models: ['sub', 'rim', 'open', 'wood', 'reese', 'flute', 'drop', 'laser'] },
-      { key: 'soul', title: 'Electro-Soul Sunrise', bpm: 90, clan: 'alchemist', scale: { root: 'F4', mode: 'majorPentatonic' }, swing: 16,
-        models: ['sub', 'clap', 'shaker', 'bongo', 'sine', 'soul', 'yeah', 'whoosh'] },
-      { key: 'metal', title: 'Industrial Distortion', bpm: 105, clan: 'industrial', scale: { root: 'D4', mode: 'phrygian' }, swing: 0,
-        models: ['hard', 'crisp', 'closed', 'cowbell', 'acid', 'saw', 'hey', 'laser'] },
-      { key: 'poly', title: 'Odd-Meter Polyrhythm', bpm: 138, clan: 'biomech', scale: { root: 'D4', mode: 'minor' }, swing: 0,
-        models: ['sub', 'rim', 'closed', 'bongo', 'reese', 'flute', 'drop', 'tom'] },
-    ];
-    function buildArcadeLibrary() {
-      PRESET_TRACKS.forEach((p, i) => {
-        try {
-          BBRhythm.registerTrack(Object.assign(
-            BBRhythm.fromSequencerGrid(PRESETS[p.key], { id: `preset-${p.key}`, title: p.title, artist: 'BeatBots', bpm: p.bpm, clan: p.clan, scale: p.scale, swing: p.swing, models: p.models }),
-            { bars: 1 }));
-        } catch (e) { console.warn('preset track skipped', p.key, e); }
+    let isArcadeRunning = false; // page key handlers stand down while a battle runs
+    function mountPadBattle() {
+      const root = document.getElementById('padbattle-root');
+      if (!root || !window.BBPadBattle) return;
+      window.BBPadBattle.mount(root, {
+        getCtx: () => { initAudio(); return audioCtx; },
+        kitBase: 'kits/',
+        clans: CLAN_ASSETS,
+        onRunningChange: (running) => { isArcadeRunning = running; },
+        onStart: () => { if (isSeqPlaying) toggleSequencer(); },
+        getHolderBot: () => null, // wallet NFT hook (cosmetic) once Genesis mints
       });
-      const sel = document.getElementById('arcade-song-select');
-      if (!sel) return;
-      sel.innerHTML = '';
-      BBRhythm.LIBRARY.forEach((t, i) => {
-        const o = document.createElement('option');
-        o.value = t.id; o.textContent = `${String(i + 1).padStart(2, '0')}: ${t.title.replace(/ \(Track 01\)$/, '')}`;
-        sel.appendChild(o);
-      });
-      const mine = document.createElement('option');
-      mine.value = 'station'; mine.textContent = `${String(BBRhythm.LIBRARY.length + 1).padStart(2, '0')}: Your Station Loop`;
-      sel.appendChild(mine);
-    }
-
-    // Sequencer-to-Arcade bridge: the current 16-step grid as a BeatMap
-    function exportGridToBeatMap() {
-      const models = Array.from({ length: NUM_TRACKS }, (_, t) => {
-        const sel = document.querySelector(`.track-model-select[data-track="${t}"]`);
-        return sel ? sel.value : 'default';
-      });
-      const clanScale = { bboy: 'A4', dub: 'G4', alchemist: 'F4', industrial: 'D4', biomech: 'D4' };
-      return BBRhythm.fromSequencerGrid(pattern, {
-        title: 'Your Station Loop', bpm, swing: swingPercent, clan: activeClanKey, models, mutes: trackMutes,
-        scale: { root: clanScale[activeClanKey] || 'A4', mode: activeClanKey === 'alchemist' ? 'majorPentatonic' : 'minorPentatonic' },
-      });
-    }
-    window.exportGridToBeatMap = exportGridToBeatMap;
-
-    function selectedArcadeTrack() {
-      const v = document.getElementById('arcade-song-select').value;
-      if (v === 'station') return exportGridToBeatMap();
-      return BBRhythm.LIBRARY.find((t) => t.id === v) || BBRhythm.LIBRARY[0];
-    }
-
-    const laneFlash = [0, 0, 0];
-
-    function startArcadeGame() {
-      initAudio();
-      let track;
-      try {
-        track = selectedArcadeTrack();
-        rhythm = rhythm || new BBRhythm.RhythmEngine({ getEngine: () => bbEngine });
-        rhythm.stop();
-        const info = rhythm.loadBeatMap(track);
-        // whole loops only, close to the 45 s round
-        arcadeRoundSeconds = Math.max(1, Math.round(45 / info.length)) * info.length;
-      } catch (e) {
-        alert(e.message);
-        return;
-      }
-      document.getElementById('arcade-overlay').classList.add('hidden');
-      document.getElementById('overlay-pre-game').classList.add('hidden');
-      document.getElementById('overlay-post-game').classList.add('hidden');
-
-      score = 0;
-      comboStreak = 0;
-      maxCombo = 0;
-      totalNotesSpawned = 0;
-      totalNotesHit = 0;
-      botHP = 100;
-      roundTimeRemaining = arcadeRoundSeconds;
-      activeNotes = [];
-      if (track.clan) bbEngine.setClan(track.clan);
-
-      const diff = document.getElementById('arcade-diff-select').value;
-      rhythm.start({
-        travelTime: ARCADE_TRAVEL[diff] || 1.9,
-        duration: arcadeRoundSeconds,
-        onMiss: () => {
-          comboStreak = 0;
-          botHP = Math.max(0, botHP - 5);
-          updateArcadeHUD();
-        },
-        onEnd: () => { if (isArcadeRunning) endArcadeGame(); },
-      });
-      isArcadeRunning = true;
-      clearInterval(arcadeTimer);
-      updateArcadeHUD();
-      requestAnimationFrame(arcadeLoop);
-    }
-
-    function endArcadeGame() {
-      isArcadeRunning = false;
-      clearInterval(arcadeTimer);
-      if (rhythm) {
-        rhythm.stop();
-        totalNotesSpawned = rhythm.stats ? rhythm.stats.notes : totalNotesSpawned;
-        totalNotesHit = rhythm.stats ? rhythm.stats.hits : totalNotesHit;
-      }
-      if (bbEngine) bbEngine.setClan(activeClanKey);
-
-      document.getElementById('arcade-overlay').classList.remove('hidden');
-      document.getElementById('overlay-post-game').classList.remove('hidden');
-
-      const accuracy = totalNotesSpawned > 0 ? Math.round((totalNotesHit / totalNotesSpawned) * 100) : 0;
-      let grade = 'F';
-      let title = 'CYPHER FAILED';
-      let scrap = Math.round(score * 0.05);
-
-      if (botHP > 0 && accuracy >= 95 && score >= 3000) {
-        grade = 'S+';
-        title = 'LEGENDARY DOMINATION';
-        scrap += 150;
-      } else if (botHP > 0 && accuracy >= 85) {
-        grade = 'A';
-        title = 'CYPHER CHAMPION';
-        scrap += 100;
-      } else if (botHP > 0 && accuracy >= 70) {
-        grade = 'B';
-        title = 'STREET PROVEN';
-        scrap += 50;
-      } else if (botHP > 0) {
-        grade = 'C';
-        title = 'NEEDS RETUNING';
-        scrap += 20;
-      }
-
-      document.getElementById('result-grade').textContent = grade;
-      document.getElementById('result-title').textContent = title;
-      document.getElementById('result-acc').textContent = `${accuracy}%`;
-      document.getElementById('result-streak').textContent = maxCombo;
-      document.getElementById('result-score').textContent = score;
-      document.getElementById('result-scrap').textContent = `+${scrap} $SCRAP`;
-    }
-
-    function updateArcadeHUD() {
-      document.getElementById('arcade-score').textContent = score.toString().padStart(4, '0');
-      const mult = comboStreak >= 20 ? 8 : comboStreak >= 10 ? 4 : comboStreak >= 5 ? 2 : 1;
-      document.getElementById('arcade-streak').textContent = `x${mult} (${comboStreak})`;
-      document.getElementById('arcade-hp-text').textContent = `${Math.max(0, Math.round(botHP))}%`;
-      document.getElementById('arcade-hp-bar').style.width = `${Math.max(0, botHP)}%`;
-      if (botHP < 25) {
-        document.getElementById('arcade-hp-bar').className = 'bg-bass-crimson h-full transition-all';
-      } else {
-        document.getElementById('arcade-hp-bar').className = 'bg-bass-toxic h-full transition-all';
-      }
-    }
-
-    function triggerHitFeedback(text, color = 'text-bass-toxic') {
-      if (/MISS/.test(text)) uiSound('miss');
-      const fb = document.getElementById('hit-feedback');
-      fb.textContent = text;
-      fb.className = `absolute top-20 font-display font-bold text-2xl ${color} opacity-100 transition-opacity duration-200`;
-      setTimeout(() => {
-        fb.classList.replace('opacity-100', 'opacity-0');
-      }, 350);
-    }
-
-    const JUDGE_POINTS = { perfect: 50, great: 35, good: 20 };
-    const JUDGE_COLOR = { perfect: 'text-bass-toxic', great: 'text-bass-cyan', good: 'text-bass-amber' };
-
-    function checkHit(laneIdx) {
-      if (!isArcadeRunning || !rhythm) return;
-      initAudio();
-      laneFlash[laneIdx] = performance.now();
-      const r = rhythm.hit(laneIdx);
-      if (r) {
-        totalNotesHit++;
-        comboStreak++;
-        maxCombo = Math.max(maxCombo, comboStreak);
-        const mult = comboStreak >= 20 ? 8 : comboStreak >= 10 ? 4 : comboStreak >= 5 ? 2 : 1;
-        const pts = JUDGE_POINTS[r.judgement] * mult;
-        score += pts;
-        botHP = Math.min(100, botHP + (r.judgement === 'perfect' ? 2.5 : 1.5));
-        triggerHitFeedback(comboStreak >= 10 ? `HYPER STREAK! +${pts}` : `${r.judgement.toUpperCase()}!`, JUDGE_COLOR[r.judgement]);
-      } else {
-        // tapped with nothing in the window
-        comboStreak = 0;
-        botHP = Math.max(0, botHP - 4);
-        triggerHitFeedback('MISS!', 'text-bass-crimson');
-      }
-      updateArcadeHUD();
-    }
-
-    const HIT_Y = 340;
-    const LANE_COLORS = ['#00FF87', '#06B6D4', '#FFB020'];
-    function arcadeLoop() {
-      if (!isArcadeRunning || !rhythm) return;
-      const f = rhythm.frame();
-      const W = canvas.width, H = canvas.height;
-
-      ctx.fillStyle = '#06080C';
-      ctx.fillRect(0, 0, W, H);
-
-      // scrolling beat grid (bar lines brighter)
-      const c = rhythm.chart, spb = 60 / c.bpm;
-      const firstBeat = Math.floor((f.time - 0.4) / spb);
-      for (let b = firstBeat; b < firstBeat + Math.ceil(rhythm.travelTime / spb) + 3; b++) {
-        const y = (1 - (b * spb - f.time) / rhythm.travelTime) * HIT_Y;
-        if (y < 0 || y > H) continue;
-        ctx.strokeStyle = b % c.beatsPerBar === 0 ? '#334155' : '#141B26';
-        ctx.lineWidth = b % c.beatsPerBar === 0 ? 2 : 1;
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-      }
-
-      // lane dividers + press flash
-      const now = performance.now();
-      for (let l = 0; l < 3; l++) {
-        const a = Math.max(0, 1 - (now - laneFlash[l]) / 140);
-        if (a > 0) {
-          ctx.fillStyle = LANE_COLORS[l] + Math.round(a * 40).toString(16).padStart(2, '0');
-          ctx.fillRect(LANE_COORDS[l] - 100, 0, 200, H);
-        }
-      }
-      ctx.strokeStyle = '#1E293B';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(200, 0); ctx.lineTo(200, H);
-      ctx.moveTo(400, 0); ctx.lineTo(400, H);
-      ctx.stroke();
-
-      // strike line
-      ctx.strokeStyle = '#00FF87';
-      ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(0, HIT_Y); ctx.lineTo(W, HIT_Y); ctx.stroke();
-
-      // chord connectors
-      const chords = {};
-      f.notes.forEach((n) => { if (n.chordId && !n.missed) (chords[n.chordId] = chords[n.chordId] || []).push(n); });
-      Object.values(chords).forEach((g) => {
-        if (g.length < 2) return;
-        const xs = g.map((n) => LANE_COORDS[n.lane]);
-        const y = g[0].progress * HIT_Y;
-        ctx.strokeStyle = '#E2E8F0aa'; ctx.lineWidth = 4;
-        ctx.beginPath(); ctx.moveTo(Math.min(...xs), y); ctx.lineTo(Math.max(...xs), y); ctx.stroke();
-      });
-
-      // notes
-      f.notes.forEach((n) => {
-        const x = LANE_COORDS[n.lane];
-        const y = n.progress * HIT_Y;
-        ctx.fillStyle = n.missed ? '#FF2E5466' : LANE_COLORS[n.lane];
-        ctx.shadowColor = ctx.fillStyle;
-        ctx.shadowBlur = n.missed ? 0 : 12;
-        ctx.beginPath();
-        ctx.roundRect(x - 45, y - 12, 90, 24, 6);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      });
-
-      roundTimeRemaining = Math.ceil(f.remaining);
-      document.getElementById('arcade-time-bar').style.width = `${(f.remaining / f.duration) * 100}%`;
-
-      if (botHP <= 0) { endArcadeGame(); return; }
-      requestAnimationFrame(arcadeLoop);
     }
 
     // ==========================================
@@ -3045,7 +2660,7 @@
         });
       });
 
-      // Keyboard listeners for FX [1]-[6] and Arcade [D, F, J]
+      // Keyboard listeners for FX [1]-[8] (the pad battle captures its own keys while running)
       window.addEventListener('keydown', (e) => {
         // Melodic Synth Lab Keys mapping (A to K)
         const keyMap = {
@@ -3069,9 +2684,6 @@
         else if (e.key === '4') triggerFX('laser');
         else if (e.key === '5') triggerFX('stop');
         else if (e.key === '6') triggerFX('riser');
-        else if (!e.repeat && (e.key === 'd' || e.key === 'D')) checkHit(0);
-        else if (!e.repeat && (e.key === 'f' || e.key === 'F')) checkHit(1);
-        else if (!e.repeat && (e.key === 'j' || e.key === 'J')) checkHit(2);
       });
 
       // Clan Tabs & Hero Pills
@@ -3094,18 +2706,8 @@
         setTimeout(() => triggerFX('siren'), 400);
       });
 
-      // Arcade controls
-      buildArcadeLibrary();
-      canvas.addEventListener('pointerdown', (e) => {
-        if (!isArcadeRunning) return;
-        const r = canvas.getBoundingClientRect();
-        checkHit(Math.min(2, Math.max(0, Math.floor(((e.clientX - r.left) / r.width) * 3))));
-      });
-      document.getElementById('start-arcade-btn').addEventListener('click', startArcadeGame);
-      document.getElementById('restart-arcade-btn').addEventListener('click', startArcadeGame);
-      document.getElementById('lane-touch-0').addEventListener('pointerdown', (e) => { e.preventDefault(); checkHit(0); });
-      document.getElementById('lane-touch-1').addEventListener('pointerdown', (e) => { e.preventDefault(); checkHit(1); });
-      document.getElementById('lane-touch-2').addEventListener('pointerdown', (e) => { e.preventDefault(); checkHit(2); });
+      // Beat Pad Battle
+      mountPadBattle();
 
       // Armory selectors
       document.getElementById('armory-select-clan').addEventListener('change', updateArmoryBuild);
@@ -3113,6 +2715,7 @@
       document.getElementById('armory-select-visor').addEventListener('change', updateArmoryBuild);
       document.getElementById('armory-select-weapon').addEventListener('change', updateArmoryBuild);
       document.getElementById('armory-apply-btn').addEventListener('click', () => {
+        if (window.BBPadBattle) window.BBPadBattle.selectBot(document.getElementById('armory-select-clan').value);
         window.location.hash = '#arcade-section';
       });
     }

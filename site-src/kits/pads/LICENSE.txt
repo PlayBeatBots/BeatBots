@@ -1,0 +1,33 @@
+BeatBots Beat Pad Battle instruments: piano, vibes, horn stabs, crash, timpani
+
+Sources:
+  [vc] Versilian Community Sample Library (VCSL) by Versilian Studios: CC0 1.0 Universal
+       (public domain dedication). https://github.com/sgossner/VCSL
+
+Files (processed: mono, trimmed, faded, peak-normalised, 32 kHz 16-bit) built by tools/build_pad_samples.py:
+  piano_A1.wav  <-  Chordophones/Zithers/Upright Piano, Knight/Sustains/Player_vl2_rr1_A1.wav  [vc]  (root MIDI 32.94)
+  piano_Cs2.wav  <-  Chordophones/Zithers/Upright Piano, Knight/Sustains/Player_vl2_rr1_C#2.wav  [vc]  (root MIDI 36.99)
+  piano_F2.wav  <-  Chordophones/Zithers/Upright Piano, Knight/Sustains/Player_vl2_rr1_F2.wav  [vc]  (root MIDI 41.02)
+  piano_A2.wav  <-  Chordophones/Zithers/Upright Piano, Knight/Sustains/Player_vl2_rr1_A2.wav  [vc]  (root MIDI 45.05)
+  piano_Cs3.wav  <-  Chordophones/Zithers/Upright Piano, Knight/Sustains/Player_vl2_rr1_C#3.wav  [vc]  (root MIDI 49.07)
+  piano_F3.wav  <-  Chordophones/Zithers/Upright Piano, Knight/Sustains/Player_vl2_rr1_F3.wav  [vc]  (root MIDI 53.12)
+  piano_A3.wav  <-  Chordophones/Zithers/Upright Piano, Knight/Sustains/Player_vl2_rr1_A3.wav  [vc]  (root MIDI 57.17)
+  piano_Cs4.wav  <-  Chordophones/Zithers/Upright Piano, Knight/Sustains/Player_vl2_rr1_C#4.wav  [vc]  (root MIDI 60.92)
+  piano_F4.wav  <-  Chordophones/Zithers/Upright Piano, Knight/Sustains/Player_vl2_rr1_F4.wav  [vc]  (root MIDI 64.93)
+  piano_A4.wav  <-  Chordophones/Zithers/Upright Piano, Knight/Sustains/Player_vl2_rr1_A4.wav  [vc]  (root MIDI 69.17)
+  vibes_C3.wav  <-  Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_C3_v2_rr1_Main.wav  [vc]  (root MIDI 47.9)
+  vibes_E3.wav  <-  Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_E3_v2_rr1_Main.wav  [vc]  (root MIDI 52.01)
+  vibes_G3.wav  <-  Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_G3_v2_rr1_Main.wav  [vc]  (root MIDI 54.92)
+  vibes_B3.wav  <-  Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_B3_v2_rr1_Main.wav  [vc]  (root MIDI 58.94)
+  vibes_D4.wav  <-  Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_D4_v2_rr1_Main.wav  [vc]  (root MIDI 61.99)
+  vibes_F4.wav  <-  Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_F4_v2_rr1_Main.wav  [vc]  (root MIDI 64.93)
+  vibes_A4.wav  <-  Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_A4_v2_rr1_Main.wav  [vc]  (root MIDI 69.0)
+  vibes_C5.wav  <-  Idiophones/Struck Idiophones/Vibraphone/Soft Mallets/Vibes_soft_C5_v2_rr1_Main.wav  [vc]  (root MIDI 72.04)
+  horn_C3.wav  <-  Aerophones/Reed Aerophones/Tenor Saxophone/Staccato/BrettTenor_Staccato_Main_C3_vl2_rr4.wav  [vc]  (root MIDI 48.04)
+  horn_E3.wav  <-  Aerophones/Reed Aerophones/Tenor Saxophone/Staccato/BrettTenor_Staccato_Main_E3_vl2_rr3.wav  [vc]  (root MIDI 52.01)
+  horn_Gs3.wav  <-  Aerophones/Reed Aerophones/Tenor Saxophone/Staccato/BrettTenor_Staccato_Main_G#3_vl1_rr1.wav  [vc]  (root MIDI 56.01)
+  horn_C4.wav  <-  Aerophones/Reed Aerophones/Tenor Saxophone/Staccato/BrettTenor_Staccato_Main_C4_vl2_rr3.wav  [vc]  (root MIDI 60.04)
+  horn_E4.wav  <-  Aerophones/Reed Aerophones/Tenor Saxophone/Staccato/BrettTenor_Staccato_Main_E4_vl2_rr4.wav  [vc]  (root MIDI 64.01)
+  crash.wav  <-  Idiophones/Struck Idiophones/Clash Cymbals 1/cymbal_crash1_mf1.wav  [vc]
+  crash_short.wav  <-  Idiophones/Struck Idiophones/Clash Cymbals 1/cymbal_crash1_short1.wav  [vc]
+  timpani.wav  <-  Membranophones/Struck Membranophones/Timpani 1/Hit/Timpani1_Hit_v4_rr1_Sum.wav  [vc]

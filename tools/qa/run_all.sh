@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run the full QA suite against a built site/ directory.
 # Usage: tools/qa/run_all.sh [siteDir=site] [outDir=qa-out]
-# Results: <outDir>/{ui,img,overflow,timing,audio,rhythm}/ ; exit code = number of failed checks.
+# Results: <outDir>/{ui,img,overflow,timing,audio,padbattle}/ ; exit code = number of failed checks.
 set -u
 cd "$(dirname "$0")/../.."
 SITE="$(realpath "${1:-site}")"; OUT="$(realpath -m "${2:-qa-out}")"
@@ -13,6 +13,6 @@ run img      node tools/qa/imgcheck.cjs  "$SITE" "$OUT/img"
 run overflow node tools/qa/overflow.cjs  "$SITE" "$OUT/overflow"
 run timing   node tools/qa/timing.cjs    "$SITE" "$OUT/timing"
 [ -f tools/audio_test.cjs ]  && run audio  node tools/audio_test.cjs  "$SITE" "$OUT/audio"
-[ -f tools/rhythm_test.cjs ] && run rhythm node tools/rhythm_test.cjs "$SITE" "$OUT/rhythm"
+[ -f tools/padbattle_test.cjs ] && run padbattle node tools/padbattle_test.cjs "$SITE" "$OUT/padbattle"
 echo "== $fails failed"
 exit $fails
