@@ -54,6 +54,12 @@ const playBot = ({ offsetMs, maxSec }) => new Promise((resolve) => {
   })));
   charts.forEach((c) => check(c.ok && c.notes > 20, `chart ${c.id}/${c.d}: ${c.ok ? `${c.notes} notes, ${c.secs}s` : c.err}`));
 
+  // first visit shows How to play; Got it leads to setup
+  await p.locator('#arcade-section').scrollIntoViewIfNeeded();
+  check(await p.locator('#padbattle-root .pb-steps li').count() === 4, 'first visit shows the 4-step How to play');
+  await p.locator('#padbattle-root').screenshot({ path: path.join(outDir, 'howto-desktop.png') });
+  await p.locator('#padbattle-root .pb-got').click();
+
   // setup screen
   await p.locator('#arcade-section').scrollIntoViewIfNeeded();
   await p.waitForTimeout(400);
@@ -66,11 +72,20 @@ const playBot = ({ offsetMs, maxSec }) => new Promise((resolve) => {
   const perfect = p.evaluate(playBot, { offsetMs: 0, maxSec: 80 });
   await shot;
   await p.locator('#padbattle-root').screenshot({ path: path.join(outDir, 'game-desktop.png') });
+  const chips = await p.evaluate(() => [...document.querySelectorAll('#padbattle-root .pb-cue .c')].filter((c) => c.style.display !== 'none').map((c) => c.textContent));
+  check(chips.length > 0 && chips.every((t) => /^[ASDF]+$/.test(t)), `cue strip shows key letters (${chips.slice(0, 6).join(' ')})`);
   const pr = await perfect;
   console.log('perfect run:', JSON.stringify(pr));
   check(pr.win && pr.counts.miss === 0 && pr.acc >= 99, 'perfect bot wins with no misses');
   await p.waitForTimeout(600);
   await p.locator('#padbattle-root').screenshot({ path: path.join(outDir, 'result-desktop.png') });
+
+  // Easy: only A + S charted
+  await p.evaluate(() => { const g = window.BBPadBattle.game; g.showSetup(); g.setup.diff = 'easy'; g.setup.song = 'golden-hour'; g.setup.clan = 'alchemist'; g.showSetup(); });
+  const easy = await p.evaluate(playBot, { offsetMs: 0, maxSec: 85 });
+  const easyPads = await p.evaluate(() => [...new Set(window.BBPadBattle.game.notes.map((n) => n.pad))]);
+  console.log('easy run:', JSON.stringify(easy), 'pads', easyPads);
+  check(easy.win && easyPads.every((x) => x === 8 || x === 9), 'Easy uses only A + S and a perfect run wins');
 
   // 60 ms late every note: should still land (GOOD/GREAT), fewer perfects
   await p.evaluate(() => window.BBPadBattle.game.showSetup());
@@ -89,6 +104,9 @@ const playBot = ({ offsetMs, maxSec }) => new Promise((resolve) => {
   // phone layout
   const m = await page(b, { width: 390, height: 844 });
   await m.locator('#arcade-section').scrollIntoViewIfNeeded();
+  await m.waitForTimeout(300);
+  await m.locator('#padbattle-root').screenshot({ path: path.join(outDir, 'howto-phone.png') });
+  await m.locator('#padbattle-root .pb-got').click();
   await m.waitForTimeout(400);
   await m.locator('#padbattle-root').screenshot({ path: path.join(outDir, 'setup-phone.png') });
   const ov = await m.evaluate(() => { const r = document.querySelector('#padbattle-root .pb').getBoundingClientRect(); const wide = [...document.querySelectorAll('#padbattle-root *')].filter((e) => e.getBoundingClientRect().right > innerWidth + 1).length; return { w: r.width, left: r.left, right: r.right, wide }; });

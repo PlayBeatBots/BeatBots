@@ -140,7 +140,7 @@
     <a class="mod" href="#mint-section"><span class="hex"><span>01</span></span><span>Genesis Mint<small>DEVNET TEST</small></span><i class="st"></i></a>
     <a class="mod" href="#clans-section"><span class="hex"><span>02</span></span><span>Sound Clans<small>5 FACTIONS</small></span><i class="st"></i></a>
     <a class="mod" href="#audio-section"><span class="hex"><span>03</span></span><span>Sound Station<small>8CH SEQUENCER</small></span><i class="st"></i></a>
-    <a class="mod" href="#arcade-section"><span class="hex"><span>04</span></span><span>Battle Arcade<small>PAD BATTLE</small></span><i class="st"></i></a>
+    <a class="mod" href="#arcade-section"><span class="hex"><span>04</span></span><span>Battle Arcade<small>BEAT BATTLE</small></span><i class="st"></i></a>
     <a class="mod" href="#armory-section"><span class="hex"><span>05</span></span><span>Armory &amp; Forge<small>TRAIT FORGE v1.0</small></span><i class="st"></i></a>
     <a class="mod" href="#vault-section"><span class="hex"><span>06</span></span><span>Founder Vault<small>TECSUPORT ARCHIVE</small></span><i class="st"></i></a>
     <a class="mod" href="#token-section"><span class="hex"><span>07</span></span><span>$BEATBOT<small>BATTLE SCRAP</small></span><i class="st"></i></a>
@@ -164,7 +164,7 @@
           <div>
             <span class="tag cy"><span class="led cyan"></span>GENESIS COLLECTION // 888 AUTONOMOUS AUDIO BATTLERS</span>
             <h1>Underground<br><span class="g">Bass Culture.</span><br><span class="o">Rhythm Duels.</span></h1>
-            <p class="lede">BeatBots is an asynchronous pad-battle rhythm universe built for bassheads and breakbeat purists. Collect handcrafted Genesis NFT battlers across Five Legendary Sound Clans, forge beats in our 16-step modular sequencer, and duel for $SCRAP on Solana.</p>
+            <p class="lede">BeatBots is an asynchronous beat-battle rhythm universe built for bassheads and breakbeat purists. Collect handcrafted Genesis NFT battlers across Five Legendary Sound Clans, forge beats in our 16-step modular sequencer, and duel for $SCRAP on Solana.</p>
             <div class="clansel">
               <div class="lbl">&gt; Select featured sound clan</div>
               <div class="chips">
@@ -176,7 +176,7 @@
               </div>
             </div>
             <div class="cta">
-              <a class="btn pri" href="#arcade-section">▶ Play Rhythm Arcade</a>
+              <a class="btn pri" href="#arcade-section">▶ Play Beat Battle</a>
               <a class="btn sec" href="#mint-section">Mint Genesis Bot <span>→</span></a>
             </div>
             <div class="hstats">
@@ -751,11 +751,11 @@
       </div>
     </section>
 
-    <!-- Upgraded 3-Lane Rhythm Arcade Engine -->
+    <!-- Beat Battle arcade -->
     <section id="arcade-section" class="py-24 bg-bass-black relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="sec-head"><span class="hex"><span>04</span></span><div class="tl"><div class="eyebrow">RHYTHM CYPHER // PAD BATTLE MODE</div><h2>RHYTHM BATTLE ARCADE</h2><p>Pick your BeatBot and face a rival on the 16-pad sampler. Your rival plays a pattern, you play it back. Every pad is a real sample, so nail the timing and you play the whole beat. Land perfect streaks to charge your clan ability and earn in-game $SCRAP.</p></div><div class="rule" data-r="MODULE 04 // ARENA"></div></div>
-        <!-- Beat Pad Battle (rendered by beatbots-padbattle.js) -->
+        <div class="sec-head"><span class="hex"><span>04</span></span><div class="tl"><div class="eyebrow">RHYTHM CYPHER // BEAT BATTLE MODE</div><h2>BEAT BATTLE</h2><p>Pick your BeatBot and face a rival on the 16-pad sampler. Your rival plays a pattern, you play it back. Every pad is a real sample, so nail the timing and you play the whole beat. Land perfect streaks to charge your clan ability and earn in-game $SCRAP.</p></div><div class="rule" data-r="MODULE 04 // ARENA"></div></div>
+        <!-- Beat Battle (rendered by beatbots-padbattle.js) -->
         <div id="padbattle-root"></div>
       </div>
     </section>
@@ -1695,7 +1695,7 @@
     }
 
     // ==========================================
-    // 4. BEAT PAD BATTLE (beatbots-padbattle.js)
+    // 4. BEAT BATTLE (beatbots-padbattle.js)
     // ==========================================
     let isArcadeRunning = false; // page key handlers stand down while a battle runs
     function mountPadBattle() {
@@ -2557,7 +2557,7 @@
         setTimeout(() => triggerFX('siren'), 400);
       });
 
-      // Beat Pad Battle
+      // Beat Battle
       mountPadBattle();
 
       // Armory selectors

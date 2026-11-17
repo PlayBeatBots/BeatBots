@@ -1,5 +1,5 @@
 /*
- * BeatBots Beat Pad Battle: a 4x4 sampler-pad rhythm battle on the Web Audio clock.
+ * BeatBots Beat Battle: a 4x4 sampler-pad rhythm battle on the Web Audio clock.
  *
  *   BBPadBattle.mount(document.getElementById('padbattle-root'), {
  *     getCtx: () => AudioContext,        // called inside a user gesture
@@ -27,10 +27,13 @@
   const ROW_COLORS = ['#FF5FA2', '#2F7BFF', '#00E5FF', '#FF2BD6']; // fx, chords, drums, bass
   const PRIORITY = ['kick', 'snare', 'b1', 'b2', 'b3', 'b4', 'clap', 'c1', 'c2', 'c3', 'c4', 'ohat', 'stab', 'crash', 'shk', 'hat'];
   const DIFFS = {
-    standard: { label: 'STANDARD', pads: 4, rows: [2], approach: 1.3, maxSim: 2, off: 'none', gap: 0.2, tgap: 0.24, rival: 0.78 },
-    turbo: { label: 'TURBO', pads: 8, rows: [2, 3], approach: 1.05, maxSim: 2, off: 'sparse', gap: 0.15, tgap: 0.15, rival: 0.86 },
-    hyper: { label: 'HYPER', pads: 16, rows: [0, 1, 2, 3], approach: 0.85, maxSim: 2, off: 'sparse', gap: 0.12, tgap: 0.11, rival: 0.92 },
+    // win = timing-window multiplier, miss = bar push per miss, stray = penalise off-pattern taps
+    easy: { label: 'EASY', pads: 2, rows: [2], roles: ['kick', 'snare'], approach: 1.7, maxSim: 1, off: 'none', gap: 0.3, tgap: 0.38, rival: 0.66, win: 1.35, miss: 0.9, stray: false, noGhosts: true },
+    standard: { label: 'STANDARD', pads: 4, rows: [2], approach: 1.4, maxSim: 2, off: 'none', gap: 0.2, tgap: 0.24, rival: 0.76, win: 1.15, miss: 1.25, stray: false, noGhosts: true },
+    turbo: { label: 'TURBO', pads: 8, rows: [2, 3], approach: 1.1, maxSim: 2, off: 'sparse', gap: 0.15, tgap: 0.15, rival: 0.86, win: 1, miss: 1.6, stray: true },
+    hyper: { label: 'HYPER', pads: 16, rows: [0, 1, 2, 3], approach: 0.9, maxSim: 2, off: 'sparse', gap: 0.12, tgap: 0.11, rival: 0.92, win: 1, miss: 1.6, stray: true },
   };
+  const padOn = (i, D) => D.rows.includes(Math.floor(i / 4)) && (!D.roles || D.roles.includes(ROLES[i]));
   const WIN = { perfect: 0.05, great: 0.095, good: 0.145 };
   const JUDGE = {
     perfect: { pts: 300, dmg: 2.0, meter: 7, color: '#00E5FF', text: 'PERFECT' },
@@ -317,7 +320,7 @@
     const spb = 60 / song.bpm, stepDur = spb / 4;
     const swing = song.swing || 0;
     const stepT = (s) => s * stepDur + (s % 2 ? swing * stepDur : 0);
-    const charted = (pad) => D.rows.includes(Math.floor(pad / 4));
+    const charted = (pad) => padOn(pad, D);
 
     // pick which events in a part become notes (shared by the call and its response)
     function chartPart(evs) {
@@ -336,7 +339,7 @@
           if (picked >= D.maxSim) return;
           if (off && D.off === 'none') return;
           if (off && D.off === 'sparse' && prevStepHad === abs - 1) return;
-          if (D.label === 'STANDARD' && e.vel < 0.6) return; // ghosts stay in the backing
+          if (D.noGhosts && e.vel < 0.6) return; // ghosts stay in the backing
           const t = e.abs * stepDur;
           if (lastOnPad[e.pad] != null && t - lastOnPad[e.pad] < D.gap) return;
           lastOnPad[e.pad] = t; e.note = true; picked++;
@@ -658,7 +661,33 @@
 .pb-abtn.ready{background:var(--cyan);color:var(--void);border-color:var(--cyan);animation:pbGlow .9s infinite alternate}
 .pb-abtn.live{background:var(--mag);color:var(--void);border-color:var(--mag)}
 @keyframes pbGlow{to{box-shadow:0 0 18px var(--cyan)}}
-.pb-gw{position:relative;padding:18px 14px 16px;display:flex;justify-content:center}
+.pb-cue{position:relative;height:66px;margin:14px 14px 0;border:1px solid var(--line2);background:linear-gradient(90deg,rgba(0,229,255,.07),transparent 30%),#020409;overflow:hidden}
+.pb-cue::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(36,57,107,.35) 1px,transparent 1px) 0 0/40px 100%}
+.pb-cue.rival{background:linear-gradient(90deg,rgba(255,43,214,.08),transparent 30%),#020409}
+.pb-hit{position:absolute;left:46px;top:0;bottom:0;width:3px;margin-left:-1px;background:var(--cyan);box-shadow:0 0 14px var(--cyan);z-index:1}
+.pb-cue.rival .pb-hit{background:var(--mag);box-shadow:0 0 14px var(--mag)}
+.pb-cuel{position:absolute;inset:0}
+.pb-cue .c,.pb-demo .c{position:absolute;left:0;top:50%;display:flex;flex-direction:column;gap:2px;margin-left:-15px;will-change:transform;z-index:2}
+.pb-cue .c b,.pb-demo .c b{min-width:30px;height:24px;padding:0 4px;display:grid;place-items:center;font:700 14px/1 var(--m);background:var(--cyan);color:var(--void);box-shadow:0 0 10px rgba(0,229,255,.55)}
+.pb-cue .c.r b{background:transparent;color:var(--mag);border:2px solid var(--mag);box-shadow:none}
+.pb-cue .c.r.miss b{opacity:.3}
+.pb-cue .c.y.hit b{background:var(--ok);opacity:.35;box-shadow:none}
+.pb-cue .c.y.miss b{background:var(--pink);opacity:.45;box-shadow:none}
+.pb-cueh{position:absolute;right:8px;top:5px;font:500 9px/1 var(--m);letter-spacing:.16em;color:var(--mute);z-index:3}
+.pb-cue.you .pb-cueh{color:var(--cyan)}.pb-cue.rival .pb-cueh{color:var(--mag)}
+.pb-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;width:100%;max-width:540px}
+.pb-steps li{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);background:rgba(10,17,36,.7);padding:12px 14px;font-size:13.5px;line-height:1.55;color:#A9B6DA}
+.pb-steps li>i{flex:none;width:26px;height:30px;display:grid;place-items:center;font:700 12px/1 var(--m);font-style:normal;color:var(--void);background:var(--cyan);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.pb-steps b{color:var(--text)}
+.pb-demo{position:relative;height:66px;margin:10px 0 8px;border:1px solid var(--line2);background:#020409}
+.pb-demo .pb-hit{left:46px}
+.pb-demo .c{transform:translateY(-50%)}
+.pb-demo .c:first-of-type{left:46px}
+.pb-keys{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px}
+.pb-keys b{min-width:30px;height:28px;display:grid;place-items:center;font:700 13px/1 var(--m);border:1px solid var(--line2);color:var(--mute)}
+.pb-keys b.on{background:var(--cyan);color:var(--void);border-color:var(--cyan)}
+.pb-keys small{flex-basis:100%;font:500 10.5px/1.4 var(--m);color:var(--dim);margin-top:4px}
+.pb-gw{position:relative;padding:14px 14px 16px;display:flex;justify-content:center}
 .pb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:min(100%,440px)}
 .pb-pad{position:relative;aspect-ratio:1/1;border:1px solid var(--line2);background:radial-gradient(circle at 50% 120%,color-mix(in srgb,var(--c) 22%,transparent),transparent 70%),#070C1B;
  display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:7px;font:700 10px/1.15 var(--m);letter-spacing:.04em;color:var(--dim);touch-action:none;cursor:pointer;text-align:left;
@@ -682,7 +711,8 @@
 .pb.shake{animation:pbShake .35s}
 @keyframes pbShake{20%{transform:translate(-4px,2px)}40%{transform:translate(4px,-2px)}60%{transform:translate(-3px,1px)}80%{transform:translate(2px,-1px)}}
 .pb-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px 14px;border-top:1px solid var(--line);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
-.pb-foot button{font:600 10px/1 var(--m);letter-spacing:.12em;color:var(--mute);background:var(--panel);border:1px solid var(--line2);padding:8px 12px;cursor:pointer}
+.pb-foot>span:last-child{display:flex;gap:6px;flex:none}
+.pb-foot button{white-space:nowrap;font:600 10px/1 var(--m);letter-spacing:.12em;color:var(--mute);background:var(--panel);border:1px solid var(--line2);padding:8px 12px;cursor:pointer}
 .pb-ov{position:absolute;inset:0;z-index:10;background:linear-gradient(180deg,rgba(3,5,12,.97),rgba(6,10,22,.96));overflow-y:auto;padding:22px 18px;display:flex;flex-direction:column;align-items:center;gap:13px}
 .pb-ov.hide{display:none}
 .pb-tag{display:inline-flex;align-items:center;gap:8px;font:500 10px/1.3 var(--m);letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);padding:6px 10px;border:1px solid rgba(0,229,255,.4);background:rgba(3,5,12,.7)}
@@ -735,6 +765,8 @@
  .pb-meter{width:96px}
  .pb-hud{padding:8px 12px}
  .pb-hud b{font-size:18px}
+ .pb-foot{font-size:9px;letter-spacing:.08em;padding:10px 12px 12px}
+ .pb-foot button{padding:7px 8px;font-size:9px}
  .pb-pick{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
  .pb-card span{font-size:8.5px;padding:0 4px}
  .pb-card small{display:none}
@@ -759,13 +791,15 @@
       this.setup = {
         clan: this.clans[saved.clan] ? saved.clan : 'bboy',
         song: SONGS.some((s) => s.id === saved.song) ? saved.song : null,
-        diff: DIFFS[saved.diff] ? saved.diff : 'standard',
+        diff: DIFFS[saved.diff] ? saved.diff : 'easy',
         bt: !!saved.bt,
       };
       this.running = false;
       this.render();
       this.bindKeys();
-      this.showSetup();
+      this.chips = [];
+      this.touch = typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches;
+      if (store.get('pb-howto', false)) this.showSetup(); else this.showHowTo();
     }
 
     clanInfo(key) {
@@ -798,8 +832,9 @@
           <div class="cb">COMBO<b class="co">0</b></div>
           <div class="pb-abil"><button class="pb-abtn" type="button">ABILITY [SPACE]</button><div class="pb-meter">${'<i></i>'.repeat(20)}</div></div>
         </div>
+        <div class="pb-cue"><i class="pb-hit"></i><div class="pb-cuel"></div><span class="pb-cueh">GET READY</span></div>
         <div class="pb-gw"><div class="pb-judge"></div><div class="pb-grid">${pads}</div><div class="pb-banner"></div></div>
-        <div class="pb-foot"><span class="tr"></span><button type="button" class="qt">QUIT</button></div>
+        <div class="pb-foot"><span class="tr"></span><span><button type="button" class="hw">? HOW TO PLAY</button> <button type="button" class="qt">QUIT</button></span></div>
         <div class="pb-ov"></div>
       </div></div>`);
       this.root.appendChild(this.ui);
@@ -807,7 +842,7 @@
       this.$ = {
         you: q('.pb-you'), rival: q('.pb-rival'), tug: q('.pb-tug>i'), turn: q('.pb-turn'), dots: q('.pb-dots'),
         mini: [...q('.pb-mini').children], score: q('.sc'), combo: q('.co'), abtn: q('.pb-abtn'), meter: [...q('.pb-meter').children],
-        judge: q('.pb-judge'), banner: q('.pb-banner'), track: q('.tr'), ov: q('.pb-ov'),
+        judge: q('.pb-judge'), cue: q('.pb-cue'), cuel: q('.pb-cuel'), cueh: q('.pb-cueh'), banner: q('.pb-banner'), track: q('.tr'), ov: q('.pb-ov'),
         pads: [...this.ui.querySelectorAll('.pb-pad')],
       };
       this.$.padParts = this.$.pads.map((p) => ({ lb: p.querySelector('.lb'), fl: p.querySelector('.fl'), gh: p.querySelector('.gh'), rg: [...p.querySelectorAll('.rg')] }));
@@ -818,6 +853,8 @@
       });
       this.$.abtn.addEventListener('click', () => this.useAbility());
       q('.qt').addEventListener('click', () => this.end('quit'));
+      q('.hw').addEventListener('click', () => { if (this.running) this.end('quit'); this.showHowTo(); });
+      window.addEventListener('resize', () => { this.cueW = 0; });
       document.addEventListener('visibilitychange', () => { if (document.hidden && this.running) this.end('quit'); });
     }
 
@@ -848,9 +885,10 @@
       const diffs = Object.keys(DIFFS).map((d) => `<button type="button" class="pb-chip${s.diff === d ? ' sel' : ''}" data-diff="${d}">${DIFFS[d].label}<small>${DIFFS[d].pads} pads</small></button>`).join('');
       const ab = ABILITY[s.clan];
       this.$.ov.innerHTML = `
-        <span class="pb-tag">MODULE 04 // PAD BATTLE</span>
-        <div class="pb-h">Beat Pad Battle</div>
-        <div class="pb-sub">Your rival plays a pattern on the pads. Play it back when the rings close. Every hit is a real sample, so a clean run plays the whole beat.</div>
+        <span class="pb-tag">MODULE 04 // BEAT BATTLE</span>
+        <div class="pb-h">Beat Battle</div>
+        <div class="pb-sub">Your rival plays a pattern, then you play it back. The strip above the pads shows exactly which keys to hit. New here? Start on Easy.</div>
+        <button type="button" class="pb-btn2 pb-how">? How to play</button>
         <div class="pb-lbl">Choose your bot</div>
         <div class="pb-pick">${cards}</div>
         <div class="pb-note pb-abdesc">Clan ability: <b>${esc(ab.name)}</b> (${esc(ab.desc)})</div>
@@ -874,8 +912,30 @@
       ov.querySelectorAll('[data-song]').forEach((li) => li.addEventListener('click', () => { s.song = li.dataset.song; this.showSetup(); }));
       ov.querySelector('.pb-bt').addEventListener('click', () => { s.bt = !s.bt; this.showSetup(); });
       ov.querySelector('.pb-go').addEventListener('click', (e) => this.start(e.currentTarget));
+      ov.querySelector('.pb-how').addEventListener('click', () => this.showHowTo());
       this.paintIdle();
     }
+    showHowTo() {
+      const keyRow = (ks, cls) => ks.map((k) => `<b class="${cls}">${k}</b>`).join('');
+      this.$.ov.innerHTML = `
+        <span class="pb-tag">HOW TO PLAY</span>
+        <div class="pb-h">Beat Battle</div>
+        <ol class="pb-steps">
+          <li><i>1</i><div><b>Rival's turn</b> (pink). Your rival plays a short pattern. Listen, and watch the pink letters slide across the strip above the pads.</div></li>
+          <li><i>2</i><div><b>Your turn</b> (cyan). The same pattern comes back as cyan letters. Hit each key the moment its letter reaches the line on the left.
+            <div class="pb-demo"><i class="pb-hit"></i><span class="c"><b>A</b></span><span class="c" style="left:38%"><b>S</b></span><span class="c" style="left:56%"><b>A</b><b>S</b></span><span class="c" style="left:78%"><b>A</b></span></div>
+            Two letters stacked = hit both at once.</div></li>
+          <li><i>3</i><div><b>Keys or taps.</b> On a keyboard use the letters shown. On a phone, tap the glowing pad; its name is on the strip. A ring also closes on the pad right when to hit it.
+            <div class="pb-keys">${keyRow(['A', 'S'], 'on')}${keyRow(['D', 'F'], '')}<small>Easy uses A + S. Standard adds D + F. Turbo adds Z X C V. Hyper uses all 16.</small></div></div></li>
+          <li><i>4</i><div><b>Win the bar.</b> Your hits push the bar toward the rival; misses push it back. Fill it for a K.O., or lead when the track ends. Perfect streaks charge your clan ability: press <b>Space</b> or tap ABILITY.</div></li>
+        </ol>
+        <button type="button" class="pb-go pb-got">Got it, let's play</button>`;
+      this.$.ov.classList.remove('hide');
+      this.$.ov.scrollTop = 0;
+      this.$.ov.querySelector('.pb-got').addEventListener('click', () => { store.set('pb-howto', true); this.showSetup(); });
+      this.paintIdle();
+    }
+
     defaultSong() { const m = SONGS.find((x) => x.clan === this.setup.clan); return (m || SONGS[0]).id; }
     selectBot(clan) { if (this.clans[clan] && !this.running) { this.setup.clan = clan; this.setup.song = null; this.showSetup(); } }
 
@@ -883,7 +943,7 @@
       const song = SONGS.find((x) => x.id === (this.setup.song || this.defaultSong())) || SONGS[0];
       this.applySongLabels(song);
       this.paintBots(this.clanInfo(this.setup.clan), null);
-      this.$.pads.forEach((p, i) => { p.classList.toggle('act', DIFFS[this.setup.diff].rows.includes(Math.floor(i / 4))); p.classList.remove('off'); });
+      this.$.pads.forEach((p, i) => { p.classList.toggle('act', padOn(i, DIFFS[this.setup.diff])); p.classList.remove('off'); });
     }
     applySongLabels(song) {
       ROLES.forEach((r, i) => { this.$.padParts[i].lb.textContent = (song.pads[r] && song.pads[r].label) || ''; });
@@ -935,7 +995,7 @@
       this.paintBots(me, rv);
       this.applySongLabels(song);
       const D = this.chart.diff;
-      this.$.pads.forEach((p, i) => { const on = D.rows.includes(Math.floor(i / 4)); p.classList.toggle('act', on); p.classList.toggle('off', !on); });
+      this.$.pads.forEach((p, i) => { const on = padOn(i, D); p.classList.toggle('act', on); p.classList.toggle('off', !on); });
 
       // per-note values are normalised so a phrase moves the bar the same amount on every difficulty
       this.norm = 12 / Math.max(4, this.chart.notesPerPhrase);
@@ -944,7 +1004,8 @@
       this.tug = 50; this.score = 0; this.combo = 0; this.maxCombo = 0; this.meter = 0; this.abilityUntil = -1; this.abilityKind = null;
       this.counts = { perfect: 0, great: 0, good: 0, miss: 0, stray: 0 };
       this.notes = this.chart.player.map((n) => Object.assign({}, n, { j: null }));
-      this.rivalQ = this.chart.rival.map((n) => Object.assign({}, n));
+      this.rivalQ = this.chart.rival.map((n) => Object.assign({}, n, { hit: null }));
+      this.cueW = 0; this.chips.forEach((c) => { c.style.display = 'none'; c.dataset.k = ''; });
       this.bi = 0; this.ri = 0; this.ni = 0; this.fx = []; this.phaseIdx = -1; this.lastResult = null;
       if (song.audio) {
         const b = A.buf[song.audio];
@@ -979,6 +1040,7 @@
         let acc = this.chart.diff.rival;
         if (this.abilityKind === 'bboy' && S + n.t < this.abilityUntil) acc -= 0.15;
         const hit = Math.random() < acc;
+        n.hit = hit;
         const jit = (Math.random() + Math.random() - 1) * 0.022;
         const at = S + n.t + (hit ? jit : 0);
         if (hit) this.sound(n.pad, at, n.vel, n.dur);
@@ -1033,6 +1095,7 @@
       }
       this.$.padParts.forEach((p, i) => { for (let k = used[i]; k < 2; k++) if (p.rg[k].style.opacity !== '0') p.rg[k].style.opacity = '0'; });
 
+      this.paintCue(songT);
       this.$.tug.style.width = `${this.tug.toFixed(1)}%`;
       if (this.tug <= 0) return this.end('ko-lose');
       if (this.tug >= 100) return this.end('ko-win');
@@ -1040,11 +1103,45 @@
       if (this.abilityUntil > 0 && now >= this.abilityUntil) { this.abilityUntil = -1; this.abilityKind = null; this.paintAbility(); }
     }
 
+    // the cue strip: upcoming notes as key letters sliding to a hit line (rival = pink, you = cyan)
+    paintCue(songT) {
+      const lane = this.$.cuel;
+      const W = this.cueW || (this.cueW = lane.offsetWidth || 400);
+      const hitX = 46, ahead = Math.max(2.6, this.chart.diff.approach * 2), behind = 0.35;
+      const groups = [];
+      const add = (list, who) => {
+        let g = null;
+        for (let i = 0; i < list.length; i++) {
+          const n = list[i];
+          if (n.t < songT - behind) continue;
+          if (n.t > songT + ahead) break;
+          if (g && Math.abs(g.t - n.t) < 0.002) { g.notes.push(n); continue; }
+          g = { t: n.t, who, notes: [n] }; groups.push(g);
+        }
+      };
+      add(this.rivalQ, 'r'); add(this.notes, 'y');
+      while (this.chips.length < groups.length) { const c = document.createElement('span'); c.className = 'c'; lane.appendChild(c); this.chips.push(c); }
+      this.chips.forEach((c, i) => {
+        const g = groups[i];
+        if (!g) { if (c.style.display !== 'none') c.style.display = 'none'; return; }
+        const label = (pad) => (this.touch ? ((this.song.pads[ROLES[pad]] || {}).label || '').split(' ')[0].slice(0, 5) : KEYS[pad].toUpperCase());
+        const j = g.who === 'y' ? (g.notes.every((n) => n.j) ? (g.notes.some((n) => n.j === 'miss') ? 'miss' : 'hit') : '') : (g.t <= songT && g.notes[0].hit === false ? 'miss' : '');
+        const key = g.who + '|' + g.notes.map((n) => n.pad).join(',') + '|' + j;
+        if (c.dataset.k !== key) { c.dataset.k = key; c.innerHTML = g.notes.map((n) => `<b>${label(n.pad)}</b>`).join(''); c.className = `c ${g.who}${j ? ' ' + j : ''}`; }
+        const x = hitX + ((g.t - songT) / ahead) * (W - hitX - 10);
+        c.style.display = '';
+        c.style.transform = `translate(${x.toFixed(1)}px,-50%)`;
+      });
+    }
+
     enterPhase(pi) {
       this.phaseIdx = pi;
       const ph = this.chart.timeline[pi], t = this.$.turn;
       const txt = { intro: 'GET READY', call: "RIVAL'S TURN", resp: 'YOUR TURN!', outro: 'FINISH' }[ph.kind];
       t.textContent = txt;
+      this.$.cueh.textContent = { intro: 'GET READY', call: 'RIVAL PLAYS · WATCH THE PATTERN', resp: 'YOUR TURN · HIT EACH KEY ON THE LINE', outro: 'FINISH' }[ph.kind];
+      this.$.cue.className = 'pb-cue ' + (ph.kind === 'resp' ? 'you' : ph.kind === 'call' ? 'rival' : '');
+      if (ph.kind === 'resp' && ph.ex === 0) this.banner('YOUR TURN!', '#00E5FF');
       t.className = 'pb-turn pop ' + (ph.kind === 'resp' ? 'you' : ph.kind === 'call' ? 'rival' : '');
       this.$.dots.style.color = ph.kind === 'resp' ? '#00E5FF' : ph.kind === 'call' ? '#FF2BD6' : '#7F8DB5';
       this.lastBeat = null;
@@ -1054,7 +1151,7 @@
       if (d.childElementCount !== ph.beats) d.innerHTML = Array.from({ length: ph.beats }, (_, i) => `<i${i % 4 === 0 ? ' class="bar"' : ''}></i>`).join('');
       [...d.children].forEach((c, i) => c.classList.toggle('on', i === beat));
     }
-    winMult() { return (this.me.spd / 92) * (this.abilityKind === 'alchemist' && this.audio.ctx.currentTime < this.abilityUntil ? 1.12 : 1); }
+    winMult() { return (this.chart.diff.win || 1) * (this.me.spd / 92) * (this.abilityKind === 'alchemist' && this.audio.ctx.currentTime < this.abilityUntil ? 1.12 : 1); }
 
     press(pad, e) {
       if (!this.running) return;
@@ -1085,7 +1182,7 @@
       }
       this.sound(pad, ctx.currentTime, 0.6, 0.25);
       const ph = this.chart.timeline[this.phaseIdx];
-      if (ph && ph.kind === 'resp') { // off-pattern tap during your turn
+      if (ph && ph.kind === 'resp' && this.chart.diff.stray) { // off-pattern tap during your turn (Turbo/Hyper)
         this.counts.stray++; this.combo = 0; this.paintScore();
         this.push(-0.5 * this.norm);
       }
@@ -1097,7 +1194,7 @@
       const ab = now < this.abilityUntil ? this.abilityKind : null;
       if (j === 'miss') {
         this.counts.miss++; this.combo = 0;
-        if (ab !== 'industrial') { this.push(-1.6 * this.norm); this.audio.missChoke(); this.anim(this.$.you, 'hurt'); }
+        if (ab !== 'industrial') { this.push(-(this.chart.diff.miss || 1.6) * this.norm); this.audio.missChoke(); this.anim(this.$.you, 'hurt'); }
         this.showJudge('MISS', '#FF5FA2');
         this.paintScore();
         return;
