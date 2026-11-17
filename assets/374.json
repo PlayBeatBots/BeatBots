@@ -19,10 +19,6 @@
       "value": "V2 VISIONARY TEMPLE"
     },
     {
-      "trait_type": "Finish",
-      "value": "Ice"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "Four-Sided Multi-Faced Obsidian Heads"
     },
@@ -33,6 +29,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Fibonacci Sacred Geometry Void"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "Blacklight"
     },
     {
       "trait_type": "Battle Ability",

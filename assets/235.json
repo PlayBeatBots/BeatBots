@@ -19,10 +19,6 @@
       "value": "V3 COZZA FRENZY STAGE"
     },
     {
-      "trait_type": "Finish",
-      "value": "Neon Trim"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "12AX7 Crown Vacuum Tubes"
     },
@@ -33,6 +29,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Cozza Frenzy Festival Mainstage"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "Laser Storm"
     },
     {
       "trait_type": "Battle Ability",

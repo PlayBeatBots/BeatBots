@@ -56,7 +56,7 @@
       "stage_backdrop": [
         "Stacked Brooklyn Boombox Wall",
         "Underground Rave Stage",
-        "Brooklyn Sound Alley",
+        "Intergalactic Sound Alley",
         "Neon Turntable Plinth"
       ],
       "audio_stems": [
@@ -281,7 +281,7 @@
       "audio_stems": [
         "Stem 01: Distorted Power Chord Riff",
         "Stem 02: Downbeat Industrial Heavy Drums",
-        "Stem 03: Remix Turntable Scrub"
+        "Stem 03: Remix-Era Turntable Scrub"
       ],
       "theme": "Hybrid nu-metal remix foundry",
       "tier_power_bands": {
@@ -336,7 +336,7 @@
       "head_chassis": [
         "Four-Sided Multi-Faced Obsidian Heads",
         "Flaming Third-Eye Spiral",
-        "Lattice of Being Crown",
+        "Visionary Lattice Crown",
         "Biomechanical Heptagram Crest"
       ],
       "chest_rig": [
@@ -346,15 +346,15 @@
         "Golden Spiral Energy Conduit"
       ],
       "stage_backdrop": [
-        "Visionary Lattice Temple",
+        "Visionary Anatomy Temple",
         "Subterranean Torchlit Crypt",
-        "Golden Spiral Sacred Geometry Void",
+        "Fibonacci Sacred Geometry Void",
         "7-Pointed Star Monolith Altar"
       ],
       "audio_stems": [
         "Stem 01: Shifting 7/8 Mandala Drums",
         "Stem 02: Hammered Bronze Gong Strike",
-        "Stem 03: Golden Spiral Tribal Bass Drone"
+        "Stem 03: Golden Spiral Tribal Drone"
       ],
       "theme": "Odd-meter prog ritual temple",
       "tier_power_bands": {

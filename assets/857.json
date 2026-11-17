@@ -19,10 +19,6 @@
       "value": "V1 OG WAREHOUSE"
     },
     {
-      "trait_type": "Finish",
-      "value": "Neon Trim"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "Holographic Spectrum Visor"
     },
@@ -33,6 +29,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Abandoned Brick Warehouse"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "Laser Storm"
     },
     {
       "trait_type": "Battle Ability",

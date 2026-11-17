@@ -19,10 +19,6 @@
       "value": "V1 OG WAREHOUSE"
     },
     {
-      "trait_type": "Finish",
-      "value": "Gold Plated"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "Vintage Ribbon Mic Antenna"
     },
@@ -33,6 +29,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Abandoned Brick Warehouse"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "Gold Plated"
     },
     {
       "trait_type": "Battle Ability",

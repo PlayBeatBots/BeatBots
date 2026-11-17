@@ -19,10 +19,6 @@
       "value": "V2 MODULAR LASER STAGE"
     },
     {
-      "trait_type": "Finish",
-      "value": "Crimson"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "Glowing Vacuum Tube Halo"
     },
@@ -33,6 +29,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Volumetric Rainbow Laser Canopy"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "Golden Hour"
     },
     {
       "trait_type": "Battle Ability",

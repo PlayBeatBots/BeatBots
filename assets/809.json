@@ -19,10 +19,6 @@
       "value": "V2 TURNTABLE VARIANT"
     },
     {
-      "trait_type": "Finish",
-      "value": "Crimson"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "Dual-Cassette Boombox"
     },
@@ -33,6 +29,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Stacked Brooklyn Boombox Wall"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "Golden Hour"
     },
     {
       "trait_type": "Battle Ability",

@@ -19,10 +19,6 @@
       "value": "V1 SUBTERRANEAN TORCHLIT"
     },
     {
-      "trait_type": "Finish",
-      "value": "Chrome"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "Flaming Third-Eye Spiral"
     },
@@ -33,6 +29,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Visionary Anatomy Temple"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "Neon Noir"
     },
     {
       "trait_type": "Battle Ability",

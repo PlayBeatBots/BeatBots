@@ -19,10 +19,6 @@
       "value": "V2 TURNTABLE VARIANT"
     },
     {
-      "trait_type": "Finish",
-      "value": "Factory"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "Intergalactic Antenna Ears"
     },
@@ -33,6 +29,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Neon Turntable Plinth"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "Stage Lights"
     },
     {
       "trait_type": "Battle Ability",

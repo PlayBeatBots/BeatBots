@@ -23,10 +23,6 @@
       "value": "V2 BASEMENT SYNTH"
     },
     {
-      "trait_type": "Finish",
-      "value": "1-of-1"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "Sub-Bass Oscilloscope Visor"
     },
@@ -37,6 +33,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Cozza Frenzy Festival Mainstage"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "1-of-1"
     },
     {
       "trait_type": "Battle Ability",

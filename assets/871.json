@@ -19,10 +19,6 @@
       "value": "V2 TURNTABLE VARIANT"
     },
     {
-      "trait_type": "Finish",
-      "value": "Neon Trim"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "Vintage Street Beanie Chassis"
     },
@@ -33,6 +29,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Stacked Brooklyn Boombox Wall"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "Laser Storm"
     },
     {
       "trait_type": "Battle Ability",

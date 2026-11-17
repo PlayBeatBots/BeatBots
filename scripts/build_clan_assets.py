@@ -46,19 +46,28 @@ COLLECTION_TILES = ["bboy_0.jpg", "alchemist_0.jpg", "industrial_0.jpg", "biomec
 
 CLAN_KEY = {"Intergalactic B-Boys": "bboy", "140 Dub Operators": "dub", "Electro-Soul Alchemists": "alchemist",
             "Industrial Mecha": "industrial", "Polyrhythmic Biomechs": "biomech"}
+_CFG = json.load(open(os.path.join(BASE, "clan_rarity_config.json")))["clans"]
+_IDX = {}
+for _c in _CFG.values():
+    for _i, _v in enumerate(_c["stage_backdrop"]): _IDX[("b", _c["name"], _v)] = _i + 1
+    for _i, _v in enumerate(_c["chest_rig"]): _IDX[("r", _c["name"], _v)] = _i + 1
 
 
 def variant_art(art, base_file, attrs):
-    """Finish-specific art if it exists: Mythics -> mythic_<clan>.jpg, others -> <base>_<finish>.jpg."""
-    finish = attrs.get("Finish", "Factory")
-    if finish == "1-of-1":
-        name = f"mythic_{CLAN_KEY[attrs['Clan']]}.jpg"
-    elif finish == "Factory":
-        return os.path.join(art, base_file)
-    else:
-        name = base_file[:-4] + "_" + finish.lower().replace(" ", "_") + ".jpg"
-    path = os.path.join(art, name)
-    return path if os.path.exists(path) else None
+    """Most specific art that exists: lit scene -> scene -> None (caller uses edition base).
+    Filenames match art/ART_MANIFEST.csv (tools/art_manifest.py)."""
+    light = attrs.get("Lighting", "Stage Lights")
+    if light == "1-of-1":
+        p = os.path.join(art, f"mythic_{CLAN_KEY[attrs['Clan']]}.jpg")
+        return p if os.path.exists(p) else None
+    scene = (f"{base_file[:-4]}-b{_IDX[('b', attrs['Clan'], attrs['Stage Backdrop'])]}"
+             f"-r{_IDX[('r', attrs['Clan'], attrs['Audio Chest Rig'])]}")
+    tries = ([scene + "-" + light.lower().replace(" ", "_")] if light != "Stage Lights" else []) + [scene]
+    for t in tries:
+        p = os.path.join(art, t + ".jpg")
+        if os.path.exists(p):
+            return p
+    return None
 
 
 def main():

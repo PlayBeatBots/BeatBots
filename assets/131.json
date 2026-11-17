@@ -19,10 +19,6 @@
       "value": "V1 SUBTERRANEAN TORCHLIT"
     },
     {
-      "trait_type": "Finish",
-      "value": "Sunset"
-    },
-    {
       "trait_type": "Head Chassis",
       "value": "Visionary Lattice Crown"
     },
@@ -33,6 +29,10 @@
     {
       "trait_type": "Stage Backdrop",
       "value": "Subterranean Torchlit Crypt"
+    },
+    {
+      "trait_type": "Lighting",
+      "value": "Stage Lights"
     },
     {
       "trait_type": "Battle Ability",
