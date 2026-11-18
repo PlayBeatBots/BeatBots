@@ -4,4 +4,16 @@
     <loc>https://playbeatbots.com/</loc>
     <changefreq>weekly</changefreq>
   </url>
+  <url>
+    <loc>https://playbeatbots.com/battle</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://playbeatbots.com/studio</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://playbeatbots.com/mint</loc>
+    <changefreq>weekly</changefreq>
+  </url>
 </urlset>

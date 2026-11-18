@@ -17,11 +17,12 @@ async function page(b, vp) {
   await p.route('**/*', (r) => {
     const u = new URL(r.request().url());
     if (u.host !== 'beatbots.test') return r.continue();
-    const f = path.join(siteDir, u.pathname === '/' ? 'index.html' : decodeURIComponent(u.pathname));
+    let f = path.join(siteDir, u.pathname === '/' ? 'index.html' : decodeURIComponent(u.pathname));
+    if (!path.extname(f) && fs.existsSync(f + '.html')) f += '.html';
     if (!fs.existsSync(f)) return r.fulfill({ status: 404, body: '' });
     r.fulfill({ status: 200, contentType: types[path.extname(f)] || 'application/octet-stream', body: fs.readFileSync(f) });
   });
-  await p.goto('http://beatbots.test/', { waitUntil: 'load' });
+  await p.goto('http://beatbots.test/battle' + (p.qs || ''), { waitUntil: 'load' }); // Beat Battle has its own page
   return p;
 }
 
@@ -55,13 +56,13 @@ const playBot = ({ offsetMs, maxSec }) => new Promise((resolve) => {
   charts.forEach((c) => check(c.ok && c.notes > 20, `chart ${c.id}/${c.d}: ${c.ok ? `${c.notes} notes, ${c.secs}s` : c.err}`));
 
   // first visit shows How to play; Got it leads to setup
-  await p.locator('#arcade-section').scrollIntoViewIfNeeded();
+  await p.locator('#padbattle-root').scrollIntoViewIfNeeded();
   check(await p.locator('#padbattle-root .pb-steps li').count() === 4, 'first visit shows the 4-step How to play');
   await p.locator('#padbattle-root').screenshot({ path: path.join(outDir, 'howto-desktop.png') });
   await p.locator('#padbattle-root .pb-got').click();
 
   // setup screen
-  await p.locator('#arcade-section').scrollIntoViewIfNeeded();
+  await p.locator('#padbattle-root').scrollIntoViewIfNeeded();
   await p.waitForTimeout(400);
   await p.locator('#padbattle-root').screenshot({ path: path.join(outDir, 'setup-desktop.png') });
   check(await p.locator('#padbattle-root .pb-card').count() === 5, 'setup shows 5 clan bots');
@@ -103,7 +104,7 @@ const playBot = ({ offsetMs, maxSec }) => new Promise((resolve) => {
 
   // phone layout
   const m = await page(b, { width: 390, height: 844 });
-  await m.locator('#arcade-section').scrollIntoViewIfNeeded();
+  await m.locator('#padbattle-root').scrollIntoViewIfNeeded();
   await m.waitForTimeout(300);
   await m.locator('#padbattle-root').screenshot({ path: path.join(outDir, 'howto-phone.png') });
   await m.locator('#padbattle-root .pb-got').click();

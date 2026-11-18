@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" data-page="battle">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Beat Battle | BeatBots</title>
+  <link rel="canonical" href="https://playbeatbots.com/battle">
+  <meta name="description" content="Beat Battle: your rival plays a pattern on the 16-pad sampler, you play it back. Five original clan tracks, Easy to Hyper. Keyboard or touch.">
+  <meta property="og:title" content="Beat Battle | BeatBots">
+  <meta property="og:description" content="Your rival plays a pattern, you play it back. Every pad is a real sample.">
+  <meta property="og:url" content="https://playbeatbots.com/battle">
+  <meta name="theme-color" content="#03050C">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="kits/pads/pads.json" as="fetch" crossorigin>
+  <style>
+    /* Deliberately small: no CSS framework, no animated chrome, so the game has the page to itself. */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{background:#03050C;color:#DCE6FF;font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+    body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
+      background:radial-gradient(1000px 600px at 70% -10%,rgba(47,123,255,.14),transparent 60%),
+        linear-gradient(rgba(36,57,107,.16) 1px,transparent 1px) 0 0/48px 48px,
+        linear-gradient(90deg,rgba(36,57,107,.16) 1px,transparent 1px) 0 0/48px 48px,#03050C}
+    a{color:inherit;text-decoration:none}
+    .bar{display:flex;align-items:center;gap:14px;height:46px;padding:0 16px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));
+      background:rgba(3,5,12,.92);border-bottom:1px solid #18264A;font:500 11px/1 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:#7F8DB5}
+    .brand{display:flex;align-items:center;gap:9px;font:700 15px/1 'Chakra Petch',sans-serif;letter-spacing:.06em;color:#DCE6FF}
+    .brand b{color:#00E5FF}
+    .logo{width:20px;height:20px;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);background:linear-gradient(135deg,#00E5FF,#FF2BD6);display:grid;place-items:center}
+    .logo i{width:14px;height:14px;clip-path:inherit;background:#03050C}
+    .nav{display:flex;gap:4px;margin-left:8px}
+    .nav a{padding:8px 10px;border:1px solid transparent}
+    .nav a:hover{color:#DCE6FF;border-color:#24396B}
+    .nav a[aria-current]{color:#00E5FF;border-color:rgba(0,229,255,.45)}
+    .sp{flex:1}
+    .dev{color:#FFB020;white-space:nowrap}
+    .fs{font:600 10px/1 'JetBrains Mono',monospace;letter-spacing:.12em;color:#7F8DB5;background:none;border:1px solid #24396B;padding:8px 10px;cursor:pointer}
+    main{flex:1;width:100%;max-width:760px;margin:0 auto;padding:18px 14px 24px}
+    .foot{padding:14px 16px 22px;text-align:center;font:500 10px/1.6 'JetBrains Mono',monospace;letter-spacing:.08em;color:#4A5880}
+    .foot a{color:#7F8DB5;margin:0 6px}
+    noscript{display:block;padding:40px;text-align:center;color:#7F8DB5}
+    .pb-in{min-height:calc(100vh - 120px)!important;min-height:calc(100dvh - 120px)!important}
+    @media (max-width:640px){
+      .nav{display:none}
+      .bar{gap:10px;padding:0 10px}
+      main{padding:8px 6px 16px}
+      .dev{font-size:9.5px}
+    }
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <a class="brand" href="/"><span class="logo"><i></i></span><span>BEAT<b>BOTS</b></span></a>
+    <nav class="nav" aria-label="Pages">
+      <a href="/">Home</a><a href="/studio">Studio</a><a href="/battle" aria-current="page">Beat Battle</a><a href="/mint">Mint</a>
+    </nav>
+    <span class="sp"></span>
+    <span class="dev">Devnet test</span>
+    <button class="fs" id="fs-btn" type="button" hidden>Full screen</button>
+  </header>
+
+  <main>
+    <div id="padbattle-root"></div>
+    <noscript>Beat Battle needs JavaScript and Web Audio.</noscript>
+  </main>
+
+  <div class="foot">Every sound is a CC0 sample or synthesized live in your browser. <a href="/">Home</a><a href="/studio">Studio</a><a href="/mint">Mint</a></div>
+
+  <script src="beatbots-clans.js"></script>
+  <script src="beatbots-padbattle.js"></script>
+  <script>
+    (function () {
+      let ctx = null;
+      const clan = new URLSearchParams(location.search).get('clan');
+      window.BBPadBattle.mount(document.getElementById('padbattle-root'), {
+        getCtx: () => {
+          if (!ctx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            ctx = new AC({ latencyHint: 'interactive' });
+          }
+          return ctx;
+        },
+        kitBase: 'kits/',
+        clans: window.CLAN_ASSETS,
+        initialClan: clan,
+        getHolderBot: () => null, // wallet NFT hook (cosmetic) once Genesis mints
+      });
+      const fs = document.getElementById('fs-btn');
+      if (document.fullscreenEnabled) {
+        fs.hidden = false;
+        fs.addEventListener('click', () => {
+          if (document.fullscreenElement) document.exitFullscreen();
+          else document.documentElement.requestFullscreen().catch(() => {});
+        });
+        document.addEventListener('fullscreenchange', () => { fs.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; });
+      }
+    })();
+  </script>
+</body>
+</html>

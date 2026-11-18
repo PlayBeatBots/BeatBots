@@ -1,7 +1,7 @@
 // Overflow check: horizontal scroll and elements wider than the viewport at phone→desktop widths.
 // Usage: node tools/qa/overflow.cjs <siteDir> <outDir>
 const fs = require('fs'), path = require('path');
-const { launch, serve, watchErrors, out, BASE } = require('./lib.cjs');
+const { launch, serve, watchErrors, out, BASE, PAGES } = require('./lib.cjs');
 const WIDTHS = [320, 360, 375, 390, 414, 768, 1024, 1280, 1440];
 
 (async () => {
@@ -9,10 +9,10 @@ const WIDTHS = [320, 360, 375, 390, 414, 768, 1024, 1280, 1440];
   out(outDir);
   const b = await launch();
   const report = {}; const fail = [];
-  for (const w of WIDTHS) {
+  for (const pg of PAGES) for (const w of WIDTHS) {
     const page = await b.newPage({ viewport: { width: w, height: 800 } });
     watchErrors(page); await serve(page, siteDir);
-    await page.goto(BASE + '/', { waitUntil: 'load' });
+    await page.goto(BASE + pg, { waitUntil: 'load' });
     await page.waitForTimeout(500);
     const r = await page.evaluate(() => {
       const vw = document.documentElement.clientWidth;
@@ -31,12 +31,12 @@ const WIDTHS = [320, 360, 375, 390, 414, 768, 1024, 1280, 1440];
       }
       return { vw, sw, scrolls: sw > vw + 1, offenders: offenders.slice(0, 15) };
     });
-    report[w] = r;
-    if (r.scrolls) { fail.push(`${w}px: page scrolls sideways (${r.sw} > ${r.vw})`); await page.screenshot({ path: path.join(outDir, `overflow-${w}.png`) }); }
+    report[pg + ' ' + w] = r;
+    if (r.scrolls) { fail.push(`${pg} ${w}px: page scrolls sideways (${r.sw} > ${r.vw})`); await page.screenshot({ path: path.join(outDir, `overflow-${pg.replace('/', '') || 'home'}-${w}.png`) }); }
     await page.close();
   }
   await b.close();
   fs.writeFileSync(path.join(outDir, 'overflow_report.json'), JSON.stringify(report, null, 2));
-  console.log(JSON.stringify({ fail, offendersAt320: report[320].offenders.slice(0, 5) }, null, 1));
+  console.log(JSON.stringify({ fail, offendersAt320: report['/ 320'].offenders.slice(0, 5) }, null, 1));
   process.exit(fail.length ? 1 : 0);
 })();

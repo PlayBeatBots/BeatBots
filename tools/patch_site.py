@@ -26,8 +26,8 @@ cfg_block = f"""<script>
       candyMachine: "{cm}"
     }};
   </script>
-  <script src="beatbots-mint.js"></script>
-  <script>window.BeatBotsMint.init(window.BEATBOTS_CONFIG);</script>
+  <script data-page="mint" src="beatbots-mint.js"></script>
+  <script data-page="mint">window.BeatBotsMint.init(window.BEATBOTS_CONFIG);</script>
 
   <!-- SCRIPT LOGIC"""
 rep("<!-- SCRIPT LOGIC", cfg_block)
@@ -148,8 +148,10 @@ real_handler = r"""      executeMintBtn.addEventListener('click', async () => {
           console.warn('Could not load mint stats:', e);
         }
       }
-      refreshMintStats();
-      setInterval(refreshMintStats, 30000);
+      if (window.BeatBotsMint) { // only the /mint page loads the mint bundle
+        refreshMintStats();
+        setInterval(refreshMintStats, 30000);
+      }
 
 """
 s = s[:start] + real_handler + s[end:]
@@ -178,12 +180,7 @@ nods = {
 }
 for old, new in nods.items():
     s = s.replace(old, new)
-# B-Boys' first edition is the Speaker-City art, mislabeled as Cozza Frenzy
-bb = s.index("bboy: {")
-i = s.index('label: "V3 COZZA FRENZY STAGE"', bb)
-if i > s.index("dub: {"):
-    sys.exit("B-Boys Cozza label not found inside bboy block")
-s = s[:i] + 'label: "V2 SPEAKER-CITY"' + s[i + len('label: "V3 COZZA FRENZY STAGE"'):]
+# (B-Boys' first edition label is fixed at the source in site-src/beatbots-clans.js.)
 
 # ---- 7. Real network badge and real rarity in the reveal ---------------------
 rep('<span class="px-2 py-0.5 rounded bg-bass-toxic/20 text-bass-toxic text-xs font-mono font-bold">SOLANA MAINNET SIMULATOR</span>',

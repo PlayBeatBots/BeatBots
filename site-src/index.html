@@ -107,7 +107,7 @@
   <link rel="stylesheet" href="command-center.css">
 
   <!-- Solana Web3.js SDK v1.95.4 -->
-  <script src="https://unpkg.com/@solana/web3.js@1.95.4/lib/index.iife.min.js"></script>
+  <script data-page="mint" src="https://unpkg.com/@solana/web3.js@1.95.4/lib/index.iife.min.js"></script>
 </head>
 <body class="cc font-sans antialiased selection:bg-bass-toxic selection:text-black relative">
 
@@ -157,7 +157,7 @@
     <nav class="mob-nav" aria-label="Sections">
       <a href="#mint-section"><i>01</i>Mint</a><a href="#clans-section"><i>02</i>Clans</a><a href="#audio-section"><i>03</i>Station</a><a href="#arcade-section"><i>04</i>Arcade</a><a href="#armory-section"><i>05</i>Armory</a><a href="#vault-section"><i>06</i>Vault</a><a href="#token-section"><i>07</i>$BEATBOT</a><a href="#faq-section"><i>08</i>FAQ</a>
     </nav>
-    <section id="hero-section" class="hero">
+    <section id="hero-section" data-page="home" class="hero">
       <div class="bgimg"></div>
       <div class="wrap">
         <div class="hero-grid">
@@ -176,7 +176,7 @@
               </div>
             </div>
             <div class="cta">
-              <a class="btn pri" href="#arcade-section">▶ Play Beat Battle</a>
+              <a class="btn pri" href="/battle">▶ Play Beat Battle</a>
               <a class="btn sec" href="#mint-section">Mint Genesis Bot <span>→</span></a>
             </div>
             <div class="hstats">
@@ -211,8 +211,24 @@
       </div>
     </section>
 
+    <section id="mint-launch" data-page="home" class="py-24 bg-bass-darker border-t border-bass-border relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="sec-head"><span class="hex"><span>01</span></span><div class="tl"><div class="eyebrow">Devnet test, mainnet date TBA</div><h2>Genesis BeatBot Mint</h2><p>Each Genesis BeatBot is a battler with its own clan, edition, stage and audio traits. The mint has its own page so the wallet code only loads when you need it.</p></div><div class="rule" data-r="MODULE 01 // MINT"></div></div>
+        <div class="bb-launch">
+          <div class="bb-bots"></div>
+          <div class="bb-copy">
+            <div class="bb-tag">MODULE 01 // GENESIS MINT</div>
+            <h3>Mint a Genesis BeatBot</h3>
+            <ul><li>Five sound clans, rarer tiers hit harder</li><li>Phantom, Solflare or Backpack</li><li>Devnet test: use free devnet SOL</li></ul>
+            <a class="bb-play" href="/mint">Open the Mint →</a>
+            <div class="bb-note">Max 5 per wallet. Mainnet date TBA.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Mint Section -->
-    <section id="mint-section" class="py-20 bg-bass-darker border-t border-bass-border relative">
+    <section id="mint-section" data-page="mint" class="py-20 bg-bass-darker border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="sec-head"><span class="hex"><span>01</span></span><div class="tl"><div class="eyebrow">DEVNET TEST, mainnet date TBA</div><h2>GENESIS BEATBOT MINT</h2><p>Each Genesis NFT is a 1-of-1 autonomous battler with randomized clan alignment, chassis geometry, and custom audio traits. Minting grants full game utility, custom sequencer sound packs, and lifetime asynchronous tournament entry.</p></div><div class="rule" data-r="MODULE 01 // MINT"></div></div>
 
@@ -262,7 +278,7 @@
     </section>
 
     <!-- Clans Section -->
-    <section id="clans-section" class="py-24 bg-bass-black relative">
+    <section id="clans-section" data-page="home" class="py-24 bg-bass-black relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="sec-head"><span class="hex"><span>02</span></span><div class="tl"><div class="eyebrow">GENESIS FACTIONS</div><h2>THE FIVE SOUND CLANS</h2><p>Each clan represents a foundational pillar of underground electronic and breakbeat history, armed with distinct audio signatures, visual blueprints, and passive game perks.</p></div><div class="rule" data-r="MODULE 02 // FACTIONS"></div></div>
 
@@ -355,9 +371,25 @@
       </div>
     </section>
 
+    <section id="studio-launch" data-page="home" class="py-24 bg-bass-darker border-t border-bass-border relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="sec-head"><span class="hex"><span>03</span></span><div class="tl"><div class="eyebrow">Pro Audio Workstation // 8-Channel Sequencer & Synth Lab</div><h2>Sound Design Station</h2><p>Build beats in your browser with clan sound kits, then take them into battle. The studio has its own page so it gets the full audio engine to itself.</p></div><div class="rule" data-r="MODULE 03 // SYNTH"></div></div>
+        <div class="bb-launch">
+          <div class="bb-bots"></div>
+          <div class="bb-copy">
+            <div class="bb-tag">MODULE 03 // SOUND STATION</div>
+            <h3>Make beats in your browser</h3>
+            <ul><li>8-channel, 16-step sequencer with 4 pattern banks</li><li>Playable synth keys and 8 live FX pads</li><li>Clan presets, swing, filters, echo and drive</li></ul>
+            <a class="bb-play" href="/studio">▶ Open the Studio</a>
+            <div class="bb-note">Keyboard, mouse or touch. Best with headphones.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Upgraded 16-Step Beat Maker & Audio Workstation -->
         <!-- Sound Design Station & 16-Step Modular Studio -->
-    <section id="audio-section" class="py-24 bg-bass-darker border-t border-bass-border relative">
+    <section id="audio-section" data-page="studio" class="py-24 bg-bass-darker border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="sec-head"><span class="hex"><span>03</span></span><div class="tl"><div class="eyebrow">PRO AUDIO WORKSTATION v3.0 // 8-CHANNEL MODULAR SYNTH & LIVE KEYBOARD LAB</div><h2>SOUND DESIGN STATION</h2><p>Professional browser-based electronic sound design suite. Features 8 synthesized instrument channels, per-track pitch & decay shaping, playable 13-key synth lab, 4 pattern memory banks, stereo delay echo, master distortion overdrive, and live performance FX pads.</p></div><div class="rule" data-r="MODULE 03 // SYNTH"></div></div>
 
@@ -751,17 +783,44 @@
       </div>
     </section>
 
-    <!-- Beat Battle arcade -->
-    <section id="arcade-section" class="py-24 bg-bass-black relative">
+    <!-- Beat Battle launcher (game lives on battle.html) -->
+    <section id="arcade-section" data-page="home" class="py-24 bg-bass-black relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="sec-head"><span class="hex"><span>04</span></span><div class="tl"><div class="eyebrow">RHYTHM CYPHER // BEAT BATTLE MODE</div><h2>BEAT BATTLE</h2><p>Pick your BeatBot and face a rival on the 16-pad sampler. Your rival plays a pattern, you play it back. Every pad is a real sample, so nail the timing and you play the whole beat. Land perfect streaks to charge your clan ability and earn in-game $SCRAP.</p></div><div class="rule" data-r="MODULE 04 // ARENA"></div></div>
-        <!-- Beat Battle (rendered by beatbots-padbattle.js) -->
-        <div id="padbattle-root"></div>
+        <!-- Beat Battle runs on its own page (battle.html) so nothing else competes with it -->
+        <div id="battle-launch" class="bb-launch">
+          <div class="bb-bots" id="battle-launch-bots"></div>
+          <div class="bb-copy">
+            <div class="bb-tag">MODULE 04 // BEAT BATTLE</div>
+            <h3>Rival plays it. You play it back.</h3>
+            <ul>
+              <li>4x4 sampler pads: every hit is a real sample</li>
+              <li>The strip shows exactly which keys to hit</li>
+              <li>5 original clan tracks · Easy to Hyper</li>
+            </ul>
+            <a class="bb-play" id="battle-launch-btn" href="/battle">▶ Play Beat Battle</a>
+            <div class="bb-note">Opens the full-screen battle page. Keyboard or touch.</div>
+          </div>
+        </div>
+        <style>
+          .bb-launch{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;align-items:center;max-width:980px;margin:0 auto;padding:28px;border:1px solid #24396B;background:linear-gradient(150deg,#0D1630,#0A1124);clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+          .bb-bots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+          .bb-bots img{width:100%;aspect-ratio:1;object-fit:cover;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);filter:saturate(.85)}
+          .bb-bots img:nth-child(4){grid-column:1/2;margin-left:50%}.bb-bots img:nth-child(5){margin-left:50%}
+          .bb-tag{font:500 10.5px/1.3 'JetBrains Mono',monospace;letter-spacing:.16em;color:#00E5FF}
+          .bb-copy h3{font:700 clamp(24px,3vw,34px)/1.05 'Chakra Petch',sans-serif;text-transform:uppercase;color:#DCE6FF;margin:10px 0 14px}
+          .bb-copy ul{list-style:none;padding:0;margin:0 0 22px;color:#A9B6DA;font-size:15px;line-height:1.9}
+          .bb-copy li::before{content:'▸ ';color:#FF2BD6}
+          .bb-play{display:inline-flex;align-items:center;padding:17px 30px;background:linear-gradient(90deg,#00E5FF,#2F7BFF);color:#020611;font:700 15px/1 'Chakra Petch',sans-serif;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 0 30px rgba(0,229,255,.35);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px)}
+          .bb-play:hover{filter:brightness(1.15)}
+          .bb-note{font:500 10.5px/1.5 'JetBrains Mono',monospace;color:#4A5880;margin-top:12px;letter-spacing:.06em}
+          @media (max-width:760px){.bb-launch{grid-template-columns:1fr;padding:20px;gap:20px}.bb-bots{max-width:320px;margin:0 auto}.bb-play{width:100%;justify-content:center}}
+        </style>
       </div>
     </section>
 
     <!-- NEW FEATURE: BeatBot Armory & Trait Forge -->
-    <section id="armory-section" class="py-24 bg-bass-darker border-t border-bass-border relative">
+    <section id="armory-section" data-page="home" class="py-24 bg-bass-darker border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="sec-head"><span class="hex"><span>05</span></span><div class="tl"><div class="eyebrow">TRAIT FORGE v1.0 // BOT CUSTOMIZATION</div><h2>BEATBOT ARMORY & FORGE</h2><p>Simulate custom modular bot builds. Select chassis materials, optical visor heads, audio gauntlets, and clan badges to calculate live battle power ratings and rarity tiers.</p></div><div class="rule" data-r="MODULE 05 // FORGE"></div></div>
 
@@ -861,7 +920,7 @@
     </section>
 
     <!-- NEW FEATURE: TecSuport Founder Vault & Lore Archive -->
-    <section id="vault-section" class="py-24 bg-bass-black border-t border-bass-border relative">
+    <section id="vault-section" data-page="home" class="py-24 bg-bass-black border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="sec-head"><span class="hex"><span>06</span></span><div class="tl"><div class="eyebrow">FOUNDER ARCHIVE // 18 YEARS OF LIVE AUDIO</div><h2>TECSUPORT FOUNDER VAULT</h2><p>BeatBots is grounded in 18 years of real underground live production, DJing, and glitch-trap history. Tracing the moniker evolution from TecSupport to TecSuport to Web3 architect Tec5uport.</p></div><div class="rule" data-r="MODULE 06 // ARCHIVE"></div></div>
 
@@ -930,7 +989,7 @@
     </section>
 
     <!-- Token & Economy Section -->
-    <section id="token-section" class="py-24 bg-bass-darker border-t border-bass-border relative">
+    <section id="token-section" data-page="home" class="py-24 bg-bass-darker border-t border-bass-border relative">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="sec-head"><span class="hex"><span>07</span></span><div class="tl"><div class="eyebrow">CIRCULAR ARCADE ECONOMY</div><h2>$BEATBOT & BATTLE SCRAP</h2><p>A zero pay-to-win ecosystem. Free-to-play guests battle with starter bots; Genesis NFT holders earn cosmetic scrap multipliers and tournament pool allocations.</p></div><div class="rule" data-r="MODULE 07 // ECONOMY"></div></div>
 
@@ -966,7 +1025,7 @@
     </section>
 
     <!-- FAQ Section -->
-    <section id="faq-section" class="py-20 bg-bass-black border-t border-bass-border">
+    <section id="faq-section" data-page="home" class="py-20 bg-bass-black border-t border-bass-border">
       <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div class="sec-head"><span class="hex"><span>08</span></span><div class="tl"><div class="eyebrow">ALL YOU NEED TO KNOW ABOUT BEATBOTS</div><h2>FREQUENTLY ASKED QUESTIONS</h2></div><div class="rule" data-r="MODULE 08 // SUPPORT"></div></div>
 
@@ -1022,7 +1081,7 @@
   <!-- Mint Simulation Modal -->
   
   <!-- Live Solana Wallet Selection Modal -->
-  <div id="wallet-modal" class="fixed inset-0 bg-bass-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+  <div id="wallet-modal" data-page="mint" class="fixed inset-0 bg-bass-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-bass-card rounded-2xl border-2 border-bass-toxic p-6 max-w-sm w-full shadow-2xl relative space-y-4">
       <button id="close-wallet-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
       <div class="text-center space-y-1">
@@ -1090,7 +1149,7 @@
   </div>
 
   <!-- Wallet Actions Dropdown -->
-  <div id="wallet-actions-dropdown" class="absolute right-0 top-14 mt-2 w-64 rounded-xl bg-bass-card border border-bass-toxic/60 shadow-2xl py-3 px-4 z-50 hidden space-y-3 font-mono text-xs">
+  <div id="wallet-actions-dropdown" data-page="mint" class="absolute right-0 top-14 mt-2 w-64 rounded-xl bg-bass-card border border-bass-toxic/60 shadow-2xl py-3 px-4 z-50 hidden space-y-3 font-mono text-xs">
     <div class="border-b border-bass-border pb-2">
       <div class="text-[10px] text-slate-400 uppercase">Connected Account</div>
       <div id="dropdown-full-address" class="text-white font-bold truncate">7xKp...9B2v</div>
@@ -1108,7 +1167,7 @@
       </button>
     </div>
   </div>
-<div id="mint-modal" class="fixed inset-0 bg-bass-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+<div id="mint-modal" data-page="mint" class="fixed inset-0 bg-bass-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-bass-card rounded-2xl border-2 border-bass-toxic p-6 sm:p-8 max-w-md w-full shadow-2xl relative space-y-6">
       
       <!-- Close Button -->
@@ -1165,96 +1224,14 @@
   </div>
 
   <script src="beatbots-audio.js"></script>
-  <script src="beatbots-padbattle.js"></script>
+  <script src="beatbots-clans.js"></script>
   <script src="command-center.js" defer></script>
   <!-- SCRIPT LOGIC (Web Audio, Sequencer, Clans, Arcade, Armory, Mint) -->
   <script>
     // ==========================================
     // 0. GLOBAL ASSETS & DATA DEFINITIONS
     // ==========================================
-    const CLAN_ASSETS = {
-      bboy: {
-        title: "Intergalactic B-Boys",
-        badge: "SOUND: BROOKLYN BOOM-BAP",
-        subtitle: "CLAN 01 // INTERGALACTIC CYPHER CREW",
-        desc: "Outfitted with a dual-cassette boombox head, retro-futuristic Intergalactic antenna ears, dual flashing amber hazard beacons, and an exposed multi-speaker boombox chest with a warm analog VU meter. Built to rock the speaker-wall cypher in stacked boombox Brooklyn streetscapes.",
-        trait: "Analog VU-Meter Speaker Chest & Hazard Beacons",
-        ability: "Scratch Fader Stutter (-15% Opponent Combo)",
-        soundLabel: "4/4 Funk Breaks & Vinyl Scratch Cuts",
-        soundType: "scratch",
-        editions: [
-          { label: "V3 COZZA FRENZY STAGE", img: "img/e317c2b941.jpg" },
-          { label: "V1 OG STREET BEANIE", img: "img/df6fc59113.jpg" },
-          { label: "V2 TURNTABLE VARIANT", img: "img/26fc1f2db6.jpg" }
-        ],
-        atk: 96, def: 88, spd: 94,
-        themeColor: "toxic"
-      },
-      dub: {
-        title: "140 Dub Operators",
-        badge: "SOUND: 140 BASS MUSIC RIG",
-        subtitle: "CLAN 02 // 20 DOUBLE-BINS UP FRONT (COZZA FRENZY)",
-        desc: "Hunched over a center mixer flanked by dual angled laptop stands and towering 20 double-bin subwoofer stacks. Whipping a wild mane of long braided audio cables and glowing 12AX7 crown vacuum tubes in front of a blinding neon LED pixel wall.",
-        trait: "Dual-Laptop Booth & Headbanging Cable Mane",
-        ability: "20 Double-Bin Frenzy (8-Bit Arp + Screen Earthquake)",
-        soundLabel: "30Hz Sine Sub Drops & 140 Deep Dub Sirens",
-        soundType: "sub",
-        editions: [
-          { label: "V3 COZZA FRENZY STAGE", img: "img/175697cfe7.jpg" },
-          { label: "V2 BASEMENT SYNTH", img: "img/f2effa6e90.jpg" }
-        ],
-        atk: 92, def: 98, spd: 86,
-        themeColor: "cyan"
-      },
-      alchemist: {
-        title: "Electro-Soul Alchemists",
-        badge: "SOUND: ELECTRO-SOUL LIGHTSHOW",
-        subtitle: "CLAN 03 // MODULAR SPECTRUM & LASER CANOPY",
-        desc: "Outfitted with triple chest analog VU meters, glowing vacuum tubes, modular synth shoulder racks, dusty vinyl crates, and a 16-pad MPC drum sampler under a full volumetric rainbow laser canopy.",
-        trait: "Triple VU-Meter Chest & Modular Laser Canopy",
-        ability: "Harmonic Resonance (+25% Points on Hold Notes)",
-        soundLabel: "Warm Tube Harmonics & Soulful MPC Grooves",
-        soundType: "laser",
-        editions: [
-          { label: "V2 MODULAR LASER STAGE", img: "img/58709dc520.jpg" },
-          { label: "V1 OG WAREHOUSE", img: "img/e8fc84038a.jpg" }
-        ],
-        atk: 90, def: 90, spd: 95,
-        themeColor: "amber"
-      },
-      industrial: {
-        title: "Industrial Mecha",
-        badge: "SOUND: HYBRID NU-METAL REMIX",
-        subtitle: "CLAN 04 // HYBRID RIG & REMIX FOUNDRY",
-        desc: "Giant weathered gunmetal combat mechs stenciled with a red winged-soldier emblem, standing inside a dark steel foundry filled with overhead cranes, towering tube-amp stacks, and welding sparks.",
-        trait: "Holographic Stencil Wings & Neon Turntable Plinths",
-        ability: "Distortion Surge (Absorbs 1 Missed Beat per Match)",
-        soundLabel: "Distorted Power Chords & Downbeat Industrial Drums",
-        soundType: "metal",
-        editions: [
-          { label: "V2 STEEL FOUNDRY MECH", img: "img/3ab895b06e.jpg" },
-          { label: "V1 DARK BUNKER EDITION", img: "img/a81b6f2faa.jpg" }
-        ],
-        atk: 97, def: 94, spd: 87,
-        themeColor: "crimson"
-      },
-      biomech: {
-        title: "Polyrhythmic Biomechs",
-        badge: "SOUND: ODD-METER PROG RITUAL",
-        subtitle: "CLAN 05 // GOLDEN SPIRAL VISIONARY TEMPLE",
-        desc: "Dark obsidian automaton surrounded by towering four-sided pillars of multi-faced heads with flaming third-eye spirals, a hammered bronze temple gong, and a carved obsidian 7-pointed heptagram monolith.",
-        trait: "Hovering Mandala Drum Pads & Heptagram Altar",
-        ability: "Polyrhythm Trance (Double Score on Odd-Meter bars)",
-        soundLabel: "Shifting 5/4 and 7/8 Polyrhythms & Tribal Drums",
-        soundType: "gong",
-        editions: [
-          { label: "V2 VISIONARY TEMPLE", img: "img/e1f79d1d9f.jpg" },
-          { label: "V1 SUBTERRANEAN TORCHLIT", img: "img/46e0c9ee9f.jpg" }
-        ],
-        atk: 94, def: 96, spd: 91,
-        themeColor: "purple"
-      }
-    };
+    const CLAN_ASSETS = window.CLAN_ASSETS; // defined in beatbots-clans.js
 
     // ==========================================
     // 1. AUDIO ENGINE v4 — procedural synthesis lives in beatbots-audio.js
@@ -1695,20 +1672,12 @@
     }
 
     // ==========================================
-    // 4. BEAT BATTLE (beatbots-padbattle.js)
+    // 4. BEAT BATTLE launcher (game: battle.html + beatbots-padbattle.js)
     // ==========================================
-    let isArcadeRunning = false; // page key handlers stand down while a battle runs
-    function mountPadBattle() {
-      const root = document.getElementById('padbattle-root');
-      if (!root || !window.BBPadBattle) return;
-      window.BBPadBattle.mount(root, {
-        getCtx: () => { initAudio(); return audioCtx; },
-        kitBase: 'kits/',
-        clans: CLAN_ASSETS,
-        onRunningChange: (running) => { isArcadeRunning = running; },
-        onStart: () => { if (isSeqPlaying) toggleSequencer(); },
-        getHolderBot: () => null, // wallet NFT hook (cosmetic) once Genesis mints
-      });
+    let isArcadeRunning = false; // the game now runs on battle.html; kept for the page key handler
+    function fillBattleLauncher() {
+      const html = Object.keys(CLAN_ASSETS).map((k, i) => `<img src="${CLAN_ASSETS[k].editions[Math.min(i % 2, CLAN_ASSETS[k].editions.length - 1)].img}" alt="${CLAN_ASSETS[k].title}" loading="lazy">`).join('');
+      document.querySelectorAll('.bb-bots').forEach((box) => { box.innerHTML = html; });
     }
 
     // ==========================================
@@ -2558,7 +2527,7 @@
       });
 
       // Beat Battle
-      mountPadBattle();
+      fillBattleLauncher();
 
       // Armory selectors
       document.getElementById('armory-select-clan').addEventListener('change', updateArmoryBuild);
@@ -2566,8 +2535,7 @@
       document.getElementById('armory-select-visor').addEventListener('change', updateArmoryBuild);
       document.getElementById('armory-select-weapon').addEventListener('change', updateArmoryBuild);
       document.getElementById('armory-apply-btn').addEventListener('click', () => {
-        if (window.BBPadBattle) window.BBPadBattle.selectBot(document.getElementById('armory-select-clan').value);
-        window.location.hash = '#arcade-section';
+        window.location.href = '/battle?clan=' + encodeURIComponent(document.getElementById('armory-select-clan').value);
       });
     }
 

@@ -25,7 +25,8 @@ async function serve(ctxOrPage, siteDir, missing = []) {
     const u = new URL(route.request().url());
     let rel = decodeURIComponent(u.pathname);
     if (rel.endsWith('/')) rel += 'index.html';
-    const p = path.join(siteDir, rel);
+    let p = path.join(siteDir, rel);
+    if (!path.extname(p) && fs.existsSync(p + '.html')) p += '.html'; // Cloudflare Pages pretty URLs (/battle -> battle.html)
     if (!p.startsWith(siteDir) || !fs.existsSync(p) || fs.statSync(p).isDirectory()) {
       missing.push(rel);
       return route.fulfill({ status: 404, body: '' });
@@ -45,6 +46,9 @@ function watchErrors(page) {
 
 function out(dir) { fs.mkdirSync(dir, { recursive: true }); return dir; }
 
+// Pages the site serves (site/index.html, studio.html, battle.html, mint.html).
+const PAGES = (process.env.QA_PAGES || '/,/studio,/battle,/mint').split(',');
+
 const VIEWPORTS = { phone: [375, 812], phoneSmall: [320, 640], tablet: [768, 1024], laptop: [1280, 800], desktop: [1920, 1080] };
 
-module.exports = { launch, serve, watchErrors, out, BASE, VIEWPORTS };
+module.exports = { launch, serve, watchErrors, out, BASE, VIEWPORTS, PAGES };

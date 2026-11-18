@@ -19,12 +19,13 @@ const types = { '.html': 'text/html', '.js': 'application/javascript', '.json': 
   page.on('dialog', (d) => d.dismiss());
   await page.route('http://beatbots.test/**', (route) => {
     const u = new URL(route.request().url());
-    const p = path.join(siteDir, u.pathname === '/' ? 'index.html' : decodeURIComponent(u.pathname));
+    let p = path.join(siteDir, u.pathname === '/' ? 'index.html' : decodeURIComponent(u.pathname));
+    if (!path.extname(p) && fs.existsSync(p + '.html')) p += '.html';
     if (!p.startsWith(siteDir) || !fs.existsSync(p)) return route.fulfill({ status: 404, body: '' });
     route.fulfill({ status: 200, contentType: types[path.extname(p)] || 'application/octet-stream', body: fs.readFileSync(p) });
   });
-  await page.goto('http://beatbots.test/', { waitUntil: 'load' });
-  await page.mouse.click(5, 5); // user gesture -> unlocks audio
+  await page.goto('http://beatbots.test/studio', { waitUntil: 'load' }); // the sequencer lives on /studio
+  await page.locator('#audio-section h2').first().click(); // user gesture -> unlocks audio (top-left corner is now the home link)
 
   // 1. Live engine: call every voice / model / FX / preset / UI sound
   const live = await page.evaluate(async () => {

@@ -2,22 +2,26 @@
 // and images rendered far smaller than their intrinsic size (>2.5x, wasted bytes).
 // Usage: node tools/qa/imgcheck.cjs <siteDir> <outDir>
 const fs = require('fs'), path = require('path');
-const { launch, serve, watchErrors, out, BASE } = require('./lib.cjs');
+const { launch, serve, watchErrors, out, BASE, PAGES } = require('./lib.cjs');
 
 (async () => {
   const [siteDir, outDir = 'qa-out/img'] = process.argv.slice(2);
   out(outDir);
   const b = await launch();
+  const missing = []; let imgs = [];
+  for (const pg of PAGES) {
   const page = await b.newPage({ viewport: { width: 1280, height: 800 } });
-  watchErrors(page); const missing = [];
+  watchErrors(page);
   await serve(page, siteDir, missing);
-  await page.goto(BASE + '/', { waitUntil: 'load' });
+  await page.goto(BASE + pg, { waitUntil: 'load' });
   // scroll to trigger lazy images
   await page.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 600) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); } });
   await page.waitForTimeout(800);
-  const imgs = await page.evaluate(() => [...document.images].map(i => ({
+  imgs = imgs.concat((await page.evaluate(() => [...document.images].map(i => ({
     src: i.currentSrc || i.src, ok: i.complete && i.naturalWidth > 0, nw: i.naturalWidth, rw: Math.round(i.getBoundingClientRect().width), alt: i.hasAttribute('alt'),
-  })));
+  })))).map((i) => Object.assign(i, { page: pg })));
+  await page.close();
+  }
   const big = [];
   for (const im of imgs) {
     if (!im.src.startsWith('http://beatbots.test')) continue;

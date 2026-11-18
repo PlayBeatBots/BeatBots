@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en" data-page="studio" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="canonical" href="https://playbeatbots.com/studio">
+  <title>Sound Design Station | BeatBots</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Chakra Petch', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Space Mono', 'monospace'],
+          },
+          gridTemplateColumns: { 16: 'repeat(16, minmax(0, 1fr))' },
+          colors: {
+            bass: {
+              black: '#03050C',
+              darker: '#060A16',
+              card: '#0A1124',
+              border: '#18264A',
+              neon: '#3CFFB4',
+              toxic: '#00E5FF',
+              amber: '#FFB020',
+              purple: '#FF2BD6',
+              cyan: '#2F7BFF',
+              crimson: '#FF2E54'
+            },
+            emerald: { 300: '#7FD8FF', 400: '#2F7BFF', 500: '#2F7BFF' },
+            slate: { 200: '#DCE6FF', 300: '#B4C0E2', 400: '#8C9AC2', 500: '#7F8DB5', 600: '#4A5880', 700: '#24396B' }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* 16-step sequencer grid: Tailwind's default build stops at grid-cols-12 */
+    .grid-cols-16 { grid-template-columns: repeat(16, minmax(0, 1fr)); }
+    body {
+      background-color: #06080C;
+      color: #E2E8F0;
+      overflow-x: hidden;
+    }
+    .crt-scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+    }
+    .glow-toxic {
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.25);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 25px rgba(47, 123, 255, 0.25);
+    }
+    .glow-amber {
+      box-shadow: 0 0 25px rgba(255, 176, 32, 0.25);
+    }
+    .glow-purple {
+      box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
+    }
+    .glow-crimson {
+      box-shadow: 0 0 25px rgba(255, 46, 84, 0.25);
+    }
+    .text-glow-toxic {
+      text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+    }
+    .text-glow-amber {
+      text-shadow: 0 0 12px rgba(255, 176, 32, 0.6);
+    }
+    .grid-pattern {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    .step-active {
+      background-color: #00E5FF !important;
+      box-shadow: 0 0 12px #00E5FF;
+    }
+    .step-current {
+      border-color: #FFB020 !important;
+      transform: scale(1.08);
+    }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0A0E17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1E293B;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00E5FF;
+    }
+  </style>
+  <link rel="stylesheet" href="command-center.css">
+
+
+</head>
+<body class="cc font-sans antialiased selection:bg-bass-toxic selection:text-black relative">
+
+  <!-- Optional CRT Scanline Layer -->
+  <div id="crt-overlay" class="fixed inset-0 z-50 crt-scanlines hidden"></div>
+
+  <!-- Command Center status bar -->
+  <header class="status">
+    <a class="brand" href="/"><span class="logo"><i></i></span><span>BEAT<b>BOTS</b></span></a>
+    <span class="hide-m" style="white-space:nowrap"><span class="led"></span><span class="v">SYSTEM ONLINE</span></span>
+    <span class="devnet-m"><span class="led amber"></span>DEVNET TEST</span>
+    <span class="sep hide-m"></span>
+    <button id="cluster-switch-btn" class="net hide-m" title="Switch Solana cluster"><span id="cluster-indicator"></span>NET <span class="v">SOLANA <strong id="cluster-label" class="text-bass-amber">DEVNET</strong></span></button>
+    <span class="sep hide-m hide-t"></span>
+    <span class="hide-m hide-t" style="white-space:nowrap">BPM <span class="v" id="cc-bpm">105</span></span>
+    <span class="sep hide-m"></span>
+    <div class="ticker hide-m"><span><em>◆ GENESIS DROP</em> &nbsp;888 Handcrafted Autonomous Audio Battlers &nbsp;//&nbsp; <em>DEVNET TEST, mainnet date TBA</em> &nbsp;//&nbsp; Five Legendary Sound Clans &nbsp;//&nbsp; All audio rendered live in your browser</span></div>
+    <span class="hide-m hide-t" id="cc-clock">--:--:--</span>
+    <canvas id="header-wave-canvas" width="60" height="24" class="hide-m"></canvas>
+    <a class="btn-wallet" href="/mint">Mint Genesis</a>
+  </header>
+
+  <!-- Command Center side console (desktop) -->
+  <aside class="console" aria-label="Sections">
+    <h6><span>CONTROL MODULES</span><span>v3.0</span></h6>
+    <a class="mod" href="/"><span class="hex"><span>00</span></span><span>Command<small>HERO // STATUS</small></span><i class="st"></i></a>
+    <a class="mod" href="/mint"><span class="hex"><span>01</span></span><span>Genesis Mint<small>DEVNET TEST</small></span><i class="st"></i></a>
+    <a class="mod" href="/#clans-section"><span class="hex"><span>02</span></span><span>Sound Clans<small>5 FACTIONS</small></span><i class="st"></i></a>
+    <a class="mod on" href="/studio" aria-current="page"><span class="hex"><span>03</span></span><span>Sound Station<small>8CH SEQUENCER</small></span><i class="st"></i></a>
+    <a class="mod" href="/battle"><span class="hex"><span>04</span></span><span>Battle Arcade<small>BEAT BATTLE</small></span><i class="st"></i></a>
+    <a class="mod" href="/#armory-section"><span class="hex"><span>05</span></span><span>Armory &amp; Forge<small>TRAIT FORGE v1.0</small></span><i class="st"></i></a>
+    <a class="mod" href="/#vault-section"><span class="hex"><span>06</span></span><span>Founder Vault<small>TECSUPORT ARCHIVE</small></span><i class="st"></i></a>
+    <a class="mod" href="/#token-section"><span class="hex"><span>07</span></span><span>$BEATBOT<small>BATTLE SCRAP</small></span><i class="st"></i></a>
+    <a class="mod" href="/#faq-section"><span class="hex"><span>08</span></span><span>FAQ<small>SUPPORT LOG</small></span><i class="st"></i></a>
+    <div class="meter">
+      <div class="lbl" style="margin-bottom:10px;display:flex;justify-content:space-between"><span>MASTER OUT</span><span class="c-cyan">L/R</span></div>
+      <div class="vu" id="cc-vu"></div>
+      <div class="meta">CLUSTER <b>DEVNET</b><br>MAINNET <b class="c-amber">DATE TBA</b><br><button id="toggle-crt-btn">CRT FX: <span id="crt-status">OFF</span></button></div>
+    </div>
+  </aside>
+
+  <!-- Hero Section -->
+  <main id="top">
+    <nav class="mob-nav" aria-label="Sections">
+      <a href="/mint"><i>01</i>Mint</a><a href="/#clans-section"><i>02</i>Clans</a><a href="/studio"><i>03</i>Station</a><a href="/battle"><i>04</i>Arcade</a><a href="/#armory-section"><i>05</i>Armory</a><a href="/#vault-section"><i>06</i>Vault</a><a href="/#token-section"><i>07</i>$BEATBOT</a><a href="/#faq-section"><i>08</i>FAQ</a>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+    <!-- Upgraded 16-Step Beat Maker & Audio Workstation -->
+        <!-- Sound Design Station & 16-Step Modular Studio -->
+    <section id="audio-section" data-page="studio" class="py-24 bg-bass-darker border-t border-bass-border relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="sec-head"><span class="hex"><span>03</span></span><div class="tl"><div class="eyebrow">PRO AUDIO WORKSTATION v3.0 // 8-CHANNEL MODULAR SYNTH & LIVE KEYBOARD LAB</div><h2>SOUND DESIGN STATION</h2><p>Professional browser-based electronic sound design suite. Features 8 synthesized instrument channels, per-track pitch & decay shaping, playable 13-key synth lab, 4 pattern memory banks, stereo delay echo, master distortion overdrive, and live performance FX pads.</p></div><div class="rule" data-r="MODULE 03 // SYNTH"></div></div>
+
+        <!-- Main Station Chassis -->
+        <div class="bg-bass-card rounded-2xl border-2 border-bass-border p-6 sm:p-8 shadow-2xl relative space-y-8">
+          
+          <!-- Station Top Status Bar: Engine State, Master BPM, Pattern Banks, Transport -->
+          <div class="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-bass-border">
+            
+            <!-- Transport Controls -->
+            <div class="flex flex-wrap items-center gap-3">
+              <button id="seq-play-btn" class="px-6 py-2.5 rounded-xl bg-bass-toxic hover:bg-emerald-400 text-bass-black font-display font-bold text-sm transition-all flex items-center space-x-2 shadow-md hover:shadow-bass-toxic/30 active:scale-95">
+                <svg id="play-icon" class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <span id="play-btn-text">PLAY PATTERN</span>
+              </button>
+              <button id="seq-clear-btn" class="px-3.5 py-2.5 rounded-xl bg-bass-darker hover:bg-bass-border text-slate-300 font-mono text-xs transition-colors border border-bass-border">
+                CLEAR
+              </button>
+              <button id="seq-random-btn" class="px-3.5 py-2.5 rounded-xl bg-bass-darker hover:bg-bass-border text-bass-cyan font-mono text-xs transition-colors border border-bass-border">
+                RANDOMIZE
+              </button>
+            </div>
+
+            <!-- Pattern Bank Selector (A / B / C / D) -->
+            <div class="flex items-center space-x-2 bg-bass-darker px-3 py-1.5 rounded-xl border border-bass-border">
+              <span class="text-[11px] font-mono text-slate-400">BANK:</span>
+              <button class="pattern-bank-btn px-2.5 py-1 rounded text-xs font-mono font-bold bg-bass-toxic/20 text-bass-toxic border border-bass-toxic" data-bank="0">A</button>
+              <button class="pattern-bank-btn px-2.5 py-1 rounded text-xs font-mono text-slate-400 hover:text-white border border-transparent" data-bank="1">B</button>
+              <button class="pattern-bank-btn px-2.5 py-1 rounded text-xs font-mono text-slate-400 hover:text-white border border-transparent" data-bank="2">C</button>
+              <button class="pattern-bank-btn px-2.5 py-1 rounded text-xs font-mono text-slate-400 hover:text-white border border-transparent" data-bank="3">D</button>
+            </div>
+
+            <!-- Tempo & Tap -->
+            <div class="flex items-center space-x-3 bg-bass-darker px-4 py-2 rounded-xl border border-bass-border">
+              <span class="text-xs font-mono text-slate-400">BPM:</span>
+              <input id="bpm-slider" type="range" min="60" max="180" value="105" class="w-20 accent-bass-toxic">
+              <span id="bpm-val" class="font-mono text-sm font-bold text-bass-toxic w-8 text-center">105</span>
+              <button id="tap-tempo-btn" class="px-2 py-0.5 rounded bg-bass-card border border-bass-border text-[10px] font-mono text-slate-300 hover:text-bass-toxic">TAP</button>
+            </div>
+
+            <!-- Genre Style Presets -->
+            <div class="flex items-center space-x-1.5 overflow-x-auto py-1">
+              <span class="text-[11px] font-mono text-slate-400 hidden sm:inline">PRESET:</span>
+              <button class="preset-btn px-2.5 py-1 rounded bg-bass-darker hover:bg-bass-border text-slate-300 text-xs font-mono border border-bass-border active" data-preset="bboy">B-Boy Funk</button>
+              <button class="preset-btn px-2.5 py-1 rounded bg-bass-darker hover:bg-bass-border text-slate-300 text-xs font-mono border border-bass-border" data-preset="dub">140 Dub</button>
+              <button class="preset-btn px-2.5 py-1 rounded bg-bass-darker hover:bg-bass-border text-slate-300 text-xs font-mono border border-bass-border" data-preset="soul">Electro-Soul</button>
+              <button class="preset-btn px-2.5 py-1 rounded bg-bass-darker hover:bg-bass-border text-slate-300 text-xs font-mono border border-bass-border" data-preset="metal">Industrial</button>
+              <button class="preset-btn px-2.5 py-1 rounded bg-bass-darker hover:bg-bass-border text-slate-300 text-xs font-mono border border-bass-border" data-preset="poly">7/8 Biomech</button>
+              <button class="preset-btn px-2.5 py-1 rounded bg-bass-darker hover:bg-bass-border text-bass-amber text-xs font-mono border border-bass-border" data-preset="t5d">Tec5uport</button>
+            </div>
+          </div>
+
+          <!-- Master FX Rack (Filters, Echo Delay, Overdrive, Saturation, Swing) -->
+          <div class="bg-bass-darker/70 p-4 rounded-xl border border-bass-border space-y-4">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-bass-cyan font-bold uppercase tracking-wider flex items-center space-x-2">
+                <span>🎛️</span>
+                <span>MASTER ANALOG FX RACK & SIGNAL PROCESSING</span>
+              </span>
+              <div class="flex flex-wrap items-center gap-2 text-[11px]">
+                <button id="toggle-saturation-btn" class="px-2.5 py-1 rounded bg-bass-toxic/20 text-bass-toxic border border-bass-toxic font-bold">WARM: ON</button>
+                <button id="toggle-delay-btn" class="px-2.5 py-1 rounded bg-bass-cyan/20 text-bass-cyan border border-bass-cyan font-bold">ECHO DELAY: ON</button>
+                <button id="toggle-dist-btn" class="px-2.5 py-1 rounded bg-bass-card text-slate-400 border border-bass-border font-bold">DRIVE: OFF</button>
+              </div>
+            </div>
+
+            <!-- Master Knobs & Sliders Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 text-xs font-mono">
+              <!-- Lowpass Cutoff -->
+              <div class="bg-bass-card p-3 rounded-lg border border-bass-border space-y-1.5">
+                <div class="flex justify-between text-slate-300">
+                  <span>LOWPASS FILTER:</span>
+                  <span id="filter-val" class="text-bass-cyan font-bold">20kHz</span>
+                </div>
+                <input id="filter-slider" type="range" min="0" max="100" value="100" class="w-full accent-bass-cyan">
+              </div>
+
+              <!-- Highpass Filter -->
+              <div class="bg-bass-card p-3 rounded-lg border border-bass-border space-y-1.5">
+                <div class="flex justify-between text-slate-300">
+                  <span>HIGHPASS FILTER:</span>
+                  <span id="hpf-val" class="text-slate-300 font-bold">30Hz</span>
+                </div>
+                <input id="hpf-slider" type="range" min="20" max="800" value="30" class="w-full accent-slate-400">
+              </div>
+
+              <!-- Delay Echo Time & Feedback -->
+              <div class="bg-bass-card p-3 rounded-lg border border-bass-border space-y-1.5">
+                <div class="flex justify-between text-slate-300">
+                  <span>ECHO TIME:</span>
+                  <span id="delay-time-val" class="text-bass-amber font-bold">280ms</span>
+                </div>
+                <input id="delay-time-slider" type="range" min="80" max="600" value="280" class="w-full accent-bass-amber">
+              </div>
+
+              <!-- Distortion Drive -->
+              <div class="bg-bass-card p-3 rounded-lg border border-bass-border space-y-1.5">
+                <div class="flex justify-between text-slate-300">
+                  <span>DRIVE / CRUNCH:</span>
+                  <span id="dist-drive-val" class="text-bass-crimson font-bold">15%</span>
+                </div>
+                <input id="dist-drive-slider" type="range" min="0" max="100" value="15" class="w-full accent-bass-crimson">
+              </div>
+
+              <!-- Swing Groove -->
+              <div class="bg-bass-card p-3 rounded-lg border border-bass-border space-y-1.5">
+                <div class="flex justify-between text-slate-300">
+                  <span>SWING GROOVE:</span>
+                  <span id="swing-val" class="text-bass-toxic font-bold">15%</span>
+                </div>
+                <input id="swing-slider" type="range" min="0" max="50" value="15" class="w-full accent-bass-toxic">
+              </div>
+            </div>
+          </div>
+
+          <!-- The 8-Channel 16-Step Modular Grid -->
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono text-slate-300 font-bold uppercase tracking-wider flex items-center space-x-2">
+                <span>🔊</span>
+                <span>8-CHANNEL SYNTHESIS SEQUENCER (16 STEPS)</span>
+              </span>
+              <span class="text-[11px] font-mono text-slate-500">CLICK PAD TO TOGGLE • SELECT SOUND MODEL ON THE LEFT</span>
+            </div>
+
+            <!-- Scrollable Grid Container -->
+            <div class="overflow-x-auto pb-2">
+              <div class="min-w-[840px] space-y-2.5">
+                
+                <!-- Track 0: 808 Kick -->
+                <div class="flex items-center space-x-3 p-2 rounded-xl bg-bass-darker/60 border border-bass-border hover:border-slate-600 transition-colors">
+                  <div class="w-44 flex items-center justify-between font-mono text-xs text-slate-300 pr-2">
+                    <div>
+                      <span class="font-bold text-white block">01: 808 KICK</span>
+                      <select class="track-model-select bg-bass-card text-[10px] text-bass-toxic border border-bass-border rounded px-1 py-0.5 mt-0.5" data-track="0">
+                        <option value="sub">808 Deep Sub</option>
+                        <option value="punch">Punch Acoustic</option>
+                        <option value="hard">Hard Industrial</option>
+                      </select>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <button class="track-mute-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="0">M</button>
+                      <button class="track-solo-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="0">S</button>
+                    </div>
+                  </div>
+                  <div class="flex-1 grid grid-cols-16 gap-1.5" id="grid-track-0"></div>
+                </div>
+
+                <!-- Track 1: Snare / Clap -->
+                <div class="flex items-center space-x-3 p-2 rounded-xl bg-bass-darker/60 border border-bass-border hover:border-slate-600 transition-colors">
+                  <div class="w-44 flex items-center justify-between font-mono text-xs text-slate-300 pr-2">
+                    <div>
+                      <span class="font-bold text-white block">02: SNARE / CLAP</span>
+                      <select class="track-model-select bg-bass-card text-[10px] text-bass-cyan border border-bass-border rounded px-1 py-0.5 mt-0.5" data-track="1">
+                        <option value="crisp">Crisp 90s Snare</option>
+                        <option value="clap">Vintage Clap</option>
+                        <option value="rim">Wood Rimshot</option>
+                      </select>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <button class="track-mute-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="1">M</button>
+                      <button class="track-solo-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="1">S</button>
+                    </div>
+                  </div>
+                  <div class="flex-1 grid grid-cols-16 gap-1.5" id="grid-track-1"></div>
+                </div>
+
+                <!-- Track 2: Hi-Hats -->
+                <div class="flex items-center space-x-3 p-2 rounded-xl bg-bass-darker/60 border border-bass-border hover:border-slate-600 transition-colors">
+                  <div class="w-44 flex items-center justify-between font-mono text-xs text-slate-300 pr-2">
+                    <div>
+                      <span class="font-bold text-white block">03: HI-HATS</span>
+                      <select class="track-model-select bg-bass-card text-[10px] text-bass-amber border border-bass-border rounded px-1 py-0.5 mt-0.5" data-track="2">
+                        <option value="closed">Closed Hat</option>
+                        <option value="open">Open Sizzle</option>
+                        <option value="shaker">Break Shaker</option>
+                      </select>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <button class="track-mute-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="2">M</button>
+                      <button class="track-solo-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="2">S</button>
+                    </div>
+                  </div>
+                  <div class="flex-1 grid grid-cols-16 gap-1.5" id="grid-track-2"></div>
+                </div>
+
+                <!-- Track 3: Percussion / Cowbell -->
+                <div class="flex items-center space-x-3 p-2 rounded-xl bg-bass-darker/60 border border-bass-border hover:border-slate-600 transition-colors">
+                  <div class="w-44 flex items-center justify-between font-mono text-xs text-slate-300 pr-2">
+                    <div>
+                      <span class="font-bold text-white block">04: PERCUSSION</span>
+                      <select class="track-model-select bg-bass-card text-[10px] text-purple-400 border border-bass-border rounded px-1 py-0.5 mt-0.5" data-track="3">
+                        <option value="cowbell">808 Cowbell</option>
+                        <option value="bongo">Tribal Bongo</option>
+                        <option value="wood">Woodblock Ping</option>
+                      </select>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <button class="track-mute-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="3">M</button>
+                      <button class="track-solo-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="3">S</button>
+                    </div>
+                  </div>
+                  <div class="flex-1 grid grid-cols-16 gap-1.5" id="grid-track-3"></div>
+                </div>
+
+                <!-- Track 4: Sub-Bass / Reese -->
+                <div class="flex items-center space-x-3 p-2 rounded-xl bg-bass-darker/60 border border-bass-border hover:border-slate-600 transition-colors">
+                  <div class="w-44 flex items-center justify-between font-mono text-xs text-slate-300 pr-2">
+                    <div>
+                      <span class="font-bold text-bass-toxic block">05: SUB SYNTH</span>
+                      <select class="track-model-select bg-bass-card text-[10px] text-bass-toxic border border-bass-border rounded px-1 py-0.5 mt-0.5" data-track="4">
+                        <option value="sine">Deep Sine 40Hz</option>
+                        <option value="reese">Grimy Reese Saw</option>
+                        <option value="acid">Acid Square Bass</option>
+                      </select>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <button class="track-mute-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="4">M</button>
+                      <button class="track-solo-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="4">S</button>
+                    </div>
+                  </div>
+                  <div class="flex-1 grid grid-cols-16 gap-1.5" id="grid-track-4"></div>
+                </div>
+
+                <!-- Track 5: Synth Chord / Lead -->
+                <div class="flex items-center space-x-3 p-2 rounded-xl bg-bass-darker/60 border border-bass-border hover:border-slate-600 transition-colors">
+                  <div class="w-44 flex items-center justify-between font-mono text-xs text-slate-300 pr-2">
+                    <div>
+                      <span class="font-bold text-bass-cyan block">06: SYNTH CHORD</span>
+                      <select class="track-model-select bg-bass-card text-[10px] text-bass-cyan border border-bass-border rounded px-1 py-0.5 mt-0.5" data-track="5">
+                        <option value="soul">Soul Minor Triad</option>
+                        <option value="saw">Cyber Saw Lead</option>
+                        <option value="flute">Ambient Flute Sine</option>
+                      </select>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <button class="track-mute-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="5">M</button>
+                      <button class="track-solo-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="5">S</button>
+                    </div>
+                  </div>
+                  <div class="flex-1 grid grid-cols-16 gap-1.5" id="grid-track-5"></div>
+                </div>
+
+                <!-- Track 6: Vocal Stab / Chant -->
+                <div class="flex items-center space-x-3 p-2 rounded-xl bg-bass-darker/60 border border-bass-border hover:border-slate-600 transition-colors">
+                  <div class="w-44 flex items-center justify-between font-mono text-xs text-slate-300 pr-2">
+                    <div>
+                      <span class="font-bold text-bass-amber block">07: VOCAL STAB</span>
+                      <select class="track-model-select bg-bass-card text-[10px] text-bass-amber border border-bass-border rounded px-1 py-0.5 mt-0.5" data-track="6">
+                        <option value="hey">"Hey!" Break Chant</option>
+                        <option value="yeah">"Yeah!" Soul Stab</option>
+                        <option value="drop">"Drop!" Dub Vocoder</option>
+                      </select>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <button class="track-mute-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="6">M</button>
+                      <button class="track-solo-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="6">S</button>
+                    </div>
+                  </div>
+                  <div class="flex-1 grid grid-cols-16 gap-1.5" id="grid-track-6"></div>
+                </div>
+
+                <!-- Track 7: Glitch FX / Tribal Tom -->
+                <div class="flex items-center space-x-3 p-2 rounded-xl bg-bass-darker/60 border border-bass-border hover:border-slate-600 transition-colors">
+                  <div class="w-44 flex items-center justify-between font-mono text-xs text-slate-300 pr-2">
+                    <div>
+                      <span class="font-bold text-bass-crimson block">08: GLITCH / TOM</span>
+                      <select class="track-model-select bg-bass-card text-[10px] text-bass-crimson border border-bass-border rounded px-1 py-0.5 mt-0.5" data-track="7">
+                        <option value="tom">Tribal Low Tom</option>
+                        <option value="laser">Modular Blip Zap</option>
+                        <option value="whoosh">Reverse Air Whoosh</option>
+                      </select>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                      <button class="track-mute-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="7">M</button>
+                      <button class="track-solo-btn px-1.5 py-1 rounded bg-bass-card border border-bass-border text-[10px] text-slate-400 font-bold" data-track="7">S</button>
+                    </div>
+                  </div>
+                  <div class="flex-1 grid grid-cols-16 gap-1.5" id="grid-track-7"></div>
+                </div>
+
+                <!-- Step Counter Labels -->
+                <div class="flex items-center space-x-3 pt-2 text-[10px] font-mono text-slate-500">
+                  <div class="w-44 text-right pr-2 font-bold text-slate-400">STEP //</div>
+                  <div class="flex-1 grid grid-cols-16 gap-1.5 text-center">
+                    <span>1</span><span>2</span><span>3</span><span>4</span>
+                    <span>5</span><span>6</span><span>7</span><span>8</span>
+                    <span>9</span><span>10</span><span>11</span><span>12</span>
+                    <span>13</span><span>14</span><span>15</span><span>16</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- NEW FEATURE: Interactive Live Synth Lab (Playable 1-Octave Micro-Keyboard) -->
+          <div class="bg-bass-darker p-5 rounded-2xl border border-bass-border space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <span class="text-xs font-mono text-bass-toxic font-bold uppercase tracking-wider block">🎹 LIVE SYNTH LAB & MELODIC KEYS</span>
+                <span class="text-[11px] font-mono text-slate-400">PLAY LIVE BASSLINES & LEADS VIA MOUSE, TOUCH, OR KEYBOARD (<kbd class="px-1 py-0.5 rounded bg-bass-card text-white">A</kbd> - <kbd class="px-1 py-0.5 rounded bg-bass-card text-white">K</kbd>)</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs font-mono max-w-full">
+                <span class="text-slate-400">SYNTH ENGINE:</span>
+                <select id="synth-lab-preset" class="bg-bass-card text-white border border-bass-border rounded px-2.5 py-1 text-xs max-w-full">
+                  <option value="vocoder">Intergalactic Vocoder Lead</option>
+                  <option value="wobble">140 Dubstep Wobble</option>
+                  <option value="rhodes">Electro-Soul Rhodes</option>
+                  <option value="industrial">Industrial Distorted Lead</option>
+                  <option value="gong">Temple Tribal Bell</option>
+                </select>
+                <div class="flex items-center space-x-1">
+                  <button id="octave-down-btn" class="px-2 py-1 rounded bg-bass-card border border-bass-border text-slate-300 font-bold">-1 Oct</button>
+                  <span id="current-octave-label" class="px-2 font-bold text-bass-toxic">OCT 3</span>
+                  <button id="octave-up-btn" class="px-2 py-1 rounded bg-bass-card border border-bass-border text-slate-300 font-bold">+1 Oct</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Piano Keyboard Interface -->
+            <div class="relative h-28 flex justify-center max-w-xl mx-auto select-none pt-1" id="synth-keyboard-container">
+              <!-- Keys generated dynamically or inline -->
+            </div>
+          </div>
+
+          <!-- Performance Launchpads (8 Pads) -->
+          <div class="pt-2 border-t border-bass-border space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono text-slate-400 uppercase tracking-wider font-bold">LIVE STAGE PERFORMANCE FX LAUNCHPADS:</span>
+              <span class="text-[11px] font-mono text-slate-500 hidden sm:inline">TRIGGER VIA KEYBOARD [1] - [8]</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2.5">
+              <button class="fx-pad p-3 rounded-xl bg-bass-darker hover:bg-bass-toxic/20 border border-bass-border hover:border-bass-toxic text-center transition-all group" data-fx="siren">
+                <span class="block font-display font-bold text-white group-hover:text-bass-toxic text-xs">DUB SIREN</span>
+                <span class="text-[10px] font-mono text-slate-400">[Key 1]</span>
+              </button>
+              <button class="fx-pad p-3 rounded-xl bg-bass-darker hover:bg-bass-cyan/20 border border-bass-border hover:border-bass-cyan text-center transition-all group" data-fx="sub">
+                <span class="block font-display font-bold text-white group-hover:text-bass-cyan text-xs">808 DROP</span>
+                <span class="text-[10px] font-mono text-slate-400">[Key 2]</span>
+              </button>
+              <button class="fx-pad p-3 rounded-xl bg-bass-darker hover:bg-bass-amber/20 border border-bass-border hover:border-bass-amber text-center transition-all group" data-fx="scratch">
+                <span class="block font-display font-bold text-white group-hover:text-bass-amber text-xs">SCRATCH FX</span>
+                <span class="text-[10px] font-mono text-slate-400">[Key 3]</span>
+              </button>
+              <button class="fx-pad p-3 rounded-xl bg-bass-darker hover:bg-bass-purple/20 border border-bass-border hover:border-bass-purple text-center transition-all group" data-fx="laser">
+                <span class="block font-display font-bold text-white group-hover:text-bass-purple text-xs">LASER ZAP</span>
+                <span class="text-[10px] font-mono text-slate-400">[Key 4]</span>
+              </button>
+              <button class="fx-pad p-3 rounded-xl bg-bass-darker hover:bg-bass-crimson/20 border border-bass-border hover:border-bass-crimson text-center transition-all group" data-fx="stop">
+                <span class="block font-display font-bold text-white group-hover:text-bass-crimson text-xs">TAPE STOP</span>
+                <span class="text-[10px] font-mono text-slate-400">[Key 5]</span>
+              </button>
+              <button class="fx-pad p-3 rounded-xl bg-bass-darker hover:bg-emerald-400/20 border border-bass-border hover:border-emerald-400 text-center transition-all group" data-fx="riser">
+                <span class="block font-display font-bold text-white group-hover:text-emerald-400 text-xs">NOISE RISER</span>
+                <span class="text-[10px] font-mono text-slate-400">[Key 6]</span>
+              </button>
+              <button class="fx-pad p-3 rounded-xl bg-bass-darker hover:bg-yellow-400/20 border border-bass-border hover:border-yellow-400 text-center transition-all group" data-fx="airhorn">
+                <span class="block font-display font-bold text-white group-hover:text-yellow-400 text-xs">AIRHORN</span>
+                <span class="text-[10px] font-mono text-slate-400">[Key 7]</span>
+              </button>
+              <button class="fx-pad p-3 rounded-xl bg-bass-darker hover:bg-blue-400/20 border border-bass-border hover:border-blue-400 text-center transition-all group" data-fx="amen">
+                <span class="block font-display font-bold text-white group-hover:text-blue-400 text-xs">AMEN ROLL</span>
+                <span class="text-[10px] font-mono text-slate-400">[Key 8]</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Pattern Export, Save & Share Toolbar -->
+          <div class="pt-4 border-t border-bass-border flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-slate-400">PATTERN UTILITIES:</span>
+              <button id="export-wav-btn" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-bass-toxic/20 to-bass-cyan/20 border border-bass-toxic text-bass-toxic hover:text-white hover:bg-bass-toxic font-mono text-xs font-bold flex items-center space-x-1.5 transition-all shadow-sm">
+            <span>🎵</span>
+            <span>Download .WAV</span>
+          </button>
+          <button id="export-json-btn" class="px-3 py-1.5 rounded-lg bg-bass-darker border border-bass-border text-slate-300 hover:text-white font-mono text-xs flex items-center space-x-1 transition-colors">
+            <span>💾</span>
+            <span>Export JSON</span>
+          </button>
+              <button id="copy-pattern-btn" class="px-3 py-1.5 rounded-lg bg-bass-darker hover:bg-bass-border text-bass-toxic border border-bass-border transition-colors">
+                Copy Code
+              </button>
+            </div>
+            <div class="text-[11px] text-slate-500 font-mono">
+              ALL AUDIO RENDERED LIVE AT 44.1kHz • ZERO CLOUD LATENCY
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-bass-darker border-t border-bass-border py-12 text-center text-xs font-mono text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-4">
+      <div class="flex justify-center space-x-6 text-slate-400">
+        <a href="/" class="hover:text-bass-toxic transition-colors">Back to Top</a>
+        <a href="/#clans-section" class="hover:text-bass-toxic transition-colors">Clans</a>
+        <a href="/studio" class="hover:text-bass-toxic transition-colors">Sequencer</a>
+        <a href="/battle" class="hover:text-bass-toxic transition-colors">Arcade</a>
+        <a href="/#armory-section" class="hover:text-bass-toxic transition-colors">Armory</a>
+      </div>
+      <p>© 2026 BeatBots Genesis Sound System. Built for underground bass & breakbeat culture.</p>
+    </div>
+  </footer>
+
+  <!-- Mint Simulation Modal -->
+  
+
+
+
+
+
+  <script src="beatbots-audio.js"></script>
+  <script src="beatbots-clans.js"></script>
+  <script src="command-center.js" defer></script>
+  <script>
+    // Network config for the mint. Switch these three values for mainnet.
+    window.BEATBOTS_CONFIG = {
+      network: "devnet",
+      rpc: "https://api.devnet.solana.com",
+      candyMachine: "FCrJhgeHCdZyAbTPAjG6TgC3f9XeqMucoZ1mQHjbemPo"
+    };
+  </script>
+
+
+
+  <!-- SCRIPT LOGIC (Web Audio, Sequencer, Clans, Arcade, Armory, Mint) -->
+  <script src="beatbots-app.js"></script>
+</body>
+</html>

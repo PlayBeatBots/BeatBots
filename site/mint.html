@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en" data-page="mint" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="canonical" href="https://playbeatbots.com/mint">
+  <title>Genesis Mint (Devnet Test) | BeatBots</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Chakra Petch', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Space Mono', 'monospace'],
+          },
+          gridTemplateColumns: { 16: 'repeat(16, minmax(0, 1fr))' },
+          colors: {
+            bass: {
+              black: '#03050C',
+              darker: '#060A16',
+              card: '#0A1124',
+              border: '#18264A',
+              neon: '#3CFFB4',
+              toxic: '#00E5FF',
+              amber: '#FFB020',
+              purple: '#FF2BD6',
+              cyan: '#2F7BFF',
+              crimson: '#FF2E54'
+            },
+            emerald: { 300: '#7FD8FF', 400: '#2F7BFF', 500: '#2F7BFF' },
+            slate: { 200: '#DCE6FF', 300: '#B4C0E2', 400: '#8C9AC2', 500: '#7F8DB5', 600: '#4A5880', 700: '#24396B' }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* 16-step sequencer grid: Tailwind's default build stops at grid-cols-12 */
+    .grid-cols-16 { grid-template-columns: repeat(16, minmax(0, 1fr)); }
+    body {
+      background-color: #06080C;
+      color: #E2E8F0;
+      overflow-x: hidden;
+    }
+    .crt-scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      background-size: 100% 3px, 6px 100%;
+      pointer-events: none;
+    }
+    .glow-toxic {
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.25);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 25px rgba(47, 123, 255, 0.25);
+    }
+    .glow-amber {
+      box-shadow: 0 0 25px rgba(255, 176, 32, 0.25);
+    }
+    .glow-purple {
+      box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);
+    }
+    .glow-crimson {
+      box-shadow: 0 0 25px rgba(255, 46, 84, 0.25);
+    }
+    .text-glow-toxic {
+      text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+    }
+    .text-glow-amber {
+      text-shadow: 0 0 12px rgba(255, 176, 32, 0.6);
+    }
+    .grid-pattern {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    .step-active {
+      background-color: #00E5FF !important;
+      box-shadow: 0 0 12px #00E5FF;
+    }
+    .step-current {
+      border-color: #FFB020 !important;
+      transform: scale(1.08);
+    }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0A0E17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1E293B;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00E5FF;
+    }
+  </style>
+  <link rel="stylesheet" href="command-center.css">
+
+  <!-- Solana Web3.js SDK v1.95.4 -->
+  <script data-page="mint" src="https://unpkg.com/@solana/web3.js@1.95.4/lib/index.iife.min.js"></script>
+</head>
+<body class="cc font-sans antialiased selection:bg-bass-toxic selection:text-black relative">
+
+  <!-- Optional CRT Scanline Layer -->
+  <div id="crt-overlay" class="fixed inset-0 z-50 crt-scanlines hidden"></div>
+
+  <!-- Command Center status bar -->
+  <header class="status">
+    <a class="brand" href="/"><span class="logo"><i></i></span><span>BEAT<b>BOTS</b></span></a>
+    <span class="hide-m" style="white-space:nowrap"><span class="led"></span><span class="v">SYSTEM ONLINE</span></span>
+    <span class="devnet-m"><span class="led amber"></span>DEVNET TEST</span>
+    <span class="sep hide-m"></span>
+    <button id="cluster-switch-btn" class="net hide-m" title="Switch Solana cluster"><span id="cluster-indicator"></span>NET <span class="v">SOLANA <strong id="cluster-label" class="text-bass-amber">DEVNET</strong></span></button>
+    <span class="sep hide-m hide-t"></span>
+    <span class="hide-m hide-t" style="white-space:nowrap">BPM <span class="v" id="cc-bpm">105</span></span>
+    <span class="sep hide-m"></span>
+    <div class="ticker hide-m"><span><em>◆ GENESIS DROP</em> &nbsp;888 Handcrafted Autonomous Audio Battlers &nbsp;//&nbsp; <em>DEVNET TEST, mainnet date TBA</em> &nbsp;//&nbsp; Five Legendary Sound Clans &nbsp;//&nbsp; All audio rendered live in your browser</span></div>
+    <span class="hide-m hide-t" id="cc-clock">--:--:--</span>
+    <canvas id="header-wave-canvas" width="60" height="24" class="hide-m"></canvas>
+    <button id="wallet-connect-btn" class="btn-wallet">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+      <span id="wallet-btn-text">Connect Solana</span>
+    </button>
+  </header>
+
+  <!-- Command Center side console (desktop) -->
+  <aside class="console" aria-label="Sections">
+    <h6><span>CONTROL MODULES</span><span>v3.0</span></h6>
+    <a class="mod" href="/"><span class="hex"><span>00</span></span><span>Command<small>HERO // STATUS</small></span><i class="st"></i></a>
+    <a class="mod on" href="/mint" aria-current="page"><span class="hex"><span>01</span></span><span>Genesis Mint<small>DEVNET TEST</small></span><i class="st"></i></a>
+    <a class="mod" href="/#clans-section"><span class="hex"><span>02</span></span><span>Sound Clans<small>5 FACTIONS</small></span><i class="st"></i></a>
+    <a class="mod" href="/studio"><span class="hex"><span>03</span></span><span>Sound Station<small>8CH SEQUENCER</small></span><i class="st"></i></a>
+    <a class="mod" href="/battle"><span class="hex"><span>04</span></span><span>Battle Arcade<small>BEAT BATTLE</small></span><i class="st"></i></a>
+    <a class="mod" href="/#armory-section"><span class="hex"><span>05</span></span><span>Armory &amp; Forge<small>TRAIT FORGE v1.0</small></span><i class="st"></i></a>
+    <a class="mod" href="/#vault-section"><span class="hex"><span>06</span></span><span>Founder Vault<small>TECSUPORT ARCHIVE</small></span><i class="st"></i></a>
+    <a class="mod" href="/#token-section"><span class="hex"><span>07</span></span><span>$BEATBOT<small>BATTLE SCRAP</small></span><i class="st"></i></a>
+    <a class="mod" href="/#faq-section"><span class="hex"><span>08</span></span><span>FAQ<small>SUPPORT LOG</small></span><i class="st"></i></a>
+    <div class="meter">
+      <div class="lbl" style="margin-bottom:10px;display:flex;justify-content:space-between"><span>MASTER OUT</span><span class="c-cyan">L/R</span></div>
+      <div class="vu" id="cc-vu"></div>
+      <div class="meta">CLUSTER <b>DEVNET</b><br>MAINNET <b class="c-amber">DATE TBA</b><br><button id="toggle-crt-btn">CRT FX: <span id="crt-status">OFF</span></button></div>
+    </div>
+  </aside>
+
+  <!-- Hero Section -->
+  <main id="top">
+    <nav class="mob-nav" aria-label="Sections">
+      <a href="/mint"><i>01</i>Mint</a><a href="/#clans-section"><i>02</i>Clans</a><a href="/studio"><i>03</i>Station</a><a href="/battle"><i>04</i>Arcade</a><a href="/#armory-section"><i>05</i>Armory</a><a href="/#vault-section"><i>06</i>Vault</a><a href="/#token-section"><i>07</i>$BEATBOT</a><a href="/#faq-section"><i>08</i>FAQ</a>
+    </nav>
+
+
+
+
+    <!-- Mint Section -->
+    <section id="mint-section" data-page="mint" class="py-20 bg-bass-darker border-t border-bass-border relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="sec-head"><span class="hex"><span>01</span></span><div class="tl"><div class="eyebrow">DEVNET TEST, mainnet date TBA</div><h2>GENESIS BEATBOT MINT</h2><p>Each Genesis NFT is a 1-of-1 autonomous battler with randomized clan alignment, chassis geometry, and custom audio traits. Minting grants full game utility, custom sequencer sound packs, and lifetime asynchronous tournament entry.</p></div><div class="rule" data-r="MODULE 01 // MINT"></div></div>
+
+        <div class="max-w-xl mx-auto bg-bass-card rounded-2xl border border-bass-border p-6 sm:p-8 shadow-xl relative overflow-hidden">
+          <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-bass-toxic via-bass-cyan to-bass-amber"></div>
+
+          <!-- Mint Progress Header -->
+          <div class="flex justify-between items-center mb-6 pb-4 border-b border-bass-border font-mono text-sm">
+            <span class="text-slate-400">Total Minted:</span>
+            <span class="text-white font-bold"><span id="minted-count">—</span> / <span id="mint-total">888</span> (<span id="mint-pct">0</span>%)</span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full bg-bass-darker rounded-full h-2.5 mb-8 overflow-hidden">
+            <div id="mint-progress-bar" class="bg-gradient-to-r from-bass-toxic to-emerald-400 h-full rounded-full" style="width: 0%"></div>
+          </div>
+
+          <!-- Quantity Selector -->
+          <div class="space-y-3 mb-8">
+            <label class="text-xs font-mono text-slate-400 uppercase tracking-wider block">Quantity (Max 5 per wallet)</label>
+            <div class="flex items-center justify-between bg-bass-darker rounded-xl p-2 border border-bass-border">
+              <button id="qty-minus" class="w-12 h-12 rounded-lg bg-bass-card hover:bg-bass-border text-white text-xl font-bold flex items-center justify-center transition-colors active:scale-95">-</button>
+              <span id="mint-qty" class="font-display font-bold text-3xl text-white">1</span>
+              <button id="qty-plus" class="w-12 h-12 rounded-lg bg-bass-card hover:bg-bass-border text-white text-xl font-bold flex items-center justify-center transition-colors active:scale-95">+</button>
+            </div>
+          </div>
+
+          <!-- Price Calculation Breakdown -->
+          <div class="space-y-2 mb-8 font-mono text-sm border-t border-bass-border pt-4">
+            <div class="flex justify-between text-slate-400">
+              <span>Network Gas (Est.):</span>
+              <span class="text-white">&lt; 0.00001 SOL</span>
+            </div>
+          </div>
+
+          <!-- Mint CTA Button -->
+          <button id="open-mint-modal-btn" class="w-full py-4 rounded-xl bg-gradient-to-r from-bass-toxic to-emerald-400 hover:from-emerald-400 hover:to-bass-toxic text-bass-black font-display font-bold text-lg shadow-lg hover:shadow-bass-toxic/30 transition-all duration-200 active:scale-95">
+            MINT ON DEVNET (TEST)
+          </button>
+
+          <!-- Disclaimer Note -->
+          <p class="text-center text-[11px] font-mono text-slate-500 mt-4">
+            Instant wallet signing on Solana. NFTs will reveal in your backpack / wallet immediately upon on-chain confirmation.
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+    <!-- Upgraded 16-Step Beat Maker & Audio Workstation -->
+
+
+
+
+
+
+
+
+
+
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-bass-darker border-t border-bass-border py-12 text-center text-xs font-mono text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-4">
+      <div class="flex justify-center space-x-6 text-slate-400">
+        <a href="/" class="hover:text-bass-toxic transition-colors">Back to Top</a>
+        <a href="/#clans-section" class="hover:text-bass-toxic transition-colors">Clans</a>
+        <a href="/studio" class="hover:text-bass-toxic transition-colors">Sequencer</a>
+        <a href="/battle" class="hover:text-bass-toxic transition-colors">Arcade</a>
+        <a href="/#armory-section" class="hover:text-bass-toxic transition-colors">Armory</a>
+      </div>
+      <p>© 2026 BeatBots Genesis Sound System. Built for underground bass & breakbeat culture.</p>
+    </div>
+  </footer>
+
+  <!-- Mint Simulation Modal -->
+  
+  <!-- Live Solana Wallet Selection Modal -->
+  <div id="wallet-modal" data-page="mint" class="fixed inset-0 bg-bass-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-bass-card rounded-2xl border-2 border-bass-toxic p-6 max-w-sm w-full shadow-2xl relative space-y-4">
+      <button id="close-wallet-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
+      <div class="text-center space-y-1">
+        <span class="px-2 py-0.5 rounded bg-bass-toxic/20 text-bass-toxic text-xs font-mono font-bold">SOLANA MAINNET ADAPTER</span>
+        <h3 class="font-display font-bold text-2xl text-white">CONNECT WALLET</h3>
+        <p class="text-xs font-mono text-slate-400">Select an installed Solana wallet provider</p>
+      </div>
+
+      <div class="space-y-3 pt-2" id="wallet-provider-options">
+        <!-- Phantom -->
+        <button id="connect-phantom-btn" class="w-full flex items-center justify-between p-3.5 rounded-xl bg-bass-darker hover:bg-bass-border border border-bass-border hover:border-bass-toxic transition-all group">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-lg bg-[#AB9FF2]/20 flex items-center justify-center p-1.5 border border-[#AB9FF2]/40">
+              <svg class="w-full h-full text-[#AB9FF2]" viewBox="0 0 128 128" fill="currentColor">
+                <path d="M112.5 61.5c-2.4-23.7-22.3-42.3-46.7-42.3-25.9 0-47 21-47 47 0 25.4 20.3 46.2 45.5 46.9 22.3.6 42.1-13.8 47.7-35.4.3-1.1-.5-2.2-1.6-2.2H94.1c-.8 0-1.6.5-1.9 1.3-3.6 11.2-14.1 19.3-26.6 19.3-15.4 0-28-12.6-28-28s12.6-28 28-28c14.2 0 26 10.7 27.7 24.6.1.9.9 1.6 1.8 1.6h16c1 .1 1.7-.8 1.4-1.8z"/>
+                <circle cx="53" cy="56" r="6"/>
+                <circle cx="75" cy="56" r="6"/>
+              </svg>
+            </div>
+            <div class="text-left">
+              <span class="font-display font-bold text-sm text-white block group-hover:text-bass-toxic transition-colors">Phantom</span>
+              <span id="phantom-status-badge" class="text-[10px] font-mono text-slate-400 block">Detecting...</span>
+            </div>
+          </div>
+          <span class="text-xs font-mono text-bass-toxic">➔</span>
+        </button>
+
+        <!-- Solflare -->
+        <button id="connect-solflare-btn" class="w-full flex items-center justify-between p-3.5 rounded-xl bg-bass-darker hover:bg-bass-border border border-bass-border hover:border-bass-cyan transition-all group">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-lg bg-[#FC8019]/20 flex items-center justify-center p-1.5 border border-[#FC8019]/40">
+              <svg class="w-full h-full text-[#FC8019]" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2L2 19.5h20L12 2zm0 3.84L18.49 17.5H5.51L12 5.84z"/>
+              </svg>
+            </div>
+            <div class="text-left">
+              <span class="font-display font-bold text-sm text-white block group-hover:text-bass-cyan transition-colors">Solflare</span>
+              <span id="solflare-status-badge" class="text-[10px] font-mono text-slate-400 block">Detecting...</span>
+            </div>
+          </div>
+          <span class="text-xs font-mono text-bass-cyan">➔</span>
+        </button>
+
+        <!-- Backpack -->
+        <button id="connect-backpack-btn" class="w-full flex items-center justify-between p-3.5 rounded-xl bg-bass-darker hover:bg-bass-border border border-bass-border hover:border-bass-amber transition-all group">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-lg bg-red-500/20 flex items-center justify-center p-1.5 border border-red-500/40">
+              <svg class="w-full h-full text-red-400" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 8h-2V6a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3v2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zm-10-2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2H9V6zm10 14H5V10h14v10z"/>
+              </svg>
+            </div>
+            <div class="text-left">
+              <span class="font-display font-bold text-sm text-white block group-hover:text-bass-amber transition-colors">Backpack</span>
+              <span id="backpack-status-badge" class="text-[10px] font-mono text-slate-400 block">Detecting...</span>
+            </div>
+          </div>
+          <span class="text-xs font-mono text-bass-amber">➔</span>
+        </button>
+      </div>
+
+      <div class="pt-2 text-center text-[11px] font-mono text-slate-400 border-t border-bass-border">
+        Need a Solana wallet? <a href="https://phantom.app" target="_blank" class="text-bass-toxic underline hover:text-white">Get Phantom</a> or <a href="https://solflare.com" target="_blank" class="text-bass-cyan underline hover:text-white">Solflare</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wallet Actions Dropdown -->
+  <div id="wallet-actions-dropdown" data-page="mint" class="absolute right-0 top-14 mt-2 w-64 rounded-xl bg-bass-card border border-bass-toxic/60 shadow-2xl py-3 px-4 z-50 hidden space-y-3 font-mono text-xs">
+    <div class="border-b border-bass-border pb-2">
+      <div class="text-[10px] text-slate-400 uppercase">Connected Account</div>
+      <div id="dropdown-full-address" class="text-white font-bold truncate">7xKp...9B2v</div>
+      <div id="dropdown-sol-balance" class="text-bass-toxic font-bold text-sm mt-0.5">0.00 SOL</div>
+    </div>
+    <div class="space-y-1">
+      <button id="copy-address-btn" class="w-full text-left py-1.5 px-2 rounded hover:bg-bass-darker text-slate-300 hover:text-white flex items-center space-x-2 transition-colors">
+        <span>📋</span> <span>Copy Address</span>
+      </button>
+      <a id="solscan-link" href="https://solscan.io" target="_blank" class="w-full text-left py-1.5 px-2 rounded hover:bg-bass-darker text-slate-300 hover:text-white flex items-center space-x-2 transition-colors block">
+        <span>🔍</span> <span>View on Solscan</span>
+      </a>
+      <button id="disconnect-wallet-btn" class="w-full text-left py-1.5 px-2 rounded hover:bg-bass-crimson/20 text-bass-crimson flex items-center space-x-2 transition-colors">
+        <span>⏏</span> <span>Disconnect</span>
+      </button>
+    </div>
+  </div>
+<div id="mint-modal" data-page="mint" class="fixed inset-0 bg-bass-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-bass-card rounded-2xl border-2 border-bass-toxic p-6 sm:p-8 max-w-md w-full shadow-2xl relative space-y-6">
+      
+      <!-- Close Button -->
+      <button id="close-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">✕</button>
+
+      <div class="text-center space-y-1">
+        <span class="px-2 py-0.5 rounded bg-bass-toxic/20 text-bass-toxic text-xs font-mono font-bold">SOLANA DEVNET (TEST)</span>
+        <h3 class="font-display font-bold text-2xl text-white">CONFIRM MINT</h3>
+      </div>
+
+      <!-- Minting Step 1: Pre-Approve -->
+      <div id="modal-step-pre" class="space-y-4">
+        <div class="p-4 rounded-xl bg-bass-darker border border-bass-border space-y-2 text-xs font-mono">
+          <div class="flex justify-between text-slate-300">
+            <span>SELECTED BOTS:</span>
+            <span id="modal-qty-text" class="text-white font-bold">1 BeatBot</span>
+          </div>
+          <div class="flex justify-between text-slate-300">
+            <span>WALLET:</span>
+            <span id="modal-wallet-address" class="text-bass-cyan font-bold">Phantom (7xKp...9B2v)</span>
+          </div>
+        </div>
+
+        <button id="execute-mint-btn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-bass-toxic to-emerald-400 hover:from-emerald-400 hover:to-bass-toxic text-bass-black font-display font-bold text-base shadow-lg transition-all active:scale-95 flex items-center justify-center space-x-2">
+          <span id="mint-spinner" class="w-4 h-4 border-2 border-bass-black border-t-transparent rounded-full animate-spin hidden"></span>
+          <span id="mint-btn-label">APPROVE & MINT (DEVNET)</span>
+        </button>
+      </div>
+
+      <!-- Minting Step 2: Mint Revealed Card -->
+      <div id="modal-step-success" class="space-y-4 hidden text-center">
+        <div class="w-12 h-12 rounded-full bg-bass-toxic/20 border border-bass-toxic text-bass-toxic flex items-center justify-center text-xl mx-auto">✓</div>
+        <h4 class="font-display font-bold text-xl text-white">MINT SUCCESSFUL!</h4>
+        <p class="text-xs font-mono text-slate-400">TX: <span class="text-bass-cyan">5hR2...w8Yq (Confirmed)</span></p>
+
+        <!-- Revealed Bot Card -->
+        <div class="p-4 rounded-xl bg-bass-darker border border-bass-toxic space-y-3">
+          <div class="aspect-square rounded-lg overflow-hidden bg-bass-black border border-bass-border">
+            <img id="modal-bot-image" src="img/185aebed42.jpg" alt="Minted Bot" class="w-full h-full object-cover">
+          </div>
+          <div class="text-left font-mono text-xs">
+            <span id="modal-bot-id" class="text-bass-toxic font-bold block">GENESIS BEATBOT #042</span>
+            <span id="modal-bot-clan" class="text-slate-300 block">Intergalactic B-Boys (Speaker-City)</span>
+            <span id="modal-bot-rarity" class="text-bass-amber text-[10px] block mt-1"></span>
+          </div>
+        </div>
+
+        <button id="finish-mint-btn" class="w-full py-3 rounded-xl bg-bass-card hover:bg-bass-border text-white font-mono text-xs font-bold border border-bass-border transition-colors">
+          VIEW IN ARMORY & CLOSE
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="beatbots-audio.js"></script>
+  <script src="beatbots-clans.js"></script>
+  <script src="command-center.js" defer></script>
+  <script>
+    // Network config for the mint. Switch these three values for mainnet.
+    window.BEATBOTS_CONFIG = {
+      network: "devnet",
+      rpc: "https://api.devnet.solana.com",
+      candyMachine: "FCrJhgeHCdZyAbTPAjG6TgC3f9XeqMucoZ1mQHjbemPo"
+    };
+  </script>
+  <script data-page="mint" src="beatbots-mint.js"></script>
+  <script data-page="mint">window.BeatBotsMint.init(window.BEATBOTS_CONFIG);</script>
+
+  <!-- SCRIPT LOGIC (Web Audio, Sequencer, Clans, Arcade, Armory, Mint) -->
+  <script src="beatbots-app.js"></script>
+</body>
+</html>

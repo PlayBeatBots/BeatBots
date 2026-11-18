@@ -9,6 +9,9 @@ NETWORK="${1:?network}"; RPC="${2:?rpc url}"; CM="${3:?candy machine id}"
 (cd mint-client && npm ci --silent && npx esbuild src/mint.js --bundle --minify --format=iife \
   --platform=browser --target=es2020 --define:global=window --outfile=../site/beatbots-mint.js)
 python3 tools/patch_site.py site-src/index.html site/index.html "$NETWORK" "$RPC" "$CM"
+python3 tools/split_pages.py site/index.html site   # home / studio / mint pages from the one source
+cp site-src/battle.html site/battle.html
+cp site-src/beatbots-clans.js site/beatbots-clans.js
 cp site-src/beatbots-audio.js site/beatbots-audio.js
 cp site-src/beatbots-padbattle.js site/beatbots-padbattle.js
 rm -f site/beatbots-rhythm.js

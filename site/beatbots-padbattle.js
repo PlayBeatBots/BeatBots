@@ -794,6 +794,7 @@
         diff: DIFFS[saved.diff] ? saved.diff : 'easy',
         bt: !!saved.bt,
       };
+      if (this.opts.initialClan && this.clans[this.opts.initialClan]) { this.setup.clan = this.opts.initialClan; this.setup.song = null; }
       this.running = false;
       this.render();
       this.bindKeys();

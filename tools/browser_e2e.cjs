@@ -30,7 +30,8 @@ const server = http.createServer((req, res) => {
   // Serve the site from disk for http://beatbots.test/* (no local server, nothing leaves the machine)
   await page.route('http://beatbots.test/**', route => {
     const u = new URL(route.request().url());
-    const p = path.join(siteDir, u.pathname === '/' ? 'index.html' : decodeURIComponent(u.pathname));
+    let p = path.join(siteDir, u.pathname === '/' ? 'index.html' : decodeURIComponent(u.pathname));
+    if (!path.extname(p) && fs.existsSync(p + '.html')) p += '.html';
     if (!p.startsWith(siteDir) || !fs.existsSync(p)) return route.fulfill({ status: 404, body: '' });
     route.fulfill({ status: 200, contentType: types[path.extname(p)] || 'application/octet-stream', body: fs.readFileSync(p) });
   });
@@ -66,7 +67,7 @@ const server = http.createServer((req, res) => {
     Object.defineProperty(window, 'phantom', { value: { solana: window.__testWallet }, configurable: true });
   }, addr);
 
-  await page.goto(process.env.SITE_URL || 'http://beatbots.test/', { waitUntil: 'domcontentloaded' });
+  await page.goto(process.env.SITE_URL || 'http://beatbots.test/mint', { waitUntil: 'domcontentloaded' }); // mint lives on /mint
   await page.waitForFunction(() => /^\d+$/.test(document.getElementById('minted-count')?.textContent || ''), null, { timeout: 60000 });
   const before = Number(await page.textContent('#minted-count'));
   const cluster = await page.textContent('#cluster-label');

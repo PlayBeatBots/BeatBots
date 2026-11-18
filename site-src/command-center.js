@@ -42,6 +42,8 @@
   function activeModule() {
     const mods = [...document.querySelectorAll('.console .mod')];
     if (!mods.length || !('IntersectionObserver' in window)) return;
+    const pg = document.documentElement.dataset.page;
+    if (pg && pg !== 'home') return; // studio/mint: the build marks the current page's module
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (e.isIntersecting) mods.forEach((m) => m.classList.toggle('on', m.getAttribute('href') === '#' + e.target.id));
     }), { rootMargin: '-45% 0px -50% 0px' });

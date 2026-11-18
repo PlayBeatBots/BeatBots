@@ -22,7 +22,7 @@ rhythm battle game. The live site is https://playbeatbots.pages.dev (DEVNET ONLY
 
 ## 3. How to change the site
 1. Branch from `main`: `fix/<topic>`, `feat/<topic>` or `perf/<topic>`.
-2. Edit `site-src/` only. Never hand-edit `site/`; it is build output.
+2. Edit `site-src/` only. Never hand-edit `site/`; it is build output. The site has four pages: `/`, `/studio`, `/mint` are all cut from `site-src/index.html` (blocks tagged `data-page="home|studio|mint"`, see tools/split_pages.py); `/battle` is `site-src/battle.html`.
 3. Build: `scripts/build_site.sh devnet https://api.devnet.solana.com FCrJhgeHCdZyAbTPAjG6TgC3f9XeqMucoZ1mQHjbemPo`
 4. Test (runbook section 8): `tools/audio_test.cjs`, `tools/rhythm_test.cjs`, and the browser mint flow.
 5. Hand it to Claude: a PR if you have write access, otherwise a patch file + task file in Drive
